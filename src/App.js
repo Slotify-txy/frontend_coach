@@ -1,24 +1,28 @@
 import logo from './logo.svg';
 import './App.css';
+import { Box } from '@mui/material';
+import { NavBar } from './component/NavBar/NavBar';
+import { Routes, Route } from 'react-router-dom'
+import OpenHour from './component/OpenHour/OpenHour';
+import SchedulePage from './component/SchedulePage/SchedulePage';
 
 function App() {
+
+  const navBarHeight = 70
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Box sx={{ height: '100vh' }}>
+      <Box sx={{ height: navBarHeight }}>
+        <NavBar />
+      </Box>
+      <Routes>
+        <Route path="/open_hour" element={<OpenHour navBarHeight={navBarHeight} />} />
+        <Route path="/schedule" element={<SchedulePage navBarHeight={navBarHeight} />} />
+        <Route path="/" element={<SchedulePage navBarHeight={navBarHeight} />} />
+      </Routes>
+
+    </Box>
+
   );
 }
 
