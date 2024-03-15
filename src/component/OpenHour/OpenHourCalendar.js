@@ -8,7 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { openHourApiSlice as openHourApi } from '../../api/openHourApiSlice'
 import { useDispatch } from 'react-redux'
 import { Box } from '@mui/material'
-import { convertSlots } from '../../util/slotUtil'
+import { convertSlots, isOverlapped } from '../../util/slotUtil'
 import CustomEventComponent from '../Calendar/CustomEventComponent'
 import * as SlotStatusConstants from "../../constants/slotStatus"
 
@@ -22,7 +22,7 @@ export default function OpenHourCalendar({ height, data, isFetching }) {
     const dispatch = useDispatch()
     const onChangeOpenHourTime = useCallback(
         (start, end, id) => {
-            if (isOverlapped(start, end, id)) {
+            if (isOverlapped(data, start, end, id)) {
                 return
             }
             dispatch(
@@ -40,7 +40,7 @@ export default function OpenHourCalendar({ height, data, isFetching }) {
 
     const onSelect = useCallback(
         (start, end) => {
-            if (isOverlapped(start, end)) {
+            if (isOverlapped(data, start, end)) {
                 return
             }
             dispatch(
@@ -57,24 +57,6 @@ export default function OpenHourCalendar({ height, data, isFetching }) {
         },
         [data]
     )
-
-    // check if the open hour will overlaps with existing open hours
-    const isOverlapped = useCallback(
-        (start, end, id = undefined) => {
-            return !data.every(openHour => {
-                if (id && openHour.id === id) {
-                    return true;
-                }
-                const range1 = moment.range(start, end);
-                const range2 = moment.range(moment(openHour.start), moment(openHour.end));
-                const result = range1.overlaps(range2)
-                if (result) {
-                    // todo: send notification
-                    return false
-                }
-                return true
-            })
-        }, [data])
 
     if (isFetching) {
         return <Box>Loading...</Box>
