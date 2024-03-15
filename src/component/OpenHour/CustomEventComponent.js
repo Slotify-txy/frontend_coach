@@ -22,17 +22,17 @@ const statusColor = {
 
 
 const CustomEventComponent = ({ event }) => {
-    const { data, isSuccess } = useGetOpenHoursQuery({ studentId: 10, coachId: 10 })
+    const { data, isSuccess } = useGetOpenHoursQuery({ coachId: 10 })
     const start = moment(event.start).format('hh:mm A')
     const end = moment(event.end).format('hh:mm A')
     const status = event.status
     const [onHover, setOnHover] = useState(false)
     const dispatch = useDispatch()
 
-    const deleteSlot = useCallback(() => {
+    const deleteOpenHour = useCallback(() => {
         isSuccess &&
             dispatch(
-                api.util.upsertQueryData('getSlots', { studentId: 10, coachId: 10 }, data.filter(slot => slot.id !== event.id))
+                api.util.upsertQueryData('getOpenHours', { coachId: 10 }, data.filter(slot => slot.id !== event.id))
             )
     }, [data, isSuccess])
 
@@ -46,7 +46,7 @@ const CustomEventComponent = ({ event }) => {
                     // todo: make ui better
                     onHover &&
                     <Tooltip title="Delete">
-                        <IconButton onClick={deleteSlot} sx={{ padding: 0, alignSelf: 'center' }} aria-label="delete">
+                        <IconButton onClick={deleteOpenHour} sx={{ padding: 0, alignSelf: 'center' }} aria-label="delete">
                             <DeleteIcon fontSize="small" />
                         </IconButton>
                     </Tooltip>

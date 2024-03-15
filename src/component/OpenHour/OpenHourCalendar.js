@@ -9,7 +9,7 @@ import { openHourApiSlice as openHourApi } from '../../api/openHourApiSlice'
 import { useDispatch } from 'react-redux'
 import { Box } from '@mui/material'
 import { convertSlots, isOverlapped } from '../../util/slotUtil'
-import CustomEventComponent from '../Calendar/CustomEventComponent'
+import CustomEventComponent from './CustomEventComponent'
 import * as SlotStatusConstants from "../../constants/slotStatus"
 
 const moment = extendMoment(Moment)
