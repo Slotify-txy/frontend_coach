@@ -1,2 +1,5 @@
 export const AVAILABLE = 'AVAILABLE';
-export const ARRANGING = 'ARRANGING';
+export const SCHEDULING = 'SCHEDULING';
+export const UNPUBLISHED = 'UNPUBLISHED';
+export const PENDING = 'PENDING';
+export const APPOINTMENT = 'APPOINTMENT';

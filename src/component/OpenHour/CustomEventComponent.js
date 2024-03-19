@@ -14,7 +14,7 @@ const statusColor = {
         backgroundColor: blue[400],
         color: blue[900],
     },
-    [SlotStatusConstants.ARRANGING]: {
+    [SlotStatusConstants.SCHEDULING]: {
         backgroundColor: orange[400],
         color: orange[900],
     }

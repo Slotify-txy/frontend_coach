@@ -52,7 +52,7 @@ code {
 }
 
 .rbc-timeslot-group {
-  min-height: 50px !important;
+  min-height: 60px !important;
 }
 
 .rbc-allday-cell {
@@ -61,4 +61,9 @@ code {
 
 .rbc-time-view .rbc-header {
   border-bottom: none;
+}
+
+.rbc-time-gutter > .rbc-timeslot-group > .rbc-time-slot {
+  background-color: white !important;
+  border: none !important;
 }

@@ -1,4 +1,3 @@
-import { createApi } from '@reduxjs/toolkit/query/react'
 import { v4 as uuidv4 } from 'uuid';
 import * as SlotStatusConstants from "../constants/slotStatus"
 import { api } from "./api"

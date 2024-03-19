@@ -26,3 +26,43 @@ export const isOverlapped = (slots, start, end, id = undefined) => {
         return range1.overlaps(range2)
     })
 }
+
+// check if the calendar's slot is within the some student's available times. If so, if it's the start or end of the available times.
+export const IsCalendarSlotWithinAvailableTimes = (slots, date) => {
+    const ret = {
+        isAvailable: false,
+        isStart: false,
+        isEnd: false,
+    }
+    if (slots === undefined) {
+        return ret;
+    }
+    date = moment(date)
+    slots.forEach(slot => {
+        const start = moment(slot.start)
+        const end = moment(slot.end)
+        if (!ret.isAvailable && date.isSameOrAfter(start, 'minute') && date.isBefore(end, 'minute')) {
+            ret.isAvailable = true
+        }
+        if (!ret.isStart && date.isSame(start, 'minute')) {
+            ret.isStart = true
+        }
+
+        if (!ret.isEnd && end.isSame(moment(date).add(0.5, 'hours'), 'minute')) {
+            ret.isEnd = true
+        }
+    })
+
+    return ret
+}
+
+export const isAppointmentWithinAvailableTimes = (availableSlotsOfSomeStudent, appointmentStart, appointmentEnd) => {
+    appointmentStart = moment(appointmentStart)
+    appointmentEnd = moment(appointmentEnd)
+
+    return availableSlotsOfSomeStudent.some(slot => {
+        const start = moment(slot.start)
+        const end = moment(slot.end)
+        return appointmentStart.isSameOrAfter(start, 'minute') && appointmentEnd.isSameOrBefore(end, 'minute')
+    })
+} 
