@@ -1,1 +1,1 @@
-export const STUDENT_CHIP = 'student chip'
+export const STUDENT_CHIP = 'student chip';
