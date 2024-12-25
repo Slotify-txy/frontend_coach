@@ -2,9 +2,9 @@ import { Box } from '@mui/material';
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
 import './App.css';
-import { NavBar } from './component/NavBar/NavBar';
-import OpenHour from './component/OpenHour/OpenHour';
-import SchedulePage from './component/SchedulePage/SchedulePage';
+import { NavBar } from './components/NavBar/NavBar';
+import SchedulePage from './components/SchedulePage/SchedulePage';
+import OpenHour from './features/OpenHour/OpenHour';
 
 function App() {
   const navBarHeight = 70;

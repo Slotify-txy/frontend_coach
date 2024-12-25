@@ -8,7 +8,7 @@ import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
 import { useDrop } from 'react-dnd';
 import { useDispatch } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
-import { slotApiSlice as slotApi } from '../../api/slotApiSlice';
+import { slotApiSlice as slotApi } from '../../app/services/slotApiSlice';
 import * as dndItemTypes from '../../constants/dnd';
 import * as SlotStatusConstants from '../../constants/slotStatus';
 import {

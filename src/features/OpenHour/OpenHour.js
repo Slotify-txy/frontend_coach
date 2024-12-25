@@ -1,6 +1,6 @@
 import { Box, Divider } from '@mui/material';
 import React from 'react';
-import { useGetOpenHoursQuery } from '../../api/openHourApiSlice';
+import { useGetOpenHoursQuery } from '../../app/services/openHourApiSlice';
 import { ActionBar } from './ActionBar';
 import ScheduleCalendar from './OpenHourCalendar';
 

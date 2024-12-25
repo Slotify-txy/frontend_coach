@@ -2,7 +2,7 @@ import { Box, Divider } from '@mui/material';
 import Moment from 'moment';
 import { extendMoment } from 'moment-range';
 import React, { useState } from 'react';
-import { useGetSlotsQuery } from '../../api/slotApiSlice';
+import { useGetSlotsQuery } from '../../app/services/slotApiSlice';
 import ScheduleCalendar from './ScheduleCalendar';
 import StudentList from './StudentList';
 

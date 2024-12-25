@@ -7,7 +7,7 @@ import React from 'react';
 import {
   useCreateOpenHoursMutation,
   useDeleteOpenHoursByCoachIdMutation,
-} from '../../api/openHourApiSlice';
+} from '../../app/services/openHourApiSlice';
 
 const timeFormat = 'YYYY-MM-DD[T]HH:mm:ss';
 

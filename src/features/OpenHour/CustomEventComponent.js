@@ -7,7 +7,7 @@ import { useDispatch } from 'react-redux';
 import {
   openHourApiSlice as api,
   useGetOpenHoursQuery,
-} from '../../api/openHourApiSlice';
+} from '../../app/services/openHourApiSlice';
 import * as SlotStatusConstants from '../../constants/slotStatus';
 import { convertStatusToText } from '../../util/slotUtil';
 
