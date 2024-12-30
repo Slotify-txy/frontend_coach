@@ -1,4 +1,12 @@
-import { Avatar, Box, Chip, List, ListItem } from '@mui/material';
+import {
+  Avatar,
+  Card,
+  CardHeader,
+  List,
+  ListItem,
+  Typography,
+} from '@mui/material';
+import { blue, grey } from '@mui/material/colors';
 import React from 'react';
 import { useDrag } from 'react-dnd';
 import * as dndItemTypes from '../../constants/dnd';
@@ -8,15 +16,25 @@ const StudentList = ({
   selectedStudent,
   setSelectedStudent,
 }) => {
-  const students = Array(1).fill({
-    id: 10,
-    name: 'Xiyuan',
-  });
+  const students = [
+    {
+      id: 1,
+      name: 'Xiyuan',
+      avatar: 'R',
+      email: 'xiyuan.tyler@gmail.com',
+    },
+    {
+      id: 2,
+      name: 'Xiyuan',
+      avatar: 'R',
+      email: 'xiyuan.tyler@gmail.com',
+    },
+  ];
 
   return (
-    <List sx={{ width: 150, overflowY: 'scroll' }}>
+    <List>
       {students.map((student) => (
-        <StudentChip
+        <StudentCard
           key={student.id}
           student={student}
           selectedStudent={selectedStudent}
@@ -28,14 +46,14 @@ const StudentList = ({
   );
 };
 
-const StudentChip = ({
+const StudentCard = ({
   student,
   selectedStudent,
   setDraggedStudent,
   setSelectedStudent,
 }) => {
   const [{ isDragging }, drag] = useDrag(() => ({
-    type: dndItemTypes.STUDENT_CHIP,
+    type: dndItemTypes.STUDENT_CARD,
     collect: (monitor) => ({
       isDragging: !!monitor.isDragging(),
     }),
@@ -50,22 +68,37 @@ const StudentChip = ({
   // }, [isDragging])
 
   return (
-    <ListItem sx={{ px: 1, py: 0.5, opacity: isDragging ? 0.5 : 1 }} ref={drag}>
-      <Box
-        onMouseEnter={() => setSelectedStudent(student.id)}
-        onMouseLeave={() => setSelectedStudent(null)}
+    <ListItem
+      sx={{
+        px: 1,
+        py: 0.5,
+        opacity: isDragging ? 0.5 : 1,
+      }}
+      ref={drag}
+      onMouseEnter={() => setSelectedStudent(student.id)}
+      onMouseLeave={() => setSelectedStudent(null)}
+    >
+      <Card
+        sx={{
+          width: '100%',
+          '--Card-radius': '18px',
+          '&:hover': {
+            backgroundColor: grey[300],
+          },
+        }}
+        variant="outlined"
       >
-        <Chip
+        <CardHeader
+          sx={{ width: '100%' }}
           avatar={
-            <Avatar alt={student.name} src="/static/images/avatar/1.jpg" />
+            <Avatar sx={{ bgcolor: blue[500] }} aria-label="student_card">
+              {student.avatar}
+            </Avatar>
           }
-          label={student.name}
-          variant="outlined"
-          sx={{
-            borderColor: `${selectedStudent == student.id ? 'green' : '#bdbdbd'}`,
-          }}
+          title={<Typography variant="body2">{student.name}</Typography>}
+          subheader={<Typography variant="body2">{student.email}</Typography>}
         />
-      </Box>
+      </Card>
     </ListItem>
   );
 };

@@ -30,6 +30,14 @@ const SchedulePage = ({ navBarHeight }) => {
         height: `calc(100% - ${navBarHeight}px)`,
       }}
     >
+      <Box sx={{ height: '100%', width: 300 }}>
+        <StudentList
+          setDraggedStudent={setDraggedStudent}
+          selectedStudent={selectedStudent}
+          setSelectedStudent={setSelectedStudent}
+        />
+      </Box>
+      <Divider orientation="vertical" sx={{ ml: 0.5 }} />
       <Box sx={{ flex: 1 }}>
         <ScheduleCalendar
           height={'100%'}
@@ -40,12 +48,7 @@ const SchedulePage = ({ navBarHeight }) => {
         />
       </Box>
       <Divider orientation="vertical" sx={{ ml: 0.5 }} />
-      <StudentList
-        setDraggedStudent={setDraggedStudent}
-        selectedStudent={selectedStudent}
-        setSelectedStudent={setSelectedStudent}
-      />
-      <Divider orientation="vertical" sx={{ ml: 0.5 }} />
+
       <Box sx={{ height: '100%', width: 70 }}>
         {/* <ActionBar allSlots={allSlots} isFetchingAllSlots={isFetchingAllSlots} /> */}
       </Box>

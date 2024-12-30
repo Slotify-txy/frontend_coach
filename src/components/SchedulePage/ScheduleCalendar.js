@@ -12,9 +12,9 @@ import { slotApiSlice as slotApi } from '../../app/services/slotApiSlice';
 import * as dndItemTypes from '../../constants/dnd';
 import * as SlotStatusConstants from '../../constants/slotStatus';
 import {
+  IsCalendarSlotWithinAvailableTimes,
   convertSlots,
   isAppointmentWithinAvailableTimes,
-  IsCalendarSlotWithinAvailableTimes,
   isOverlapped,
 } from '../../util/slotUtil';
 
@@ -182,7 +182,7 @@ export default function ScheduleCalendar({
 
   const [, drop] = useDrop(
     () => ({
-      accept: dndItemTypes.STUDENT_CHIP,
+      accept: dndItemTypes.STUDENT_CARD,
     }),
     []
   );
