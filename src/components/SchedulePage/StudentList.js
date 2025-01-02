@@ -1,15 +1,5 @@
-import {
-  Avatar,
-  Card,
-  CardHeader,
-  List,
-  ListItem,
-  Typography,
-} from '@mui/material';
-import { blue, grey } from '@mui/material/colors';
-import React from 'react';
-import { useDrag } from 'react-dnd';
-import * as dndItemTypes from '../../constants/dnd';
+import { List, ListItem } from '@mui/material';
+import React, { useCallback, useState } from 'react';
 
 const StudentList = ({
   setDraggedStudent,
@@ -18,13 +8,7 @@ const StudentList = ({
 }) => {
   const students = [
     {
-      id: 1,
-      name: 'Xiyuan',
-      avatar: 'R',
-      email: 'xiyuan.tyler@gmail.com',
-    },
-    {
-      id: 2,
+      id: 10,
       name: 'Xiyuan',
       avatar: 'R',
       email: 'xiyuan.tyler@gmail.com',
@@ -52,20 +36,17 @@ const StudentCard = ({
   setDraggedStudent,
   setSelectedStudent,
 }) => {
-  const [{ isDragging }, drag] = useDrag(() => ({
-    type: dndItemTypes.STUDENT_CARD,
-    collect: (monitor) => ({
-      isDragging: !!monitor.isDragging(),
-    }),
-  }));
+  const [isDragging, setIsDragging] = useState(false);
 
-  // useEffect(() => {
-  //     if (isDragging) {
-  //         setDraggedStudent({ name: student.name })
-  //     } else {
-  //         setDraggedStudent(null)
-  //     }
-  // }, [isDragging])
+  const onDragStart = useCallback(() => {
+    setIsDragging(true);
+    setDraggedStudent({ title: student.id, name: student.name });
+  }, [student, setDraggedStudent, setIsDragging]);
+
+  const onDragEnd = useCallback(() => {
+    setIsDragging(false);
+    setDraggedStudent(null);
+  }, [setDraggedStudent, setIsDragging]);
 
   return (
     <ListItem
@@ -74,11 +55,8 @@ const StudentCard = ({
         py: 0.5,
         opacity: isDragging ? 0.5 : 1,
       }}
-      ref={drag}
-      onMouseEnter={() => setSelectedStudent(student.id)}
-      onMouseLeave={() => setSelectedStudent(null)}
     >
-      <Card
+      {/* <Card
         sx={{
           width: '100%',
           '--Card-radius': '18px',
@@ -87,6 +65,11 @@ const StudentCard = ({
           },
         }}
         variant="outlined"
+        draggable
+        onDragStart={onDragStart}
+        onDragEnd={onDragEnd}
+        onMouseEnter={() => setSelectedStudent(student.id)}
+        onMouseLeave={() => setSelectedStudent(null)}
       >
         <CardHeader
           sx={{ width: '100%' }}
@@ -98,7 +81,18 @@ const StudentCard = ({
           title={<Typography variant="body2">{student.name}</Typography>}
           subheader={<Typography variant="body2">{student.email}</Typography>}
         />
-      </Card>
+      </Card> */}
+
+      <div
+        key={student.id}
+        draggable
+        onDragStart={onDragStart}
+        onDragEnd={onDragEnd}
+        onMouseEnter={() => setSelectedStudent(student.id)}
+        onMouseLeave={() => setSelectedStudent(null)}
+      >
+        123
+      </div>
     </ListItem>
   );
 };

@@ -43,6 +43,7 @@ const SchedulePage = ({ navBarHeight }) => {
           height={'100%'}
           allSlots={allSlots}
           draggedStudent={draggedStudent}
+          setDraggedStudent={setDraggedStudent}
           selectedStudent={selectedStudent}
           setSelectedStudent={setSelectedStudent}
         />

@@ -1,15 +1,13 @@
 import { Box } from '@mui/material';
 import Moment from 'moment';
 import { extendMoment } from 'moment-range';
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import withDragAndProp from 'react-big-calendar/lib/addons/dragAndDrop';
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
-import { useDrop } from 'react-dnd';
 import { useDispatch } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
 import { slotApiSlice as slotApi } from '../../app/services/slotApiSlice';
-import * as dndItemTypes from '../../constants/dnd';
 import * as SlotStatusConstants from '../../constants/slotStatus';
 import {
   IsCalendarSlotWithinAvailableTimes,
@@ -26,9 +24,12 @@ const DnDCalendar = withDragAndProp(Calendar);
 export default function ScheduleCalendar({
   height,
   allSlots,
+  draggedStudent,
+  setDraggedStudent,
   selectedStudent,
   setSelectedStudent,
 }) {
+  const [events, setEvents] = useState([]);
   const pendingSlots = useMemo(
     () =>
       convertSlots(allSlots).filter(
@@ -108,12 +109,12 @@ export default function ScheduleCalendar({
     ({ start, end }) => {
       const { isAvailable: isStartAvailable } =
         IsCalendarSlotWithinAvailableTimes(
-          availableSlots[selectedStudent],
+          availableSlots[draggedStudent.id],
           moment(start)
         );
       const { isAvailable: isEndAvailable } =
         IsCalendarSlotWithinAvailableTimes(
-          availableSlots[selectedStudent],
+          availableSlots[draggedStudent.id],
           moment(end)
         );
       // console.log(isStartAvailable)
@@ -139,7 +140,7 @@ export default function ScheduleCalendar({
             id: uuidv4(),
             start: moment(start).format(timeFormat),
             end: moment(start).add('1', 'hours').format(timeFormat),
-            studentId: selectedStudent,
+            studentId: draggedStudent.id,
             name: 'Xiyuan',
             status: SlotStatusConstants.UNPUBLISHED,
             isDraggable: true,
@@ -147,9 +148,9 @@ export default function ScheduleCalendar({
         ])
       );
 
-      setSelectedStudent(null);
+      setDraggedStudent(null);
     },
-    [selectedStudent, setSelectedStudent, allSlots]
+    [draggedStudent, setDraggedStudent, allSlots]
   );
 
   const onChangeSlotTime = useCallback(
@@ -180,64 +181,69 @@ export default function ScheduleCalendar({
     [pendingSlots, availableSlots, allSlots]
   );
 
-  const [, drop] = useDrop(
-    () => ({
-      accept: dndItemTypes.STUDENT_CARD,
-    }),
-    []
-  );
+  const handleDropFromOutside = ({ start, end, allDay }) => {
+    console.log(start);
+    const newEvent = {
+      title: '1',
+      start,
+      end,
+      allDay,
+    };
 
+    setEvents((prevEvents) => [...prevEvents, newEvent]);
+  };
+
+  const dragFromOutsideItem = useCallback(
+    () => draggedStudent,
+    [draggedStudent]
+  );
   useEffect(() => {
-    console.log(pendingSlots);
+    console.log(allSlots);
   }, [pendingSlots]);
 
   return (
     <Box style={{ height }}>
-      <div ref={drop}>
-        <DnDCalendar
-          localizer={localizer}
-          events={pendingSlots}
-          // timeslots={30}
-          // step={1}
-          draggableAccessor={'isDraggable'}
-          // dragFromOutsideItem={
-          //     displayDragItemInCell ? dragFromOutsideItem : null
-          // }
-          views={['month', 'week']}
-          defaultView="week"
-          // drilldownView="week"
-          onEventDrop={({ start, end, event }) => {
-            if (start.getDay() === end.getDay()) {
-              onChangeSlotTime(start, end, event.id);
-            }
-          }}
-          // onEventResize={({ start, end, event }) => {
-          //     onChangeSlotTime(start, end, event.id)
-          // }}
-          resizable={false}
-          selectable={false}
-          // onSelectSlot={({ start, end }) => {
-          //     onSelect(start, end)
-          // }}
-          // onDropFromOutside={onDropFromOutside}
-          // eventPropGetter={(event) => {
-          //     const backgroundColor = 'yellow';
-          //     return { style: { backgroundColor } }
-          // }}
-          // onRangeChange={(weekdays) => {
-          //     setRangeYear(moment(weekdays[0]).year())
-          //     setRangeWeek(moment(weekdays[0]).week())
-          // }}
-          onDropFromOutside={onDropFromOutside}
-          slotPropGetter={slotPropGetter}
-          components={{
-            event: CustomEventContainer({
-              selectedStudent,
-              setSelectedStudent,
-            }),
-          }}
-        />
-      </div>
+      <DnDCalendar
+        localizer={localizer}
+        events={events}
+        // timeslots={30}
+        // step={1}
+        draggableAccessor="isDraggable"
+        dragFromOutsideItem={dragFromOutsideItem}
+        views={['month', 'week']}
+        defaultView="week"
+        // drilldownView="week"
+        onEventDrop={({ start, end, event }) => {
+          if (start.getDay() === end.getDay()) {
+            onChangeSlotTime(start, end, event.id);
+          }
+        }}
+        // onEventResize={({ start, end, event }) => {
+        //     onChangeSlotTime(start, end, event.id)
+        // }}
+        resizable={false}
+        selectable={false}
+        // onSelectSlot={({ start, end }) => {
+        //     onSelect(start, end)
+        // }}
+        // eventPropGetter={(event) => {
+        //     const backgroundColor = 'yellow';
+        //     return { style: { backgroundColor } }
+        // }}
+        // onRangeChange={(weekdays) => {
+        //     setRangeYear(moment(weekdays[0]).year())
+        //     setRangeWeek(moment(weekdays[0]).week())
+        // }}
+        // onDropFromOutside={handleDropFromOutside}
+        slotPropGetter={slotPropGetter}
+        // need to fix components to use dragFromOutsideItem
+        components={{
+          event: CustomEventContainer({
+            selectedStudent,
+            setSelectedStudent,
+          }),
+        }}
+      />
     </Box>
   );
 }
