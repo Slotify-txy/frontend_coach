@@ -14,7 +14,12 @@
     "sourceType": "module"
   },
   "rules": {
-    "prettier/prettier": ["error"],
+    "prettier/prettier": [
+      "error",
+      {
+        "endOfLine": "auto"
+      }
+    ],
     "no-console": "warn",
     "no-unused-vars": [
       "warn",
