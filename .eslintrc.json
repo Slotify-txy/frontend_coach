@@ -29,6 +29,7 @@
         "ignoreRestSiblings": true
       }
     ],
+    "no-unused-labels": "warn",
     "react/prop-types": "off"
   }
 }

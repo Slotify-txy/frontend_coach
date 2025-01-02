@@ -1,18 +1,11 @@
 import DeleteIcon from '@mui/icons-material/Delete';
-import {
-  Avatar,
-  Box,
-  Chip,
-  IconButton,
-  Tooltip,
-  Typography,
-} from '@mui/material';
+import { Box, IconButton, Tooltip, Typography } from '@mui/material';
 import { blue, green, orange, teal } from '@mui/material/colors';
 import moment from 'moment-timezone';
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { openHourApiSlice as api } from '../../api/openHourApiSlice';
-import { useGetSlotsQuery } from '../../api/slotApiSlice';
+import { openHourApiSlice as api } from '../../app/services/openHourApiSlice';
+import { useGetSlotsQuery } from '../../app/services/slotApiSlice';
 import * as SlotStatusConstants from '../../constants/slotStatus';
 import { convertStatusToText } from '../../util/slotUtil';
 
@@ -35,32 +28,21 @@ const statusColor = {
   },
 };
 
-const CustomEventComponent = ({
-  event,
-  selectedStudent,
-  setSelectedStudent,
-}) => {
+const CustomEventComponent = ({ event }) => {
   const { data, isSuccess } = useGetSlotsQuery({ coachId: 10 });
-  const {
-    id: eventId,
-    studentId,
-    name,
-    email,
-    start,
-    end,
-    status,
-  } = event.event;
-  const eventStart = moment(start).format('hh:mm A');
-  const eventEnd = moment(end).format('hh:mm A');
+  const start = moment(event.start).format('hh:mm A');
+  const end = moment(event.end).format('hh:mm A');
+  const status = event.status;
+  const [onHover, setOnHover] = useState(false);
   const dispatch = useDispatch();
 
-  const deleteSlot = useCallback(() => {
+  const deleteOpenHour = useCallback(() => {
     isSuccess &&
       dispatch(
         api.util.upsertQueryData(
           'getSlots',
           { coachId: 10 },
-          data.filter((slot) => slot.id !== eventId)
+          data.filter((slot) => slot.id !== event.id)
         )
       );
   }, [data, isSuccess]);
@@ -74,12 +56,8 @@ const CustomEventComponent = ({
         backgroundColor: statusColor[status].backgroundColor,
         borderRadius: 2,
       }}
-      onMouseEnter={() => {
-        setSelectedStudent(studentId);
-      }}
-      onMouseLeave={() => {
-        setSelectedStudent(null);
-      }}
+      onMouseEnter={() => setOnHover(true)}
+      onMouseLeave={() => setOnHover(false)}
     >
       <Box
         sx={{
@@ -102,10 +80,10 @@ const CustomEventComponent = ({
         </Typography>
         {
           // todo: make ui better
-          selectedStudent == studentId && (
+          onHover && (
             <Tooltip title="Delete">
               <IconButton
-                onClick={deleteSlot}
+                onClick={deleteOpenHour}
                 sx={{ padding: 0, alignSelf: 'center' }}
                 aria-label="delete"
               >
@@ -115,14 +93,9 @@ const CustomEventComponent = ({
           )
         }
       </Box>
-      <Chip
-        avatar={<Avatar alt={name} src="/static/images/avatar/1.jpg" />}
-        label={name}
-        variant="outlined"
-        size="medium"
-        sx={{ alignSelf: 'center' }}
-      />
-      {/* <Typography sx={{ fontSize: 15, alignSelf: 'center' }}>{eventStart} - {eventEnd}</Typography> */}
+      <Typography sx={{ fontSize: 15, alignSelf: 'center' }}>
+        {start} - {end}
+      </Typography>
     </Box>
   );
 };

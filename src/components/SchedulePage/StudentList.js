@@ -8,6 +8,7 @@ import {
 } from '@mui/material';
 import { blue, grey } from '@mui/material/colors';
 import React, { useCallback, useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 import { AVAILABLE } from '../../constants/slotStatus';
 
 const StudentList = ({
@@ -57,9 +58,11 @@ const StudentCard = ({
   const onDragStart = useCallback(() => {
     setIsDragging(true);
     setDraggedStudent({
-      status: AVAILABLE,
-      title: student.id,
+      id: uuidv4(),
+      studentId: student.id,
       name: student.name,
+      email: student.email,
+      status: AVAILABLE,
     });
   }, [student, setDraggedStudent, setIsDragging]);
 

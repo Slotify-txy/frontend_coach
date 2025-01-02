@@ -1,22 +1,18 @@
 import { Box } from '@mui/material';
 import Moment from 'moment';
 import { extendMoment } from 'moment-range';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import withDragAndProp from 'react-big-calendar/lib/addons/dragAndDrop';
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
 import { useDispatch } from 'react-redux';
-import { v4 as uuidv4 } from 'uuid';
 import { slotApiSlice as slotApi } from '../../app/services/slotApiSlice';
 import * as SlotStatusConstants from '../../constants/slotStatus';
 import CustomEventComponent from '../../features/OpenHour/CustomEventComponent';
 import {
   IsCalendarSlotWithinAvailableTimes,
   convertSlots,
-  isAppointmentWithinAvailableTimes,
-  isOverlapped,
 } from '../../util/slotUtil';
-
 const moment = extendMoment(Moment);
 const localizer = momentLocalizer(Moment);
 const timeFormat = 'YYYY-MM-DD[T]HH:mm:ss';
@@ -30,7 +26,6 @@ export default function ScheduleCalendar({
   selectedStudent,
   setSelectedStudent,
 }) {
-  const [events, setEvents] = useState([]);
   const pendingSlots = useMemo(
     () =>
       convertSlots(allSlots).filter(
@@ -106,110 +101,59 @@ export default function ScheduleCalendar({
     [selectedStudent]
   );
 
+  const onChangeSlotTime = useCallback((start, end, id) => {
+    // if (
+    //   isOverlapped(pendingSlots, start, end, id) ||
+    //   !isAppointmentWithinAvailableTimes(availableSlots[10], start, end)
+    // ) {
+    //   // todo: notifications
+    //   return;
+    // }
+    dispatch(
+      slotApi.util.updateQueryData('getSlots', { coachId: 10 }, (slots) => {
+        let slot = slots.find((slot) => slot.id === id);
+        if (slot) {
+          slot.start = moment(start).format(timeFormat);
+          slot.end = moment(end).format(timeFormat);
+        }
+      })
+    );
+  }, []);
+
   const onDropFromOutside = useCallback(
     ({ start, end }) => {
-      const { isAvailable: isStartAvailable } =
-        IsCalendarSlotWithinAvailableTimes(
-          availableSlots[draggedStudent.id],
-          moment(start)
-        );
-      const { isAvailable: isEndAvailable } =
-        IsCalendarSlotWithinAvailableTimes(
-          availableSlots[draggedStudent.id],
-          moment(end)
-        );
-      // console.log(isStartAvailable)
-      // console.log(isEndAvailable)
-      // console.log(start)
-      // console.log(end)
-      // console.log(end)
-      if (!isStartAvailable || !isEndAvailable) {
-        // todo: add notification
-        return;
-      }
-
-      // By default, the duration of an appointment 1 hour
-      if (isOverlapped(pendingSlots, start, moment(start).add('1', 'hours'))) {
-        // todo: add notification
-        return;
-      }
-
       dispatch(
-        slotApi.util.upsertQueryData('getSlots', { coachId: 10 }, [
-          ...allSlots,
-          {
-            id: uuidv4(),
+        slotApi.util.updateQueryData('getSlots', { coachId: 10 }, (slots) => {
+          slots.push({
+            id: draggedStudent.id,
             start: moment(start).format(timeFormat),
-            end: moment(start).add('1', 'hours').format(timeFormat),
-            studentId: draggedStudent.id,
-            name: 'Xiyuan',
-            status: SlotStatusConstants.UNPUBLISHED,
+            end: moment(end).format(timeFormat),
+            status: SlotStatusConstants.AVAILABLE,
             isDraggable: true,
-          },
-        ])
-      );
-
-      setDraggedStudent(null);
-    },
-    [draggedStudent, setDraggedStudent, allSlots]
-  );
-
-  const onChangeSlotTime = useCallback(
-    (start, end, id) => {
-      if (
-        isOverlapped(pendingSlots, start, end, id) ||
-        !isAppointmentWithinAvailableTimes(availableSlots[10], start, end)
-      ) {
-        // todo: notifications
-        return;
-      }
-      dispatch(
-        slotApi.util.upsertQueryData(
-          'getSlots',
-          { coachId: 10 },
-          allSlots.map((slot) =>
-            slot.id === id
-              ? {
-                  ...slot,
-                  start: moment(start).format(timeFormat),
-                  end: moment(end).format(timeFormat),
-                }
-              : slot
-          )
-        )
+          });
+        })
       );
     },
-    [pendingSlots, availableSlots, allSlots]
+    [draggedStudent]
   );
-
-  const handleDropFromOutside = ({ start, end, allDay }) => {
-    console.log(start);
-    const newEvent = {
-      title: '1',
-      start,
-      end,
-      allDay,
-    };
-
-    setEvents((prevEvents) => [...prevEvents, newEvent]);
-  };
 
   const dragFromOutsideItem = useCallback(
     () => draggedStudent,
     [draggedStudent]
   );
+
   useEffect(() => {
-    console.log(allSlots);
+    console.log(pendingSlots);
   }, [pendingSlots]);
 
   return (
     <Box style={{ height }}>
       <DnDCalendar
         localizer={localizer}
-        events={events}
+        events={pendingSlots}
         // timeslots={30}
         // step={1}
-        draggableAccessor="isDraggable"
+        // draggableAccessor="isDraggable"
         dragFromOutsideItem={dragFromOutsideItem}
         views={['month', 'week']}
         defaultView="week"
@@ -235,7 +179,11 @@ export default function ScheduleCalendar({
         //     setRangeYear(moment(weekdays[0]).year())
         //     setRangeWeek(moment(weekdays[0]).week())
         // }}
-        // onDropFromOutside={handleDropFromOutside}
+        onDropFromOutside={onDropFromOutside}
+        // onDragOver={(e) => {
+        //   console.log(e.title);
+        //   // console.log(e.end);
+        // }}
         slotPropGetter={slotPropGetter}
         components={{
           event: CustomEventComponent,
