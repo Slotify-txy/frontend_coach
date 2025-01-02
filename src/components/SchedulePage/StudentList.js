@@ -1,5 +1,14 @@
-import { List, ListItem } from '@mui/material';
+import {
+  Avatar,
+  Card,
+  CardHeader,
+  List,
+  ListItem,
+  Typography,
+} from '@mui/material';
+import { blue, grey } from '@mui/material/colors';
 import React, { useCallback, useState } from 'react';
+import { AVAILABLE } from '../../constants/slotStatus';
 
 const StudentList = ({
   setDraggedStudent,
@@ -18,13 +27,20 @@ const StudentList = ({
   return (
     <List>
       {students.map((student) => (
-        <StudentCard
+        <ListItem
           key={student.id}
-          student={student}
-          selectedStudent={selectedStudent}
-          setDraggedStudent={setDraggedStudent}
-          setSelectedStudent={setSelectedStudent}
-        />
+          sx={{
+            px: 1,
+            py: 0.5,
+          }}
+        >
+          <StudentCard
+            student={student}
+            selectedStudent={selectedStudent}
+            setDraggedStudent={setDraggedStudent}
+            setSelectedStudent={setSelectedStudent}
+          />
+        </ListItem>
       ))}
     </List>
   );
@@ -40,7 +56,11 @@ const StudentCard = ({
 
   const onDragStart = useCallback(() => {
     setIsDragging(true);
-    setDraggedStudent({ title: student.id, name: student.name });
+    setDraggedStudent({
+      status: AVAILABLE,
+      title: student.id,
+      name: student.name,
+    });
   }, [student, setDraggedStudent, setIsDragging]);
 
   const onDragEnd = useCallback(() => {
@@ -48,52 +68,43 @@ const StudentCard = ({
     setDraggedStudent(null);
   }, [setDraggedStudent, setIsDragging]);
 
-  return (
-    <ListItem
-      sx={{
-        px: 1,
-        py: 0.5,
-        opacity: isDragging ? 0.5 : 1,
-      }}
-    >
-      {/* <Card
-        sx={{
-          width: '100%',
-          '--Card-radius': '18px',
-          '&:hover': {
-            backgroundColor: grey[300],
-          },
-        }}
-        variant="outlined"
-        draggable
-        onDragStart={onDragStart}
-        onDragEnd={onDragEnd}
-        onMouseEnter={() => setSelectedStudent(student.id)}
-        onMouseLeave={() => setSelectedStudent(null)}
-      >
-        <CardHeader
-          sx={{ width: '100%' }}
-          avatar={
-            <Avatar sx={{ bgcolor: blue[500] }} aria-label="student_card">
-              {student.avatar}
-            </Avatar>
-          }
-          title={<Typography variant="body2">{student.name}</Typography>}
-          subheader={<Typography variant="body2">{student.email}</Typography>}
-        />
-      </Card> */}
+  const onMouseEnter = useCallback(
+    () => setSelectedStudent(student.id),
+    [student, setSelectedStudent]
+  );
+  const onMouseLeave = useCallback(
+    () => setSelectedStudent(null),
+    [setSelectedStudent]
+  );
 
-      <div
-        key={student.id}
-        draggable
-        onDragStart={onDragStart}
-        onDragEnd={onDragEnd}
-        onMouseEnter={() => setSelectedStudent(student.id)}
-        onMouseLeave={() => setSelectedStudent(null)}
-      >
-        123
-      </div>
-    </ListItem>
+  return (
+    <Card
+      sx={{
+        width: '100%',
+        opacity: isDragging ? 0.5 : 1,
+        '--Card-radius': '18px',
+        '&:hover': {
+          backgroundColor: grey[300],
+        },
+      }}
+      variant="outlined"
+      draggable
+      onDragStart={onDragStart}
+      onDragEnd={onDragEnd}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+    >
+      <CardHeader
+        sx={{ width: '100%' }}
+        avatar={
+          <Avatar sx={{ bgcolor: blue[500] }} aria-label="student_card">
+            {student.avatar}
+          </Avatar>
+        }
+        title={<Typography variant="body2">{student.name}</Typography>}
+        subheader={<Typography variant="body2">{student.email}</Typography>}
+      />
+    </Card>
   );
 };
 

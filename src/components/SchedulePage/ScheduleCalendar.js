@@ -9,6 +9,7 @@ import { useDispatch } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
 import { slotApiSlice as slotApi } from '../../app/services/slotApiSlice';
 import * as SlotStatusConstants from '../../constants/slotStatus';
+import CustomEventComponent from '../../features/OpenHour/CustomEventComponent';
 import {
   IsCalendarSlotWithinAvailableTimes,
   convertSlots,
@@ -236,26 +237,10 @@ export default function ScheduleCalendar({
         // }}
         // onDropFromOutside={handleDropFromOutside}
         slotPropGetter={slotPropGetter}
-        // need to fix components to use dragFromOutsideItem
         components={{
-          event: CustomEventContainer({
-            selectedStudent,
-            setSelectedStudent,
-          }),
+          event: CustomEventComponent,
         }}
       />
     </Box>
   );
-}
-
-function CustomEventContainer({ selectedStudent, setSelectedStudent }) {
-  return function CustomEventComponent(props) {
-    return (
-      <CustomEventComponent
-        event={props}
-        selectedStudent={selectedStudent}
-        setSelectedStudent={setSelectedStudent}
-      />
-    );
-  };
 }
