@@ -128,7 +128,7 @@ export default function ScheduleCalendar({
           slots.push({
             id: draggedStudent.id,
             start: moment(start).format(timeFormat),
-            end: moment(end).format(timeFormat),
+            end: moment(end).add(0.5, 'hours').format(timeFormat),
             status: SlotStatusConstants.AVAILABLE,
             isDraggable: true,
           });
@@ -138,15 +138,18 @@ export default function ScheduleCalendar({
     [draggedStudent]
   );
 
-  const dragFromOutsideItem = useCallback(
-    () => draggedStudent,
-    [draggedStudent]
-  );
+  const dragFromOutsideItem = useCallback(() => null, []);
 
   useEffect(() => {
     console.log(pendingSlots);
   }, [pendingSlots]);
 
+  /**
+   * Need to figure out
+   * 1. how to diplay preview that takes more than 1 slot
+   * 2. when deleting a slot, the preview seems to still exist
+   * before actually using dragFromOutsideItem
+   */
   return (
     <Box style={{ height }}>
       <DnDCalendar
@@ -154,7 +157,7 @@ export default function ScheduleCalendar({
         events={pendingSlots}
         // timeslots={2}
         // step={60}
-        // draggableAccessor="isDraggable"
+        draggableAccessor="isDraggable"
         dragFromOutsideItem={dragFromOutsideItem}
         views={['month', 'week']}
         defaultView="week"

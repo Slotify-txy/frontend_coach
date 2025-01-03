@@ -37,7 +37,6 @@ const CustomEventComponent = ({ event }) => {
   const status = event.status;
   const [onHover, setOnHover] = useState(false);
   const dispatch = useDispatch();
-  const [isVisible, setIsVisible] = useState(true);
 
   const deleteSlot = useCallback(() => {
     dispatch(
@@ -48,14 +47,7 @@ const CustomEventComponent = ({ event }) => {
         }
       })
     );
-    setIsVisible(false);
   }, []);
-
-  // If dragFromOutsideItem is set, the slot won't disappear even though it's deleted.
-  // This is a workaround. And the border needs to be none.
-  if (!isVisible) {
-    return null;
-  }
 
   return (
     <Box
