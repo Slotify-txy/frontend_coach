@@ -8,11 +8,12 @@ import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
 import { useDispatch } from 'react-redux';
 import { slotApiSlice as slotApi } from '../../app/services/slotApiSlice';
 import * as SlotStatusConstants from '../../constants/slotStatus';
-import CustomEventComponent from '../../features/OpenHour/CustomEventComponent';
 import {
   IsCalendarSlotWithinAvailableTimes,
   convertSlots,
 } from '../../util/slotUtil';
+import CustomEventComponent from '../SchedulePage/CustomEventComponent';
+
 const moment = extendMoment(Moment);
 const localizer = momentLocalizer(Moment);
 const timeFormat = 'YYYY-MM-DD[T]HH:mm:ss';
@@ -151,8 +152,8 @@ export default function ScheduleCalendar({
       <DnDCalendar
         localizer={localizer}
         events={pendingSlots}
-        // timeslots={30}
-        // step={1}
+        // timeslots={2}
+        // step={60}
         // draggableAccessor="isDraggable"
         dragFromOutsideItem={dragFromOutsideItem}
         views={['month', 'week']}

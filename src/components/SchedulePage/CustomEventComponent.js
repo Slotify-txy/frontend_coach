@@ -4,8 +4,10 @@ import { blue, green, orange, teal } from '@mui/material/colors';
 import moment from 'moment-timezone';
 import React, { useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { openHourApiSlice as api } from '../../app/services/openHourApiSlice';
-import { useGetSlotsQuery } from '../../app/services/slotApiSlice';
+import {
+  slotApiSlice as slotApi,
+  useGetSlotsQuery,
+} from '../../app/services/slotApiSlice';
 import * as SlotStatusConstants from '../../constants/slotStatus';
 import { convertStatusToText } from '../../util/slotUtil';
 
@@ -35,17 +37,25 @@ const CustomEventComponent = ({ event }) => {
   const status = event.status;
   const [onHover, setOnHover] = useState(false);
   const dispatch = useDispatch();
+  const [isVisible, setIsVisible] = useState(true);
 
-  const deleteOpenHour = useCallback(() => {
-    isSuccess &&
-      dispatch(
-        api.util.upsertQueryData(
-          'getSlots',
-          { coachId: 10 },
-          data.filter((slot) => slot.id !== event.id)
-        )
-      );
-  }, [data, isSuccess]);
+  const deleteSlot = useCallback(() => {
+    dispatch(
+      slotApi.util.updateQueryData('getSlots', { coachId: 10 }, (slots) => {
+        const index = slots.findIndex((slot) => slot.id === event.id);
+        if (index !== -1) {
+          slots.splice(index, 1);
+        }
+      })
+    );
+    setIsVisible(false);
+  }, []);
+
+  // If dragFromOutsideItem is set, the slot won't disappear even though it's deleted.
+  // This is a workaround. And the border needs to be none.
+  if (!isVisible) {
+    return null;
+  }
 
   return (
     <Box
@@ -83,7 +93,7 @@ const CustomEventComponent = ({ event }) => {
           onHover && (
             <Tooltip title="Delete">
               <IconButton
-                onClick={deleteOpenHour}
+                onClick={deleteSlot}
                 sx={{ padding: 0, alignSelf: 'center' }}
                 aria-label="delete"
               >
