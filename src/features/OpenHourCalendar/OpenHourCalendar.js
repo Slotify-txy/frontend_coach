@@ -8,8 +8,8 @@ import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
 import { useDispatch } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
 import { openHourApiSlice as openHourApi } from '../../app/services/openHourApiSlice';
-import * as SlotStatusConstants from '../../constants/slotStatus';
-import { convertSlots, isOverlapped } from '../../util/slotUtil';
+import * as SlotStatusConstants from '../../common/constants/slotStatus';
+import { convertSlots, isOverlapped } from '../../common/util/slotUtil';
 import CustomEventComponent from './CustomEventComponent';
 
 const moment = extendMoment(Moment);

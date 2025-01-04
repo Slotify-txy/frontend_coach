@@ -8,8 +8,8 @@ import {
   openHourApiSlice as api,
   useGetOpenHoursQuery,
 } from '../../app/services/openHourApiSlice';
-import * as SlotStatusConstants from '../../constants/slotStatus';
-import { convertStatusToText } from '../../util/slotUtil';
+import * as SlotStatusConstants from '../../common/constants/slotStatus';
+import { convertStatusToText } from '../../common/util/slotUtil';
 
 const statusColor = {
   [SlotStatusConstants.AVAILABLE]: {

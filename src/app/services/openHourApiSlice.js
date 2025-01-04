@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import * as SlotStatusConstants from '../../constants/slotStatus';
+import * as SlotStatusConstants from '../../common/constants/slotStatus';
 import { api } from './api';
 
 export const openHourApiSlice = api.injectEndpoints({

@@ -3,8 +3,8 @@ import React from 'react';
 import { Route, Routes } from 'react-router-dom';
 import './App.css';
 import { NavBar } from './components/NavBar/NavBar';
-import SchedulePage from './components/SchedulePage/SchedulePage';
-import OpenHour from './features/OpenHour/OpenHour';
+import OpenHour from './features/OpenHourCalendar/OpenHourPage';
+import SchedulePage from './features/ScheduleCalendar/SchedulePage';
 
 function App() {
   const navBarHeight = 70;

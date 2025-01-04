@@ -1,15 +1,12 @@
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Box, IconButton, Tooltip, Typography } from '@mui/material';
-import { blue, green, orange, teal } from '@mui/material/colors';
+import { blue, green, orange, purple, teal } from '@mui/material/colors';
 import moment from 'moment-timezone';
 import React, { useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import {
-  slotApiSlice as slotApi,
-  useGetSlotsQuery,
-} from '../../app/services/slotApiSlice';
-import * as SlotStatusConstants from '../../constants/slotStatus';
-import { convertStatusToText } from '../../util/slotUtil';
+import { useGetSlotsQuery } from '../../app/services/slotApiSlice';
+import * as SlotStatusConstants from '../../common/constants/slotStatus';
+import { convertStatusToText } from '../../common/util/slotUtil';
 
 const statusColor = {
   [SlotStatusConstants.AVAILABLE]: {
@@ -19,6 +16,10 @@ const statusColor = {
   [SlotStatusConstants.SCHEDULING]: {
     backgroundColor: orange[400],
     color: orange[900],
+  },
+  [SlotStatusConstants.PLANNING]: {
+    backgroundColor: purple[400],
+    color: purple[900],
   },
   [SlotStatusConstants.UNPUBLISHED]: {
     backgroundColor: teal[400],
@@ -30,24 +31,28 @@ const statusColor = {
   },
 };
 
-const CustomEventComponent = ({ event }) => {
+const CustomEventComponent = ({
+  event,
+  setPlanningSlots,
+  setSelectedStudent,
+}) => {
   const { data, isSuccess } = useGetSlotsQuery({ coachId: 10 });
   const start = moment(event.start).format('hh:mm A');
   const end = moment(event.end).format('hh:mm A');
   const status = event.status;
   const [onHover, setOnHover] = useState(false);
   const dispatch = useDispatch();
-
   const deleteSlot = useCallback(() => {
-    dispatch(
-      slotApi.util.updateQueryData('getSlots', { coachId: 10 }, (slots) => {
-        const index = slots.findIndex((slot) => slot.id === event.id);
-        if (index !== -1) {
-          slots.splice(index, 1);
-        }
-      })
-    );
-  }, []);
+    setPlanningSlots((prev) => prev.filter((slot) => slot.id !== event.id));
+    // dispatch(
+    //   slotApi.util.updateQueryData('getSlots', { coachId: 10 }, (slots) => {
+    //     const index = slots.findIndex((slot) => slot.id === event.id);
+    //     if (index !== -1) {
+    //       slots.splice(index, 1);
+    //     }
+    //   })
+    // );
+  }, [setPlanningSlots]);
 
   return (
     <Box
@@ -58,8 +63,14 @@ const CustomEventComponent = ({ event }) => {
         backgroundColor: statusColor[status].backgroundColor,
         borderRadius: 2,
       }}
-      onMouseEnter={() => setOnHover(true)}
-      onMouseLeave={() => setOnHover(false)}
+      onMouseEnter={() => {
+        setOnHover(true);
+        setSelectedStudent(event.studentId);
+      }}
+      onMouseLeave={() => {
+        setOnHover(false);
+        setSelectedStudent(null);
+      }}
     >
       <Box
         sx={{

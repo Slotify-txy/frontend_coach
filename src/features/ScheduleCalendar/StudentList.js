@@ -8,8 +8,6 @@ import {
 } from '@mui/material';
 import { blue, grey } from '@mui/material/colors';
 import React, { useCallback, useState } from 'react';
-import { v4 as uuidv4 } from 'uuid';
-import { AVAILABLE } from '../../constants/slotStatus';
 
 const StudentList = ({
   setDraggedStudent,
@@ -23,6 +21,12 @@ const StudentList = ({
       avatar: 'R',
       email: 'xiyuan.tyler@gmail.com',
     },
+    // {
+    //   id: 10,
+    //   name: 'Xiyuan',
+    //   avatar: 'R',
+    //   email: 'xiyuan.tyler@gmail.com',
+    // },
   ];
 
   return (
@@ -57,13 +61,7 @@ const StudentCard = ({
 
   const onDragStart = useCallback(() => {
     setIsDragging(true);
-    setDraggedStudent({
-      id: uuidv4(),
-      studentId: student.id,
-      name: student.name,
-      email: student.email,
-      status: AVAILABLE,
-    });
+    setDraggedStudent(student.id);
   }, [student, setDraggedStudent, setIsDragging]);
 
   const onDragEnd = useCallback(() => {

@@ -30,7 +30,9 @@ export const isOverlapped = (slots, start, end, id = undefined) => {
   });
 };
 
-// check if the calendar's slot is within the some student's available times. If so, if it's the start or end of the available times.
+/**
+ * Check if the calendar's slot is within the some student's available times. If so, if it's the start or end of the available times.
+ */
 export const IsCalendarSlotWithinAvailableTimes = (slots, date) => {
   const ret = {
     isAvailable: false,
@@ -63,20 +65,22 @@ export const IsCalendarSlotWithinAvailableTimes = (slots, date) => {
   return ret;
 };
 
-export const isAppointmentWithinAvailableTimes = (
+/**
+ * Check if the appointment is doable. `availableSlotsOfSomeStudent` should already be combined slots.
+ */
+export const isWithinAvailableTimes = (
   availableSlotsOfSomeStudent,
-  appointmentStart,
-  appointmentEnd
+  start,
+  end
 ) => {
-  appointmentStart = moment(appointmentStart);
-  appointmentEnd = moment(appointmentEnd);
-
+  start = moment(start);
+  end = moment(end);
   return availableSlotsOfSomeStudent.some((slot) => {
-    const start = moment(slot.start);
-    const end = moment(slot.end);
+    const slotStart = moment(slot.start);
+    const slotEnd = moment(slot.end);
     return (
-      appointmentStart.isSameOrAfter(start, 'minute') &&
-      appointmentEnd.isSameOrBefore(end, 'minute')
+      start.isSameOrAfter(slotStart, 'minute') &&
+      end.isSameOrBefore(slotEnd, 'minute')
     );
   });
 };
