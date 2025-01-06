@@ -1,4 +1,5 @@
 import moment from 'moment';
+import * as SlotStatusConstants from '../../common/constants/slotStatus';
 
 export const convertSlots = (data) => {
   return data.map((slot) => {
@@ -83,4 +84,30 @@ export const isWithinAvailableTimes = (
       end.isSameOrBefore(slotEnd, 'minute')
     );
   });
+};
+
+export const getStatusColor = (status) => {
+  let backgroundColor = '',
+    color = '';
+  switch (status) {
+    case SlotStatusConstants.AVAILABLE:
+      backgroundColor = '#A5D6A7';
+      color = '#1B5E20';
+      break;
+    case SlotStatusConstants.SCHEDULING:
+      backgroundColor = '#FFCC80';
+      color = '#E65100';
+      break;
+    case SlotStatusConstants.PUBLISHED:
+      backgroundColor = '#90CAF9';
+      color = '#0D47A1';
+      break;
+    case SlotStatusConstants.PLANNING:
+      backgroundColor = '#CE93D8';
+      color = '#4A148C';
+      break;
+    default:
+      break;
+  }
+  return { backgroundColor, color };
 };

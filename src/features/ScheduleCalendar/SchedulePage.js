@@ -16,9 +16,9 @@ const SchedulePage = ({ navBarHeight }) => {
   } = useGetSlotsQuery({ coachId: 10 });
   const [draggedStudent, setDraggedStudent] = useState(null);
   const [selectedStudent, setSelectedStudent] = useState(null);
-
+  const [hoveredEvent, setHoveredEvent] = useState(null);
   if (isFetchingAllSlots) {
-    console.log(allSlots);
+    allSlots;
     return;
   }
 
@@ -46,6 +46,8 @@ const SchedulePage = ({ navBarHeight }) => {
           setDraggedStudent={setDraggedStudent}
           selectedStudent={selectedStudent}
           setSelectedStudent={setSelectedStudent}
+          hoveredEvent={hoveredEvent}
+          setHoveredEvent={setHoveredEvent}
         />
       </Box>
       <Divider orientation="vertical" sx={{ ml: 0.5 }} />

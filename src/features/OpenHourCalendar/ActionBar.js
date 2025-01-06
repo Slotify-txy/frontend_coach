@@ -3,7 +3,7 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import { Box, IconButton, Tooltip } from '@mui/material';
 import { green, grey } from '@mui/material/colors';
 import moment from 'moment';
-import React from 'react';
+import React, { useCallback } from 'react';
 import {
   useCreateOpenHoursMutation,
   useDeleteOpenHoursByCoachIdMutation,
@@ -11,37 +11,30 @@ import {
 
 const timeFormat = 'YYYY-MM-DD[T]HH:mm:ss';
 
-export const ActionBar = ({ data, isFetching }) => {
+export const ActionBar = ({ availableOpenHours, setAvailableOpenHours }) => {
   const [createOpenHours, { isLoading: isCreatingOpenHours }] =
     useCreateOpenHoursMutation();
-  const [
-    deleteOpenHoursByCoachId,
-    { isLoading: isDeletingOpenHoursByCoachId },
-  ] = useDeleteOpenHoursByCoachIdMutation();
 
-  const publishOpenHours = async () => {
+  const publishOpenHours = useCallback(async () => {
     try {
       await createOpenHours({
         coachId: 10,
-        openHours: data.map(({ start, end }) => {
-          return {
+        openHours: availableOpenHours
+          .filter(({ start }) => start > Date.now())
+          .map(({ start, end }) => ({
             startAt: moment(start).format(timeFormat),
             endAt: moment(end).format(timeFormat),
-          };
-        }),
-      });
+          })),
+      }).unwrap();
+      setAvailableOpenHours([]);
     } catch (err) {
       console.error('Failed to save the open hours: ', err);
     }
-  };
+  }, [availableOpenHours]);
 
-  const clearOpenHours = async () => {
-    try {
-      await deleteOpenHoursByCoachId({ coachId: 10 });
-    } catch (err) {
-      console.error('Failed to clear open hours: ', err);
-    }
-  };
+  const clearOpenHours = useCallback(() => {
+    setAvailableOpenHours([]);
+  }, []);
 
   return (
     <Box sx={{ pt: 2 }}>
@@ -50,20 +43,18 @@ export const ActionBar = ({ data, isFetching }) => {
         icon={<CheckBoxIcon />}
         tooltip={'Publish Open Hours'}
         callback={publishOpenHours}
-        disabled={isFetching}
       />
       <Action
         color={grey[700]}
         icon={<DeleteForeverIcon />}
         tooltip={'Clear'}
         callback={clearOpenHours}
-        disabled={isFetching}
       />
     </Box>
   );
 };
 
-const Action = ({ color, icon, tooltip, callback, disabled }) => {
+const Action = ({ color, icon, tooltip, callback, disabled = false }) => {
   return (
     <Box
       sx={{

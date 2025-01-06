@@ -2,11 +2,15 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { Box, IconButton, Tooltip, Typography } from '@mui/material';
 import { blue, green, orange, purple, teal } from '@mui/material/colors';
 import moment from 'moment-timezone';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useGetSlotsQuery } from '../../app/services/slotApiSlice';
 import * as SlotStatusConstants from '../../common/constants/slotStatus';
-import { convertStatusToText } from '../../common/util/slotUtil';
+import {
+  convertStatusToText,
+  getStatusColor,
+} from '../../common/util/slotUtil';
+import { Label } from '@mui/icons-material';
 
 const statusColor = {
   [SlotStatusConstants.AVAILABLE]: {
@@ -21,7 +25,7 @@ const statusColor = {
     backgroundColor: purple[400],
     color: purple[900],
   },
-  [SlotStatusConstants.UNPUBLISHED]: {
+  [SlotStatusConstants.PUBLISHED]: {
     backgroundColor: teal[400],
     color: teal[900],
   },
@@ -35,24 +39,21 @@ const CustomEventComponent = ({
   event,
   setPlanningSlots,
   setSelectedStudent,
+  hoveredEvent,
+  setHoveredEvent,
 }) => {
-  const { data, isSuccess } = useGetSlotsQuery({ coachId: 10 });
   const start = moment(event.start).format('hh:mm A');
   const end = moment(event.end).format('hh:mm A');
   const status = event.status;
-  const [onHover, setOnHover] = useState(false);
-  const dispatch = useDispatch();
+  const { backgroundColor, color } = getStatusColor(status);
+
   const deleteSlot = useCallback(() => {
+    if (event.status !== SlotStatusConstants.PLANNING) {
+      return;
+    }
     setPlanningSlots((prev) => prev.filter((slot) => slot.id !== event.id));
-    // dispatch(
-    //   slotApi.util.updateQueryData('getSlots', { coachId: 10 }, (slots) => {
-    //     const index = slots.findIndex((slot) => slot.id === event.id);
-    //     if (index !== -1) {
-    //       slots.splice(index, 1);
-    //     }
-    //   })
-    // );
-  }, [setPlanningSlots]);
+    setSelectedStudent(null);
+  }, [event]);
 
   return (
     <Box
@@ -60,16 +61,16 @@ const CustomEventComponent = ({
         height: '100%',
         paddingX: '0.3rem',
         overflow: 'hidden',
-        backgroundColor: statusColor[status].backgroundColor,
+        backgroundColor: backgroundColor,
         borderRadius: 2,
       }}
       onMouseEnter={() => {
-        setOnHover(true);
         setSelectedStudent(event.studentId);
+        setHoveredEvent(event.id);
       }}
       onMouseLeave={() => {
-        setOnHover(false);
         setSelectedStudent(null);
+        setHoveredEvent(null);
       }}
     >
       <Box
@@ -86,17 +87,18 @@ const CustomEventComponent = ({
             fontSize: 15,
             fontWeight: 700,
             alignSelf: 'center',
-            color: statusColor[status].color,
+            color: color,
           }}
         >
           {convertStatusToText(status)}
         </Typography>
         {
           // todo: make ui better
-          onHover && (
+          hoveredEvent === event.id && (
             <Tooltip title="Delete">
               <IconButton
                 onClick={deleteSlot}
+                onMouseDown={(e) => e.stopPropagation()} // otherwise, it triggers with onDragStart
                 sx={{ padding: 0, alignSelf: 'center' }}
                 aria-label="delete"
               >

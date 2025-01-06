@@ -9,37 +9,36 @@ import {
   useGetOpenHoursQuery,
 } from '../../app/services/openHourApiSlice';
 import * as SlotStatusConstants from '../../common/constants/slotStatus';
-import { convertStatusToText } from '../../common/util/slotUtil';
+import {
+  convertStatusToText,
+  getStatusColor,
+} from '../../common/util/slotUtil';
 
 const statusColor = {
   [SlotStatusConstants.AVAILABLE]: {
     backgroundColor: blue[400],
     color: blue[900],
   },
-  [SlotStatusConstants.SCHEDULING]: {
+  [SlotStatusConstants.PUBLISHED]: {
     backgroundColor: orange[400],
     color: orange[900],
   },
 };
 
-const CustomEventComponent = ({ event }) => {
-  const { data, isSuccess } = useGetOpenHoursQuery({ coachId: 10 });
+const CustomEventComponent = ({ event, setAvailableOpenHours }) => {
   const start = moment(event.start).format('hh:mm A');
   const end = moment(event.end).format('hh:mm A');
   const status = event.status;
   const [onHover, setOnHover] = useState(false);
-  const dispatch = useDispatch();
-
+  const { backgroundColor, color } = getStatusColor(status);
   const deleteOpenHour = useCallback(() => {
-    isSuccess &&
-      dispatch(
-        api.util.upsertQueryData(
-          'getOpenHours',
-          { coachId: 10 },
-          data.filter((slot) => slot.id !== event.id)
-        )
-      );
-  }, [data, isSuccess]);
+    if (event.status !== SlotStatusConstants.AVAILABLE) {
+      return;
+    }
+    setAvailableOpenHours((prev) =>
+      prev.filter((slot) => slot.id !== event.id)
+    );
+  }, [event]);
 
   return (
     <Box
@@ -47,7 +46,7 @@ const CustomEventComponent = ({ event }) => {
         height: '100%',
         paddingX: '0.3rem',
         overflow: 'hidden',
-        backgroundColor: statusColor[status].backgroundColor,
+        backgroundColor: backgroundColor,
         borderRadius: 2,
       }}
       onMouseEnter={() => setOnHover(true)}
@@ -67,7 +66,7 @@ const CustomEventComponent = ({ event }) => {
             fontSize: 15,
             fontWeight: 700,
             alignSelf: 'center',
-            color: statusColor[status].color,
+            color: color,
           }}
         >
           {convertStatusToText(status)}
@@ -78,6 +77,7 @@ const CustomEventComponent = ({ event }) => {
             <Tooltip title="Delete">
               <IconButton
                 onClick={deleteOpenHour}
+                onMouseDown={(e) => e.stopPropagation()} // otherwise, it triggers with onDragStart
                 sx={{ padding: 0, alignSelf: 'center' }}
                 aria-label="delete"
               >

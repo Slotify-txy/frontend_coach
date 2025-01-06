@@ -1,11 +1,13 @@
 import { Box, Divider } from '@mui/material';
-import React from 'react';
-import { useGetOpenHoursQuery } from '../../app/services/openHourApiSlice';
+import React, { useEffect, useState } from 'react';
 import { ActionBar } from './ActionBar';
 import ScheduleCalendar from './OpenHourCalendar';
 
 const OpenHour = ({ navBarHeight }) => {
-  const { data, isFetching, isSuccess } = useGetOpenHoursQuery({ coachId: 10 });
+  const [availableOpenHours, setAvailableOpenHours] = useState([]);
+  useEffect(() => {
+    console.log('availableOpenHours', availableOpenHours);
+  }, [availableOpenHours]);
 
   return (
     <Box
@@ -16,11 +18,18 @@ const OpenHour = ({ navBarHeight }) => {
       }}
     >
       <Box sx={{ flex: 1 }}>
-        <ScheduleCalendar height={'100%'} data={data} isFetching={isFetching} />
+        <ScheduleCalendar
+          height={'100%'}
+          availableOpenHours={availableOpenHours}
+          setAvailableOpenHours={setAvailableOpenHours}
+        />
       </Box>
       <Divider orientation="vertical" sx={{ ml: 1 }} />
       <Box sx={{ height: '100%', width: 70 }}>
-        <ActionBar data={data} isFetching={isFetching} />
+        <ActionBar
+          availableOpenHours={availableOpenHours}
+          setAvailableOpenHours={setAvailableOpenHours}
+        />
       </Box>
     </Box>
   );

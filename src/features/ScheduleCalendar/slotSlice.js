@@ -17,8 +17,9 @@ export const selectSlotsResultByCoachId = slotApi.endpoints.getSlots.select({
 export const selectStudentAvailableSlots = createSelector(
   selectSlotsResultByCoachId,
   (slots) => {
+    slots = slots?.data ?? [];
     const ret = {};
-    slots?.data.forEach((slot) => {
+    slots.forEach((slot) => {
       if (slot.status !== SlotStatusConstants.SCHEDULING) return;
       if (slot.studentId in ret) {
         ret[slot.studentId].push(slot);

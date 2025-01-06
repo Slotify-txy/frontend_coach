@@ -32,6 +32,8 @@ export default function ScheduleCalendar({
   setDraggedStudent,
   selectedStudent,
   setSelectedStudent,
+  hoveredEvent,
+  setHoveredEvent,
 }) {
   const studentAvailableSlots = useSelector(selectStudentAvailableSlots);
   const unschedulingSlots = useSelector(selectUnschedulingSlots);
@@ -74,13 +76,6 @@ export default function ScheduleCalendar({
 
   const onChangeSlotTime = useCallback(
     (start, end, id) => {
-      // if (
-      //   isOverlapped(pendingSlots, start, end, id) ||
-      //   !isAppointmentWithinAvailableTimes(availableSlots[10], start, end)
-      // ) {
-      //   // todo: notifications
-      //   return;
-      // }
       if (
         !isWithinAvailableTimes(
           studentAvailableSlots[draggedStudent] ?? [],
@@ -89,6 +84,7 @@ export default function ScheduleCalendar({
         ) ||
         isOverlapped([...unschedulingSlots, ...planningSlots], start, end, id)
       ) {
+        // todo: notifications
         return;
       }
       setPlanningSlots((prev) => {
@@ -97,32 +93,21 @@ export default function ScheduleCalendar({
         slot.end = end;
         return prev;
       });
-
-      dispatch(
-        slotApi.util.updateQueryData('getSlots', { coachId: 10 }, (slots) => {
-          let slot = slots.find((slot) => slot.id === id);
-          if (slot) {
-            slot.start = moment(start).format(timeFormat);
-            slot.end = moment(end).format(timeFormat);
-          }
-        })
-      );
     },
-    [setPlanningSlots, draggedStudent, unschedulingSlots, planningSlots]
+    [draggedStudent, unschedulingSlots, planningSlots]
   );
 
   const onDropFromOutside = useCallback(
     ({ start, end }) => {
       // By default, each class's duration is 1 hour
       end = moment(end).add(0.5, 'hours');
-      // console.log(start);
-      // console.log(end);
       if (
         !isWithinAvailableTimes(
           studentAvailableSlots[draggedStudent] ?? [],
           start,
           end
-        )
+        ) ||
+        isOverlapped([...unschedulingSlots, ...planningSlots], start, end)
       ) {
         return;
       }
@@ -137,37 +122,27 @@ export default function ScheduleCalendar({
           isDraggable: true,
         },
       ]);
-      // dispatch(
-      //   slotApi.util.updateQueryData('getSlots', { coachId: 10 }, (slots) => {
-      //     slots.push({
-      //       id: draggedStudent.id,
-      //       start: moment(start).format(timeFormat),
-      //       end: end.format(timeFormat),
-      //       status: SlotStatusConstants.PLANNING,
-      //       isDraggable: true,
-      //     });
-      //   })
-      // );
     },
-    [
-      studentAvailableSlots,
-      draggedStudent,
-      isWithinAvailableTimes,
-      setPlanningSlots,
-    ]
+    [studentAvailableSlots, draggedStudent]
   );
 
-  const dragFromOutsideItem = useCallback(() => null, []);
+  const dragFromOutsideItem = useCallback(() => null, [draggedStudent]);
 
   useEffect(() => {
-    console.log(allSlots);
-  }, [allSlots]);
+    console.log(planningSlots);
+  }, [planningSlots]);
+
+  useEffect(() => {
+    console.log('selectedStudent', selectedStudent);
+  }, [selectedStudent]);
+
+  useEffect(() => {
+    console.log('draggedStudent', draggedStudent);
+  }, [draggedStudent]);
 
   /**
    * Need to figure out
    * 1. how to diplay preview that takes more than 1 slot
-   * 2. when deleting a slot, the preview seems to still exist
-   * before actually using dragFromOutsideItem
    */
   return (
     <Box style={{ height }}>
@@ -200,8 +175,11 @@ export default function ScheduleCalendar({
         components={{
           event: (props) => (
             <CustomEventComponent
+              selectedStudent={selectedStudent}
               setPlanningSlots={setPlanningSlots}
               setSelectedStudent={setSelectedStudent}
+              hoveredEvent={hoveredEvent}
+              setHoveredEvent={setHoveredEvent}
               {...props}
             />
           ),

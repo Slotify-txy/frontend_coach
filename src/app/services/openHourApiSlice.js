@@ -13,8 +13,8 @@ export const openHourApiSlice = api.injectEndpoints({
           id: uuidv4(),
           start: startAt,
           end: endAt,
-          isDraggable: true,
-          status: SlotStatusConstants.AVAILABLE,
+          isDraggable: false,
+          status: SlotStatusConstants.PUBLISHED,
         })),
       providesTags: (result) =>
         result
