@@ -1,39 +1,12 @@
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Box, IconButton, Tooltip, Typography } from '@mui/material';
-import { blue, green, orange, purple, teal } from '@mui/material/colors';
 import moment from 'moment-timezone';
 import React, { useCallback, useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { useGetSlotsQuery } from '../../app/services/slotApiSlice';
 import * as SlotStatusConstants from '../../common/constants/slotStatus';
 import {
   convertStatusToText,
   getStatusColor,
 } from '../../common/util/slotUtil';
-import { Label } from '@mui/icons-material';
-
-const statusColor = {
-  [SlotStatusConstants.AVAILABLE]: {
-    backgroundColor: blue[400],
-    color: blue[900],
-  },
-  [SlotStatusConstants.SCHEDULING]: {
-    backgroundColor: orange[400],
-    color: orange[900],
-  },
-  [SlotStatusConstants.PLANNING]: {
-    backgroundColor: purple[400],
-    color: purple[900],
-  },
-  [SlotStatusConstants.PUBLISHED]: {
-    backgroundColor: teal[400],
-    color: teal[900],
-  },
-  [SlotStatusConstants.APPOINTMENT]: {
-    backgroundColor: green[400],
-    color: green[900],
-  },
-};
 
 const CustomEventComponent = ({
   event,
@@ -45,7 +18,7 @@ const CustomEventComponent = ({
   const start = moment(event.start).format('hh:mm A');
   const end = moment(event.end).format('hh:mm A');
   const status = event.status;
-  const { backgroundColor, color } = getStatusColor(status);
+  const backgroundColor = getStatusColor(status);
 
   const deleteSlot = useCallback(() => {
     if (event.status !== SlotStatusConstants.PLANNING) {
@@ -87,7 +60,6 @@ const CustomEventComponent = ({
             fontSize: 15,
             fontWeight: 700,
             alignSelf: 'center',
-            color: color,
           }}
         >
           {convertStatusToText(status)}

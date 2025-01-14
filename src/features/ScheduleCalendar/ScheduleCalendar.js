@@ -1,7 +1,7 @@
 import { Box } from '@mui/material';
 import Moment from 'moment';
 import { extendMoment } from 'moment-range';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import withDragAndProp from 'react-big-calendar/lib/addons/dragAndDrop';
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
@@ -19,6 +19,7 @@ import {
   selectStudentAvailableSlots,
   selectUnschedulingSlots,
 } from './slotSlice';
+import StyledCalendar from '../../components/StyledCalendar';
 
 const moment = extendMoment(Moment);
 const localizer = momentLocalizer(Moment);
@@ -26,7 +27,6 @@ const timeFormat = 'YYYY-MM-DD[T]HH:mm:ss';
 const DnDCalendar = withDragAndProp(Calendar);
 
 export default function ScheduleCalendar({
-  height,
   allSlots,
   draggedStudent,
   setDraggedStudent,
@@ -34,6 +34,8 @@ export default function ScheduleCalendar({
   setSelectedStudent,
   hoveredEvent,
   setHoveredEvent,
+  scheduleCalendarView,
+  scheduleCalendarDate,
 }) {
   const studentAvailableSlots = useSelector(selectStudentAvailableSlots);
   const unschedulingSlots = useSelector(selectUnschedulingSlots);
@@ -140,19 +142,23 @@ export default function ScheduleCalendar({
     console.log('draggedStudent', draggedStudent);
   }, [draggedStudent]);
 
+  const formats = useMemo(
+    () => ({
+      timeGutterFormat: (date, culture, localizer) =>
+        localizer.format(date, 'h A', culture),
+    }),
+    []
+  );
   /**
    * Need to figure out
    * 1. how to diplay preview that takes more than 1 slot
    */
   return (
-    <Box style={{ height }}>
-      <DnDCalendar
-        localizer={localizer}
+    <Box style={{ height: '100%' }}>
+      <StyledCalendar
         events={[...unschedulingSlots, ...planningSlots]}
-        draggableAccessor="isDraggable"
-        dragFromOutsideItem={dragFromOutsideItem}
-        views={['month', 'week']}
-        defaultView="week"
+        date={scheduleCalendarDate}
+        view={scheduleCalendarView}
         onEventDrop={({ start, end, event }) => {
           const { id, status } = event;
           if (status === SlotStatusConstants.PLANNING) {
@@ -162,8 +168,13 @@ export default function ScheduleCalendar({
             onChangeSlotTime(start, end, id);
           }
         }}
+        onEventResize={({ start, end, event }) => {
+          onChangeSlotTime(start, end, event.id);
+        }}
         resizable={false}
         selectable={false}
+        slotPropGetter={slotPropGetter}
+        dragFromOutsideItem={dragFromOutsideItem}
         onDropFromOutside={onDropFromOutside}
         onDragStart={(e) => {
           const { studentId, status } = e.event;
@@ -171,19 +182,16 @@ export default function ScheduleCalendar({
             setDraggedStudent(studentId);
           }
         }}
-        slotPropGetter={slotPropGetter}
-        components={{
-          event: (props) => (
-            <CustomEventComponent
-              selectedStudent={selectedStudent}
-              setPlanningSlots={setPlanningSlots}
-              setSelectedStudent={setSelectedStudent}
-              hoveredEvent={hoveredEvent}
-              setHoveredEvent={setHoveredEvent}
-              {...props}
-            />
-          ),
-        }}
+        createCustomEventComponent={(props) => (
+          <CustomEventComponent
+            selectedStudent={selectedStudent}
+            setPlanningSlots={setPlanningSlots}
+            setSelectedStudent={setSelectedStudent}
+            hoveredEvent={hoveredEvent}
+            setHoveredEvent={setHoveredEvent}
+            {...props}
+          />
+        )}
       />
     </Box>
   );

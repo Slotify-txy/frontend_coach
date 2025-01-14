@@ -1,36 +1,19 @@
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Box, IconButton, Tooltip, Typography } from '@mui/material';
-import { blue, orange } from '@mui/material/colors';
 import moment from 'moment-timezone';
 import React, { useCallback, useState } from 'react';
-import { useDispatch } from 'react-redux';
-import {
-  openHourApiSlice as api,
-  useGetOpenHoursQuery,
-} from '../../app/services/openHourApiSlice';
 import * as SlotStatusConstants from '../../common/constants/slotStatus';
 import {
   convertStatusToText,
   getStatusColor,
 } from '../../common/util/slotUtil';
 
-const statusColor = {
-  [SlotStatusConstants.AVAILABLE]: {
-    backgroundColor: blue[400],
-    color: blue[900],
-  },
-  [SlotStatusConstants.PUBLISHED]: {
-    backgroundColor: orange[400],
-    color: orange[900],
-  },
-};
-
 const CustomEventComponent = ({ event, setAvailableOpenHours }) => {
   const start = moment(event.start).format('hh:mm A');
   const end = moment(event.end).format('hh:mm A');
   const status = event.status;
   const [onHover, setOnHover] = useState(false);
-  const { backgroundColor, color } = getStatusColor(status);
+  const backgroundColor = getStatusColor(status);
   const deleteOpenHour = useCallback(() => {
     if (event.status !== SlotStatusConstants.AVAILABLE) {
       return;
@@ -66,7 +49,6 @@ const CustomEventComponent = ({ event, setAvailableOpenHours }) => {
             fontSize: 15,
             fontWeight: 700,
             alignSelf: 'center',
-            color: color,
           }}
         >
           {convertStatusToText(status)}

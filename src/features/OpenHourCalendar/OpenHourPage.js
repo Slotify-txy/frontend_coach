@@ -1,9 +1,16 @@
 import { Box, Divider } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { ActionBar } from './ActionBar';
-import ScheduleCalendar from './OpenHourCalendar';
+import OpenHourCalendar from './OpenHourCalendar';
 
-const OpenHour = ({ navBarHeight }) => {
+const OpenHour = ({
+  navBarHeight,
+  setOpenHourCalendarRange,
+  openHourCalendarView,
+  setOpenHourCalendarView,
+  openHourCalendarDate,
+  setOpenHourCalendarDate,
+}) => {
   const [availableOpenHours, setAvailableOpenHours] = useState([]);
   useEffect(() => {
     console.log('availableOpenHours', availableOpenHours);
@@ -17,14 +24,22 @@ const OpenHour = ({ navBarHeight }) => {
         height: `calc(100% - ${navBarHeight}px)`,
       }}
     >
-      <Box sx={{ flex: 1 }}>
-        <ScheduleCalendar
-          height={'100%'}
+      <Box
+        sx={{
+          flex: 1,
+          ml: 1,
+        }}
+      >
+        <OpenHourCalendar
           availableOpenHours={availableOpenHours}
           setAvailableOpenHours={setAvailableOpenHours}
+          openHourCalendarView={openHourCalendarView}
+          setOpenHourCalendarView={setOpenHourCalendarView}
+          setOpenHourCalendarRange={setOpenHourCalendarRange}
+          openHourCalendarDate={openHourCalendarDate}
+          setOpenHourCalendarDate={setOpenHourCalendarDate}
         />
       </Box>
-      <Divider orientation="vertical" sx={{ ml: 1 }} />
       <Box sx={{ height: '100%', width: 70 }}>
         <ActionBar
           availableOpenHours={availableOpenHours}

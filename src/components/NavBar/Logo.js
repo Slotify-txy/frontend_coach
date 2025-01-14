@@ -9,7 +9,6 @@ const Logo = () => {
         fontWeight: 300,
         fontSize: 30,
         fontStyle: 'normal',
-        marginRight: 10,
       }}
     >
       Simply Schedule

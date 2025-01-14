@@ -8,7 +8,14 @@ import StudentList from './StudentList';
 
 const moment = extendMoment(Moment);
 
-const SchedulePage = ({ navBarHeight }) => {
+const SchedulePage = ({
+  navBarHeight,
+  setScheduleCalendarRange,
+  scheduleCalendarView,
+  setScheduleCalendarView,
+  scheduleCalendarDate,
+  setScheduleCalendarDate,
+}) => {
   const {
     data: allSlots,
     isFetching: isFetchingAllSlots,
@@ -37,10 +44,8 @@ const SchedulePage = ({ navBarHeight }) => {
           setSelectedStudent={setSelectedStudent}
         />
       </Box>
-      <Divider orientation="vertical" sx={{ ml: 0.5 }} />
-      <Box sx={{ flex: 1 }}>
+      <Box sx={{ flex: 1, ml: 1 }}>
         <ScheduleCalendar
-          height={'100%'}
           allSlots={allSlots}
           draggedStudent={draggedStudent}
           setDraggedStudent={setDraggedStudent}
@@ -48,10 +53,13 @@ const SchedulePage = ({ navBarHeight }) => {
           setSelectedStudent={setSelectedStudent}
           hoveredEvent={hoveredEvent}
           setHoveredEvent={setHoveredEvent}
+          scheduleCalendarView={scheduleCalendarView}
+          setScheduleCalendarView={setScheduleCalendarView}
+          setScheduleCalendarRange={setScheduleCalendarRange}
+          scheduleCalendarDate={scheduleCalendarDate}
+          setScheduleCalendarDate={setScheduleCalendarDate}
         />
       </Box>
-      <Divider orientation="vertical" sx={{ ml: 0.5 }} />
-
       <Box sx={{ height: '100%', width: 70 }}>
         {/* <ActionBar allSlots={allSlots} isFetchingAllSlots={isFetchingAllSlots} /> */}
       </Box>

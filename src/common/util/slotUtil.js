@@ -87,27 +87,16 @@ export const isWithinAvailableTimes = (
 };
 
 export const getStatusColor = (status) => {
-  let backgroundColor = '',
-    color = '';
   switch (status) {
     case SlotStatusConstants.AVAILABLE:
-      backgroundColor = '#A5D6A7';
-      color = '#1B5E20';
-      break;
+      return '#039BE5';
     case SlotStatusConstants.SCHEDULING:
-      backgroundColor = '#FFCC80';
-      color = '#E65100';
-      break;
+      return '#f6bf26';
     case SlotStatusConstants.PUBLISHED:
-      backgroundColor = '#90CAF9';
-      color = '#0D47A1';
-      break;
+      return '#33b679';
     case SlotStatusConstants.PLANNING:
-      backgroundColor = '#CE93D8';
-      color = '#4A148C';
-      break;
+      return '#7986cb';
     default:
-      break;
+      return '';
   }
-  return { backgroundColor, color };
 };
