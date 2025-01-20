@@ -5,7 +5,7 @@ import React, { useCallback, useMemo } from 'react';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import withDragAndProp from 'react-big-calendar/lib/addons/dragAndDrop';
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
 import {
   openHourApiSlice as openHourApi,
@@ -15,6 +15,7 @@ import * as SlotStatusConstants from '../../common/constants/slotStatus';
 import { convertSlots, isOverlapped } from '../../common/util/slotUtil';
 import CustomEventComponent from './CustomEventComponent';
 import StyledCalendar from '../../components/StyledCalendar';
+import * as AuthStatus from '../../common/constants/authStatus';
 
 const moment = extendMoment(Moment);
 const localizer = momentLocalizer(Moment);
@@ -27,6 +28,7 @@ export default function OpenHourCalendar({
   openHourCalendarView,
   openHourCalendarDate,
 }) {
+  const { status } = useSelector((state) => state.auth);
   const {
     data: publishedOpenHours,
     isFetching,
@@ -38,6 +40,7 @@ export default function OpenHourCalendar({
         result.data = convertSlots(result.data ?? []);
         return result;
       },
+      skip: status != AuthStatus.AUTHENTICATED,
     }
   );
   const onChangeOpenHourTime = useCallback(

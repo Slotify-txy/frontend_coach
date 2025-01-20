@@ -52,7 +52,8 @@ export const selectStudentAvailableSlots = createSelector(
 export const selectUnschedulingSlots = createSelector(
   selectSlotsResultByCoachId,
   (slots) => {
-    return slots?.data.filter(
+    const data = slots?.data ?? [];
+    return data.filter(
       (slot) => slot.status !== SlotStatusConstants.SCHEDULING
     );
   }

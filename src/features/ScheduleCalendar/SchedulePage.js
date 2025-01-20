@@ -5,6 +5,8 @@ import React, { useState } from 'react';
 import { useGetSlotsQuery } from '../../app/services/slotApiSlice';
 import ScheduleCalendar from './ScheduleCalendar';
 import StudentList from './StudentList';
+import * as AuthStatus from '../../common/constants/authStatus';
+import { useSelector } from 'react-redux';
 
 const moment = extendMoment(Moment);
 
@@ -16,11 +18,18 @@ const SchedulePage = ({
   scheduleCalendarDate,
   setScheduleCalendarDate,
 }) => {
+  const { status } = useSelector((state) => state.auth);
+
   const {
     data: allSlots,
     isFetching: isFetchingAllSlots,
     isSuccess: isAllSlotsSuccess,
-  } = useGetSlotsQuery({ coachId: 10 });
+  } = useGetSlotsQuery(
+    { coachId: 10 },
+    {
+      skip: status != AuthStatus.AUTHENTICATED,
+    }
+  );
   const [draggedStudent, setDraggedStudent] = useState(null);
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [hoveredEvent, setHoveredEvent] = useState(null);
