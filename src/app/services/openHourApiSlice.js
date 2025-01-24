@@ -7,7 +7,7 @@ export const openHourApiSlice = api.injectEndpoints({
   tagTypes: ['OpenHours'],
   endpoints: (builder) => ({
     getOpenHours: builder.query({
-      query: ({ coachId }) => `/open-hour/${coachId}`,
+      query: ({ coachId }) => `/open-hour/coach/${coachId}`,
       transformResponse: (response) =>
         response.map(({ startAt, endAt }) => ({
           id: uuidv4(),
@@ -26,7 +26,7 @@ export const openHourApiSlice = api.injectEndpoints({
     }),
     createOpenHours: builder.mutation({
       query: ({ coachId, openHours }) => ({
-        url: `/open-hour/${coachId}`,
+        url: `/open-hour/coach/${coachId}`,
         method: 'POST',
         body: openHours,
       }),

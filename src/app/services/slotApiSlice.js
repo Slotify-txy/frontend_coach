@@ -6,23 +6,14 @@ export const slotApiSlice = api.injectEndpoints({
   tagTypes: ['Slots'],
   endpoints: (builder) => ({
     getSlots: builder.query({
-      query: ({ coachId }) => `/slot/${coachId}`,
+      query: ({ coachId }) => `/slot/coach/${coachId}`,
       transformResponse: (response) => {
-        const emails = ['xiyuan@gmail.com', 'alex@gmail.com'];
-        const names = ['xiyuan', 'alex'];
-        let index = 0;
         return response.map(({ startAt, endAt, status, studentId }) => {
-          index += 1;
-          if (index >= emails.length) {
-            index = 0;
-          }
           return {
             id: uuidv4(),
             start: startAt,
             end: endAt,
             studentId,
-            email: emails[index],
-            name: names[index],
             status,
             isDraggable: false,
           };
@@ -38,7 +29,7 @@ export const slotApiSlice = api.injectEndpoints({
     }),
     createSlots: builder.mutation({
       query: ({ studentId, coachId, slots }) => ({
-        url: `/slot/${studentId}/${coachId}`,
+        url: `/slot/student/${studentId}/coach/${coachId}`,
         method: 'POST',
         body: slots,
       }),
@@ -46,7 +37,7 @@ export const slotApiSlice = api.injectEndpoints({
     }),
     deleteSlots: builder.mutation({
       query: ({ studentId, coachId }) => ({
-        url: `/slot/${studentId}/${coachId}`,
+        url: `/slot/student/${studentId}/coach/${coachId}`,
         method: 'DELETE',
       }),
       invalidatesTags: (result, error, id) => [{ type: 'Slots', id }],
