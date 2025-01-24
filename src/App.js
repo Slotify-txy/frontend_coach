@@ -64,7 +64,15 @@ function App() {
 
   return (
     <Box sx={{ height: '100vh', bgcolor: '#f8fafe' }}>
-      <Box sx={{ height: height, py: `${py}px` }}>
+      <Box
+        sx={{
+          height: height,
+          py: `${py}px`,
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+        }}
+      >
         {tab == TabConstants.OPEN_HOUR ? (
           <NavBar
             calendarView={openHourCalendarView}

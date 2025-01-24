@@ -18,16 +18,16 @@ const SchedulePage = ({
   scheduleCalendarDate,
   setScheduleCalendarDate,
 }) => {
-  const { status } = useSelector((state) => state.auth);
+  const { user, status } = useSelector((state) => state.auth);
 
   const {
     data: allSlots,
     isFetching: isFetchingAllSlots,
     isSuccess: isAllSlotsSuccess,
   } = useGetSlotsQuery(
-    { coachId: 10 },
+    { coachId: user?.id },
     {
-      skip: status != AuthStatus.AUTHENTICATED,
+      skip: status != AuthStatus.AUTHENTICATED || user == null,
     }
   );
   const [draggedStudent, setDraggedStudent] = useState(null);

@@ -8,17 +8,20 @@ import {
   useCreateOpenHoursMutation,
   useDeleteOpenHoursByCoachIdMutation,
 } from '../../app/services/openHourApiSlice';
+import { useSelector } from 'react-redux';
 
 const timeFormat = 'YYYY-MM-DD[T]HH:mm:ss';
 
 export const ActionBar = ({ availableOpenHours, setAvailableOpenHours }) => {
+  const { user } = useSelector((state) => state.auth);
+
   const [createOpenHours, { isLoading: isCreatingOpenHours }] =
     useCreateOpenHoursMutation();
 
   const publishOpenHours = useCallback(async () => {
     try {
       await createOpenHours({
-        coachId: 10,
+        coachId: user?.id,
         openHours: availableOpenHours
           .filter(({ start }) => start > Date.now())
           .map(({ start, end }) => ({

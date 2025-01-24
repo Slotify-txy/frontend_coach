@@ -28,19 +28,19 @@ export default function OpenHourCalendar({
   openHourCalendarView,
   openHourCalendarDate,
 }) {
-  const { status } = useSelector((state) => state.auth);
+  const { user, status } = useSelector((state) => state.auth);
   const {
     data: publishedOpenHours,
     isFetching,
     isSuccess,
   } = useGetOpenHoursQuery(
-    { coachId: 10 },
+    { coachId: user?.id },
     {
       selectFromResult: (result) => {
         result.data = convertSlots(result.data ?? []);
         return result;
       },
-      skip: status != AuthStatus.AUTHENTICATED,
+      skip: status != AuthStatus.AUTHENTICATED || user == null,
     }
   );
   const onChangeOpenHourTime = useCallback(
@@ -86,14 +86,6 @@ export default function OpenHourCalendar({
       ]);
     },
     [publishedOpenHours, availableOpenHours]
-  );
-
-  const formats = useMemo(
-    () => ({
-      timeGutterFormat: (date, culture, localizer) =>
-        localizer.format(date, 'h A', culture),
-    }),
-    []
   );
 
   if (isFetching) {

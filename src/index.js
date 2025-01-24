@@ -13,6 +13,7 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 const theme = createTheme({
   typography: {
     fontFamily: [
+      'Roboto Flex',
       '-apple-system',
       'BlinkMacSystemFont',
       'Segoe UI',

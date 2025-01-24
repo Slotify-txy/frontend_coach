@@ -8,10 +8,13 @@ import {
   useCreateOpenHoursMutation,
   useDeleteOpenHoursByCoachIdMutation,
 } from '../../api/openHourApiSlice';
+import { useSelector } from 'react-redux';
 
 const timeFormat = 'YYYY-MM-DD[T]HH:mm:ss';
 
 export const ActionBar = ({ data, isFetching }) => {
+  const { user } = useSelector((state) => state.auth);
+
   const [createOpenHours, { isLoading: isCreatingOpenHours }] =
     useCreateOpenHoursMutation();
   const [
@@ -22,7 +25,7 @@ export const ActionBar = ({ data, isFetching }) => {
   const publishOpenHours = async () => {
     try {
       await createOpenHours({
-        coachId: 10,
+        coachId: user?.id,
         openHours: data.map(({ start, end }) => {
           return {
             startAt: moment(start).format(timeFormat),
@@ -37,7 +40,7 @@ export const ActionBar = ({ data, isFetching }) => {
 
   const clearOpenHours = async () => {
     try {
-      await deleteOpenHoursByCoachId({ coachId: 10 });
+      await deleteOpenHoursByCoachId({ coachId: user?.id });
     } catch (err) {
       console.error('Failed to clear open hours: ', err);
     }

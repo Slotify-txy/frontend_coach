@@ -5,7 +5,7 @@ export const userApiSlice = api.injectEndpoints({
   tagTypes: ['User'],
   endpoints: (builder) => ({
     getUser: builder.query({
-      query: () => '/student',
+      query: () => '/user',
       providesTags: ['User'],
     }),
   }),
