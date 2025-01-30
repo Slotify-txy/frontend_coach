@@ -1,1 +1,2 @@
-export const STUDENT_CARD = 'student card';
+export const SCHEDULING_STUDENT = 'SCHEDULING_STUDENT';
+export const ARRANGING_STUDENT = 'ARRANGING_STUDENT';

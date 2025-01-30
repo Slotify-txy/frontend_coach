@@ -2,29 +2,24 @@ import { Box } from '@mui/material';
 import Moment from 'moment';
 import { extendMoment } from 'moment-range';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Calendar, momentLocalizer } from 'react-big-calendar';
-import withDragAndProp from 'react-big-calendar/lib/addons/dragAndDrop';
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
-import { useDispatch, useSelector } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
-import { slotApiSlice as slotApi } from '../../app/services/slotApiSlice';
 import * as SlotStatusConstants from '../../common/constants/slotStatus';
 import {
+  computeStudentAvailableSlots,
+  getUnschedulingSlots,
   IsCalendarSlotWithinAvailableTimes,
   isOverlapped,
   isWithinAvailableTimes,
 } from '../../common/util/slotUtil';
 import CustomEventComponent from './CustomEventComponent';
-import {
-  selectStudentAvailableSlots,
-  selectUnschedulingSlots,
-} from './slotSlice';
 import StyledCalendar from '../../components/StyledCalendar';
+import * as DnDTypes from '../../common/constants/dnd';
+import { useDrop } from 'react-dnd';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectAllStudents } from './StudentList/studentSlice';
 
 const moment = extendMoment(Moment);
-const localizer = momentLocalizer(Moment);
-const timeFormat = 'YYYY-MM-DD[T]HH:mm:ss';
-const DnDCalendar = withDragAndProp(Calendar);
 
 export default function ScheduleCalendar({
   allSlots,
@@ -36,10 +31,18 @@ export default function ScheduleCalendar({
   setHoveredEvent,
   scheduleCalendarView,
   scheduleCalendarDate,
+  setDroppedStudent,
 }) {
-  const studentAvailableSlots = useSelector(selectStudentAvailableSlots);
-  const unschedulingSlots = useSelector(selectUnschedulingSlots);
-  const dispatch = useDispatch();
+  const allStudents = useSelector(selectAllStudents);
+  const studentAvailableSlots = useMemo(
+    () => computeStudentAvailableSlots(allSlots),
+    [allSlots]
+  );
+
+  const unschedulingSlots = useMemo(
+    () => getUnschedulingSlots(allSlots),
+    [allSlots]
+  );
   const [planningSlots, setPlanningSlots] = useState([]);
 
   const slotPropGetter = useCallback(
@@ -54,7 +57,7 @@ export default function ScheduleCalendar({
       }
 
       const ret = IsCalendarSlotWithinAvailableTimes(
-        studentAvailableSlots[student] ?? [],
+        studentAvailableSlots[student.id] ?? [],
         moment(date)
       );
 
@@ -80,7 +83,7 @@ export default function ScheduleCalendar({
     (start, end, id) => {
       if (
         !isWithinAvailableTimes(
-          studentAvailableSlots[draggedStudent] ?? [],
+          studentAvailableSlots[draggedStudent.id] ?? [],
           start,
           end
         ) ||
@@ -105,7 +108,7 @@ export default function ScheduleCalendar({
       end = moment(end).add(0.5, 'hours');
       if (
         !isWithinAvailableTimes(
-          studentAvailableSlots[draggedStudent] ?? [],
+          studentAvailableSlots[draggedStudent.id] ?? [],
           start,
           end
         ) ||
@@ -113,11 +116,12 @@ export default function ScheduleCalendar({
       ) {
         return;
       }
+      setDroppedStudent(draggedStudent.id);
       setPlanningSlots((prev) => [
         ...prev,
         {
           id: uuidv4(),
-          studentId: draggedStudent,
+          studentId: draggedStudent.id,
           start: moment(start).toDate(),
           end: end.toDate(),
           status: SlotStatusConstants.PLANNING,
@@ -125,14 +129,20 @@ export default function ScheduleCalendar({
         },
       ]);
     },
-    [studentAvailableSlots, draggedStudent]
+    [
+      studentAvailableSlots,
+      draggedStudent,
+      unschedulingSlots,
+      planningSlots,
+      setDroppedStudent,
+    ]
   );
 
   const dragFromOutsideItem = useCallback(() => null, [draggedStudent]);
 
-  useEffect(() => {
-    console.log(planningSlots);
-  }, [planningSlots]);
+  // useEffect(() => {
+  //   console.log(planningSlots);
+  // }, [planningSlots]);
 
   useEffect(() => {
     console.log('selectedStudent', selectedStudent);
@@ -142,19 +152,15 @@ export default function ScheduleCalendar({
     console.log('draggedStudent', draggedStudent);
   }, [draggedStudent]);
 
-  const formats = useMemo(
-    () => ({
-      timeGutterFormat: (date, culture, localizer) =>
-        localizer.format(date, 'h A', culture),
-    }),
-    []
-  );
+  const [{ handlerId }, drop] = useDrop({
+    accept: DnDTypes.ARRANGING_STUDENT,
+  });
   /**
    * Need to figure out
    * 1. how to diplay preview that takes more than 1 slot
    */
   return (
-    <Box style={{ height: '100%' }}>
+    <Box style={{ height: '100%' }} ref={drop}>
       <StyledCalendar
         events={[...unschedulingSlots, ...planningSlots]}
         date={scheduleCalendarDate}
@@ -179,7 +185,9 @@ export default function ScheduleCalendar({
         onDragStart={(e) => {
           const { studentId, status } = e.event;
           if (status === SlotStatusConstants.PLANNING) {
-            setDraggedStudent(studentId);
+            setDraggedStudent(
+              allStudents.find((student) => student.id === studentId)
+            );
           }
         }}
         createCustomEventComponent={(props) => (

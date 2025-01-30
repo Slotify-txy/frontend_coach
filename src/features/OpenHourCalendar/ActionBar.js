@@ -9,10 +9,12 @@ import {
   useDeleteOpenHoursByCoachIdMutation,
 } from '../../app/services/openHourApiSlice';
 import { useSelector } from 'react-redux';
+import ActionButton from '../../components/ActionButton';
 
 const timeFormat = 'YYYY-MM-DD[T]HH:mm:ss';
 
 export const ActionBar = ({ availableOpenHours, setAvailableOpenHours }) => {
+  const offset = [0, -14];
   const { user } = useSelector((state) => state.auth);
 
   const [createOpenHours, { isLoading: isCreatingOpenHours }] =
@@ -41,53 +43,20 @@ export const ActionBar = ({ availableOpenHours, setAvailableOpenHours }) => {
 
   return (
     <Box sx={{ pt: 2 }}>
-      <Action
+      <ActionButton
         color={green[700]}
         icon={<CheckBoxIcon />}
         tooltip={'Publish Open Hours'}
         callback={publishOpenHours}
+        offset={offset}
       />
-      <Action
+      <ActionButton
         color={grey[700]}
         icon={<DeleteForeverIcon />}
         tooltip={'Clear'}
         callback={clearOpenHours}
+        offset={offset}
       />
-    </Box>
-  );
-};
-
-const Action = ({ color, icon, tooltip, callback, disabled = false }) => {
-  return (
-    <Box
-      sx={{
-        display: 'flex',
-        mb: 2,
-        flexDirection: 'row',
-        justifyContent: 'center',
-      }}
-    >
-      <Tooltip
-        title={tooltip}
-        slotProps={{
-          popper: {
-            modifiers: [
-              {
-                name: 'offset',
-                options: {
-                  offset: [0, -14],
-                },
-              },
-            ],
-          },
-        }}
-      >
-        <span>
-          <IconButton sx={{ color }} onClick={callback} disabled={disabled}>
-            {icon}
-          </IconButton>
-        </span>
-      </Tooltip>
     </Box>
   );
 };

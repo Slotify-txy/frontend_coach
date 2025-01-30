@@ -9,6 +9,8 @@ import './index.css';
 import reportWebVitals from './reportWebVitals';
 import { createTheme, ThemeProvider, CssBaseline } from '@mui/material';
 import { GoogleOAuthProvider } from '@react-oauth/google';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
 
 const theme = createTheme({
   typography: {
@@ -36,7 +38,9 @@ root.render(
       <React.StrictMode>
         <Provider store={store}>
           <BrowserRouter>
-            <App />
+            <DndProvider backend={HTML5Backend}>
+              <App />
+            </DndProvider>
           </BrowserRouter>
         </Provider>
       </React.StrictMode>

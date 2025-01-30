@@ -1,13 +1,13 @@
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import { Box, IconButton, Tooltip } from '@mui/material';
+import { Box, IconButton, Stack, Tooltip } from '@mui/material';
 import { green, grey } from '@mui/material/colors';
 import moment from 'moment';
 import React from 'react';
 import {
   useCreateOpenHoursMutation,
   useDeleteOpenHoursByCoachIdMutation,
-} from '../../api/openHourApiSlice';
+} from '../../app/services/openHourApiSlice';
 import { useSelector } from 'react-redux';
 
 const timeFormat = 'YYYY-MM-DD[T]HH:mm:ss';
@@ -47,7 +47,7 @@ export const ActionBar = ({ data, isFetching }) => {
   };
 
   return (
-    <Box sx={{ pt: 2 }}>
+    <Stack direction={'row'} sx={{ height: '100%' }}>
       <Action
         color={green[700]}
         icon={<CheckBoxIcon />}
@@ -62,7 +62,7 @@ export const ActionBar = ({ data, isFetching }) => {
         callback={clearOpenHours}
         disabled={isFetching}
       />
-    </Box>
+    </Stack>
   );
 };
 

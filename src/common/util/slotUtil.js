@@ -86,6 +86,47 @@ export const isWithinAvailableTimes = (
   });
 };
 
+/**
+ * Get SCHEDULING slots for each student
+ * @returns { studentId: [slots] }
+ */
+export const computeStudentAvailableSlots = (slots) => {
+  slots = slots ?? [];
+  const ret = {};
+  slots.forEach((slot) => {
+    if (slot.status !== SlotStatusConstants.SCHEDULING) return;
+    if (slot.studentId in ret) {
+      ret[slot.studentId].push(slot);
+    } else {
+      ret[slot.studentId] = [slot];
+    }
+  });
+
+  for (const studentId in ret) {
+    ret[studentId].sort((a, b) => moment(a.start) - moment(b.start));
+    const ranges = ret[studentId].map((slot) =>
+      moment.range(moment(slot.start), moment(slot.end))
+    );
+    const joinedRanges = [];
+    for (let i = 0; i < ranges.length; i++) {
+      let range = ranges[i];
+      while (i + 1 < ranges.length && range.adjacent(ranges[i + 1])) {
+        range = range.add(ranges[i + 1], { adjacent: true });
+        i += 1;
+      }
+      joinedRanges.push(range);
+    }
+    ret[studentId] = joinedRanges;
+  }
+
+  return ret;
+};
+
+export const getUnschedulingSlots = (slots) => {
+  slots = slots ?? [];
+  return slots.filter((slot) => slot.status !== SlotStatusConstants.SCHEDULING);
+};
+
 export const getStatusColor = (status) => {
   switch (status) {
     case SlotStatusConstants.AVAILABLE:

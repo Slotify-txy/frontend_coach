@@ -30,7 +30,7 @@ const CustomEventComponent = ({ event, setAvailableOpenHours }) => {
         paddingX: '0.3rem',
         overflow: 'hidden',
         backgroundColor: backgroundColor,
-        borderRadius: 2,
+        borderRadius: '8px',
       }}
       onMouseEnter={() => setOnHover(true)}
       onMouseLeave={() => setOnHover(false)}
@@ -48,7 +48,6 @@ const CustomEventComponent = ({ event, setAvailableOpenHours }) => {
           sx={{
             fontSize: 15,
             fontWeight: 700,
-            alignSelf: 'center',
           }}
         >
           {convertStatusToText(status)}
@@ -60,16 +59,16 @@ const CustomEventComponent = ({ event, setAvailableOpenHours }) => {
               <IconButton
                 onClick={deleteOpenHour}
                 onMouseDown={(e) => e.stopPropagation()} // otherwise, it triggers with onDragStart
-                sx={{ padding: 0, alignSelf: 'center' }}
+                sx={{ padding: 0.2 }}
                 aria-label="delete"
               >
-                <DeleteIcon fontSize="small" />
+                <DeleteIcon sx={{ fontSize: 18 }} />
               </IconButton>
             </Tooltip>
           )
         }
       </Box>
-      <Typography sx={{ fontSize: 15, alignSelf: 'center' }}>
+      <Typography sx={{ fontSize: 15 }}>
         {start} - {end}
       </Typography>
     </Box>

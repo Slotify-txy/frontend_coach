@@ -1,12 +1,17 @@
 import { Box, Divider } from '@mui/material';
 import Moment from 'moment';
 import { extendMoment } from 'moment-range';
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useGetSlotsQuery } from '../../app/services/slotApiSlice';
 import ScheduleCalendar from './ScheduleCalendar';
-import StudentList from './StudentList';
+// import StudentList from './StudentList';
 import * as AuthStatus from '../../common/constants/authStatus';
 import { useSelector } from 'react-redux';
+import {
+  useGetSchedulingStudentsQuery,
+  useGetStudentsByCoachIdQuery,
+} from '../../app/services/studentApiSlice';
+import StudentList from './StudentList/StudentList';
 
 const moment = extendMoment(Moment);
 
@@ -30,14 +35,34 @@ const SchedulePage = ({
       skip: status != AuthStatus.AUTHENTICATED || user == null,
     }
   );
+
+  const { isFetching: isFetchingSchedulingStudents } =
+    useGetSchedulingStudentsQuery(
+      { coachId: user?.id },
+      {
+        skip: status != AuthStatus.AUTHENTICATED || user == null,
+      }
+    );
+
+  const { isFetching: isFetchingAllStudents } = useGetStudentsByCoachIdQuery(
+    { coachId: user?.id },
+    {
+      skip: status != AuthStatus.AUTHENTICATED || user == null,
+    }
+  );
   const [draggedStudent, setDraggedStudent] = useState(null);
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [hoveredEvent, setHoveredEvent] = useState(null);
-  if (isFetchingAllSlots) {
-    allSlots;
+  const [droppedStudent, setDroppedStudent] = useState(null);
+
+  if (
+    isFetchingAllSlots ||
+    isFetchingSchedulingStudents ||
+    isFetchingAllStudents
+  ) {
+    <Box>Loading...</Box>;
     return;
   }
-
   return (
     <Box
       sx={{
@@ -46,8 +71,11 @@ const SchedulePage = ({
         height: `calc(100% - ${navBarHeight}px)`,
       }}
     >
-      <Box sx={{ height: '100%', width: 300 }}>
+      <Box sx={{ height: '100%', width: 500 }}>
         <StudentList
+          droppedStudent={droppedStudent}
+          setDroppedStudent={setDroppedStudent}
+          draggedStudent={draggedStudent}
           setDraggedStudent={setDraggedStudent}
           selectedStudent={selectedStudent}
           setSelectedStudent={setSelectedStudent}
@@ -67,6 +95,7 @@ const SchedulePage = ({
           setScheduleCalendarRange={setScheduleCalendarRange}
           scheduleCalendarDate={scheduleCalendarDate}
           setScheduleCalendarDate={setScheduleCalendarDate}
+          setDroppedStudent={setDroppedStudent}
         />
       </Box>
       <Box sx={{ height: '100%', width: 70 }}>
