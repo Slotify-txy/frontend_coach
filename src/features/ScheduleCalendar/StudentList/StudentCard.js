@@ -3,8 +3,10 @@ import {
   Box,
   Card,
   CardHeader,
+  Chip,
   List,
   ListItem,
+  Stack,
   Typography,
 } from '@mui/material';
 import { blue, grey } from '@mui/material/colors';
@@ -102,9 +104,9 @@ const StudentCard = ({
       isDragging: monitor.isDragging(),
       monitor,
     }),
-    end: ({ id, index }, monitor) => {
+    end: ({ id }, monitor) => {
       if (monitor.didDrop() && id === droppedStudent) {
-        dispatch(dragToCalendar({ index }));
+        dispatch(dragToCalendar({ id }));
         setDroppedStudent(null);
         setDraggedStudent(null);
         setSelectedStudent(null);
@@ -154,17 +156,29 @@ const StudentCard = ({
       onMouseLeave={onMouseLeave}
     >
       <CardHeader
-        sx={{ width: '100%' }}
+        sx={{ width: '100%', p: 1 }}
         avatar={
           <Avatar
             alt={student.name}
             src={student.picture}
-            sx={{ bgcolor: blue[500] }}
+            sx={{ bgcolor: blue[500], width: 30, height: 30 }}
             aria-label="student_card"
           />
         }
-        title={<Typography variant="body2">{student.name}</Typography>}
-        subheader={<Typography variant="body2">{student.email}</Typography>}
+        title={
+          <Stack direction="row" spacing={1} alignItems="center">
+            <Typography sx={{ fontSize: 13 }}>{student.name}</Typography>
+            <Chip
+              label={student.location}
+              size="small"
+              color="primary"
+              sx={{ fontSize: 11 }}
+            />
+          </Stack>
+        }
+        subheader={
+          <Typography sx={{ fontSize: 13 }}>{student.email}</Typography>
+        }
       />
     </Card>
   );

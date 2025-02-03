@@ -2,6 +2,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import {
   Avatar,
   Box,
+  Chip,
   IconButton,
   Stack,
   Tooltip,
@@ -19,6 +20,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import * as AuthStatus from '../../common/constants/authStatus';
 import {
   addArrangingStudent,
+  addSchedulingStudent,
   selectAllStudents,
 } from './StudentList/studentSlice';
 
@@ -44,7 +46,7 @@ const CustomEventComponent = ({
       return;
     }
     setPlanningSlots((prev) => prev.filter((slot) => slot.id !== event.id));
-    dispatch(addArrangingStudent(student));
+    dispatch(addSchedulingStudent(student));
     setSelectedStudent(null);
   }, [event]);
 
@@ -76,7 +78,7 @@ const CustomEventComponent = ({
           mt: 0.2,
         }}
       >
-        <Stack direction="row" spacing={1}>
+        <Stack direction="row" spacing={1} alignItems={'center'}>
           <Avatar
             sx={{ width: 20, height: 20 }}
             src={student?.picture}
@@ -90,6 +92,12 @@ const CustomEventComponent = ({
           >
             {student?.name}
           </Typography>
+          <Chip
+            label={student.location}
+            size="small"
+            color="primary"
+            sx={{ fontSize: 13 }}
+          />
         </Stack>
 
         {

@@ -144,16 +144,16 @@ export default function ScheduleCalendar({
   //   console.log(planningSlots);
   // }, [planningSlots]);
 
-  useEffect(() => {
-    console.log('selectedStudent', selectedStudent);
-  }, [selectedStudent]);
+  // useEffect(() => {
+  //   console.log('selectedStudent', selectedStudent);
+  // }, [selectedStudent]);
 
-  useEffect(() => {
-    console.log('draggedStudent', draggedStudent);
-  }, [draggedStudent]);
+  // useEffect(() => {
+  //   console.log('draggedStudent', draggedStudent);
+  // }, [draggedStudent]);
 
   const [{ handlerId }, drop] = useDrop({
-    accept: DnDTypes.ARRANGING_STUDENT,
+    accept: [DnDTypes.ARRANGING_STUDENT, DnDTypes.SCHEDULING_STUDENT],
   });
   /**
    * Need to figure out

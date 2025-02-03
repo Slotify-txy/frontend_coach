@@ -51,7 +51,7 @@ const ArrangingStudentList = ({
   });
 
   return (
-    <List sx={{ height: '100%' }} ref={drop}>
+    <List sx={{ height: '100%', py: 0 }} ref={drop}>
       {arrangingStudents.map((student, index) => (
         <ListItem
           key={student.id}

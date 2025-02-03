@@ -21,9 +21,12 @@ import { useDrop } from 'react-dnd';
 import {
   dragToArranging,
   selectArrangingStudents,
+  selectFilteredSchedulingStudents,
+  selectIsSearching,
   selectSchedulingStudents,
 } from './studentSlice.js';
 import { useDispatch, useSelector } from 'react-redux';
+import { selectCurrentUser } from '../../auth/authSlice.js';
 
 const SchedulingStudentList = ({
   droppedStudent,
@@ -35,7 +38,15 @@ const SchedulingStudentList = ({
 }) => {
   const dispatch = useDispatch();
   const schedulingStudents = useSelector(selectSchedulingStudents);
+  const filteredSchedulingStudents = useSelector(
+    selectFilteredSchedulingStudents
+  );
   const arrangingStudents = useSelector(selectArrangingStudents);
+  const isSearching = useSelector(selectIsSearching);
+
+  const displayedStudents = isSearching
+    ? filteredSchedulingStudents
+    : schedulingStudents;
 
   const [, drop] = useDrop({
     accept: DnDTypes.ARRANGING_STUDENT,
@@ -50,8 +61,8 @@ const SchedulingStudentList = ({
     },
   });
   return (
-    <List sx={{ height: '100%' }} ref={drop}>
-      {schedulingStudents.map((student, index) => (
+    <List sx={{ height: '100%', py: 0 }} ref={drop}>
+      {displayedStudents.map((student, index) => (
         <ListItem
           key={student.id}
           sx={{

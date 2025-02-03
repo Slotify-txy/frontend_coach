@@ -5,11 +5,30 @@ import update from 'immutability-helper';
 const slice = createSlice({
   name: 'student',
   initialState: {
+    isSearching: false,
     allStudents: [],
     schedulingStudents: [],
+    filteredSchedulingStudents: [],
     arrangingStudents: [],
   },
   reducers: {
+    setIsSearching: (state, { payload }) => {
+      state.isSearching = payload;
+    },
+    searchStudents: (state, { payload }) => {
+      state.filteredSchedulingStudents = state.schedulingStudents.filter(
+        (student) =>
+          student.name.toLowerCase().includes(payload.toLowerCase()) ||
+          student.email.toLowerCase().includes(payload.toLowerCase())
+      );
+    },
+    addSchedulingStudent: (state, { payload }) => {
+      if (state.isSearching) {
+        state.filteredSchedulingStudents.push(payload);
+      } else {
+        state.schedulingStudents.push(payload);
+      }
+    },
     addArrangingStudent: (state, { payload }) => {
       state.arrangingStudents.push(payload);
     },
@@ -29,12 +48,24 @@ const slice = createSlice({
     },
     dragWithinScheduling: (state, { payload }) => {
       const { dragIndex, hoverIndex } = payload;
-      state.schedulingStudents = update(state.schedulingStudents, {
-        $splice: [
-          [dragIndex, 1],
-          [hoverIndex, 0, state.schedulingStudents[dragIndex]],
-        ],
-      });
+      if (state.isSearching) {
+        state.filteredSchedulingStudents = update(
+          state.filteredSchedulingStudents,
+          {
+            $splice: [
+              [dragIndex, 1],
+              [hoverIndex, 0, state.filteredSchedulingStudents[dragIndex]],
+            ],
+          }
+        );
+      } else {
+        state.schedulingStudents = update(state.schedulingStudents, {
+          $splice: [
+            [dragIndex, 1],
+            [hoverIndex, 0, state.schedulingStudents[dragIndex]],
+          ],
+        });
+      }
     },
     dragWithinArranging: (state, { payload }) => {
       const { dragIndex, hoverIndex } = payload;
@@ -64,10 +95,24 @@ const slice = createSlice({
       });
     },
     dragToCalendar: (state, { payload }) => {
-      const { index } = payload;
-      state.arrangingStudents = update(state.arrangingStudents, {
+      const { id } = payload;
+      let index = state.schedulingStudents.findIndex(
+        (student) => student.id === id
+      );
+      state.schedulingStudents = update(state.schedulingStudents, {
         $splice: [[index, 1]],
       });
+      if (state.isSearching) {
+        index = state.filteredSchedulingStudents.findIndex(
+          (student) => student.id === id
+        );
+        state.filteredSchedulingStudents = update(
+          state.filteredSchedulingStudents,
+          {
+            $splice: [[index, 1]],
+          }
+        );
+      }
     },
   },
   extraReducers: (builder) => {
@@ -82,12 +127,16 @@ const slice = createSlice({
         api.endpoints.getSchedulingStudents.matchFulfilled,
         (state, { payload }) => {
           state.schedulingStudents = payload;
+          state.filteredSchedulingStudents = payload;
         }
       );
   },
 });
 
 export const {
+  setIsSearching,
+  searchStudents,
+  addSchedulingStudent,
   addArrangingStudent,
   addAllSchedulingStudentsToArrangingStudents,
   addAllArrangingStudentsToSchedulingStudents,
@@ -100,7 +149,10 @@ export const {
 
 export default slice.reducer;
 
+export const selectIsSearching = (state) => state.student.isSearching;
 export const selectAllStudents = (state) => state.student.allStudents;
+export const selectFilteredSchedulingStudents = (state) =>
+  state.student.filteredSchedulingStudents;
 export const selectSchedulingStudents = (state) =>
   state.student.schedulingStudents;
 export const selectArrangingStudents = (state) =>

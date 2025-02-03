@@ -71,7 +71,7 @@ const SchedulePage = ({
         height: `calc(100% - ${navBarHeight}px)`,
       }}
     >
-      <Box sx={{ height: '100%', width: 500 }}>
+      <Box sx={{ height: '100%', width: 250 }}>
         <StudentList
           droppedStudent={droppedStudent}
           setDroppedStudent={setDroppedStudent}

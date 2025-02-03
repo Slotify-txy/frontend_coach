@@ -13,7 +13,6 @@ export const NavBar = ({
   tab,
   setTab,
 }) => {
-  console.log(calendarRange);
   return (
     <Stack
       sx={{

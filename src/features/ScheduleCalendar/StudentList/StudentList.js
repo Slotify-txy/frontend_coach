@@ -20,6 +20,7 @@ import React, {
 import { ActionBar } from './ActionBar';
 import SchedulingStudentList from './SchedulingStudentList';
 import ArrangingStudentList from './ArrangingStudentList';
+import StudentSearch from './StudentSearch';
 
 const StudentList = ({
   droppedStudent,
@@ -29,17 +30,20 @@ const StudentList = ({
   selectedStudent,
   setSelectedStudent,
 }) => {
-  const actionBarHeight = 50;
+  const height = 50;
   return (
     <Box sx={{ height: '100%' }}>
-      <Box sx={{ height: actionBarHeight }}>
-        <ActionBar />
+      {/* <Stack direction="row" sx={{ height }}> */}
+      <Box sx={{ pl: 1 }}>
+        <StudentSearch />
       </Box>
-      <Stack
-        direction="row"
-        sx={{ height: `calc(100% - ${actionBarHeight}px)` }}
-      >
-        <Box sx={{ width: '50%', overflowY: 'auto' }}>
+      {/* hide arrangingStudentList for now */}
+      {/* <Box sx={{ height: '50%' }}>
+          <ActionBar />
+        </Box> */}
+      {/* </Stack> */}
+      <Stack direction="row" sx={{ height: `calc(100% - ${height}px)` }}>
+        <Box sx={{ width: '100%', overflowY: 'auto' }}>
           <SchedulingStudentList
             droppedStudent={droppedStudent}
             setDroppedStudent={setDroppedStudent}
@@ -49,7 +53,8 @@ const StudentList = ({
             setSelectedStudent={setSelectedStudent}
           />
         </Box>
-        <Box sx={{ width: '50%', overflowY: 'auto' }}>
+        {/* hide arrangingStudentList for now */}
+        {/* <Box sx={{ width: '50%', overflowY: 'auto' }}>
           <ArrangingStudentList
             droppedStudent={droppedStudent}
             setDroppedStudent={setDroppedStudent}
@@ -58,7 +63,7 @@ const StudentList = ({
             selectedStudent={selectedStudent}
             setSelectedStudent={setSelectedStudent}
           />
-        </Box>
+        </Box> */}
       </Stack>
     </Box>
   );

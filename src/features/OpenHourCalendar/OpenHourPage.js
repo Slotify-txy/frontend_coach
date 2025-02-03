@@ -12,9 +12,9 @@ const OpenHour = ({
   setOpenHourCalendarDate,
 }) => {
   const [availableOpenHours, setAvailableOpenHours] = useState([]);
-  useEffect(() => {
-    console.log('availableOpenHours', availableOpenHours);
-  }, [availableOpenHours]);
+  // useEffect(() => {
+  //   console.log('availableOpenHours', availableOpenHours);
+  // }, [availableOpenHours]);
 
   return (
     <Box

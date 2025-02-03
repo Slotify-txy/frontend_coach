@@ -87,7 +87,7 @@ export default function OpenHourCalendar({
     },
     [publishedOpenHours, availableOpenHours]
   );
-
+  console.log('publishedOpenHours', publishedOpenHours);
   if (isFetching) {
     return <Box>Loading...</Box>;
   }
