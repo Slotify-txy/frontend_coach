@@ -4,9 +4,10 @@ import { extendMoment } from 'moment-range';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
 import { v4 as uuidv4 } from 'uuid';
-import * as SlotStatusConstants from '../../common/constants/slotStatus';
+import SLOT_STATUS from '../../common/constants/slotStatus';
 import {
   computeStudentAvailableSlots,
+  convertSlots,
   getUnschedulingSlots,
   IsCalendarSlotWithinAvailableTimes,
   isOverlapped,
@@ -18,11 +19,15 @@ import * as DnDTypes from '../../common/constants/dnd';
 import { useDrop } from 'react-dnd';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectAllStudents } from './StudentList/studentSlice';
+import { useGetSlotsQuery } from '../../app/services/slotApiSlice';
+import AUTH_STATUS from '../../common/constants/authStatus';
+import { all } from 'axios';
 
 const moment = extendMoment(Moment);
 
 export default function ScheduleCalendar({
-  allSlots,
+  planningSlots,
+  setPlanningSlots,
   draggedStudent,
   setDraggedStudent,
   selectedStudent,
@@ -33,6 +38,23 @@ export default function ScheduleCalendar({
   scheduleCalendarDate,
   setDroppedStudent,
 }) {
+  const { user, status } = useSelector((state) => state.auth);
+
+  const {
+    data: allSlots,
+    isFetching: isFetchingAllSlots,
+    isSuccess: isAllSlotsSuccess,
+  } = useGetSlotsQuery(
+    { coachId: user?.id },
+    {
+      selectFromResult: (result) => {
+        result.data = convertSlots(result.data ?? []);
+        return result;
+      },
+      skip: status != AUTH_STATUS.AUTHENTICATED || user == null,
+    }
+  );
+
   const allStudents = useSelector(selectAllStudents);
   const studentAvailableSlots = useMemo(
     () => computeStudentAvailableSlots(allSlots),
@@ -43,7 +65,6 @@ export default function ScheduleCalendar({
     () => getUnschedulingSlots(allSlots),
     [allSlots]
   );
-  const [planningSlots, setPlanningSlots] = useState([]);
 
   const slotPropGetter = useCallback(
     (date) => {
@@ -99,7 +120,7 @@ export default function ScheduleCalendar({
         return prev;
       });
     },
-    [draggedStudent, unschedulingSlots, planningSlots]
+    [draggedStudent, unschedulingSlots, planningSlots, setPlanningSlots]
   );
 
   const onDropFromOutside = useCallback(
@@ -124,7 +145,7 @@ export default function ScheduleCalendar({
           studentId: draggedStudent.id,
           start: moment(start).toDate(),
           end: end.toDate(),
-          status: SlotStatusConstants.PLANNING,
+          status: SLOT_STATUS.PLANNING_SCHEDULE,
           isDraggable: true,
         },
       ]);
@@ -134,6 +155,7 @@ export default function ScheduleCalendar({
       draggedStudent,
       unschedulingSlots,
       planningSlots,
+      setPlanningSlots,
       setDroppedStudent,
     ]
   );
@@ -167,7 +189,7 @@ export default function ScheduleCalendar({
         view={scheduleCalendarView}
         onEventDrop={({ start, end, event }) => {
           const { id, status } = event;
-          if (status === SlotStatusConstants.PLANNING) {
+          if (status === SLOT_STATUS.PLANNING_SCHEDULE) {
             setDraggedStudent(null);
           }
           if (start.getDay() === end.getDay()) {
@@ -184,7 +206,7 @@ export default function ScheduleCalendar({
         onDropFromOutside={onDropFromOutside}
         onDragStart={(e) => {
           const { studentId, status } = e.event;
-          if (status === SlotStatusConstants.PLANNING) {
+          if (status === SLOT_STATUS.PLANNING_SCHEDULE) {
             setDraggedStudent(
               allStudents.find((student) => student.id === studentId)
             );

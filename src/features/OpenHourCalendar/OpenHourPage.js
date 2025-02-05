@@ -11,7 +11,7 @@ const OpenHour = ({
   openHourCalendarDate,
   setOpenHourCalendarDate,
 }) => {
-  const [availableOpenHours, setAvailableOpenHours] = useState([]);
+  const [planningOpenHours, setPlanningOpenHours] = useState([]);
   // useEffect(() => {
   //   console.log('availableOpenHours', availableOpenHours);
   // }, [availableOpenHours]);
@@ -31,8 +31,8 @@ const OpenHour = ({
         }}
       >
         <OpenHourCalendar
-          availableOpenHours={availableOpenHours}
-          setAvailableOpenHours={setAvailableOpenHours}
+          planningOpenHours={planningOpenHours}
+          setPlanningOpenHours={setPlanningOpenHours}
           openHourCalendarView={openHourCalendarView}
           setOpenHourCalendarView={setOpenHourCalendarView}
           setOpenHourCalendarRange={setOpenHourCalendarRange}
@@ -42,8 +42,8 @@ const OpenHour = ({
       </Box>
       <Box sx={{ height: '100%', width: 70 }}>
         <ActionBar
-          availableOpenHours={availableOpenHours}
-          setAvailableOpenHours={setAvailableOpenHours}
+          planningOpenHours={planningOpenHours}
+          setPlanningOpenHours={setPlanningOpenHours}
         />
       </Box>
     </Box>

@@ -16,11 +16,18 @@ import React, {
   useRef,
   useState,
 } from 'react';
-
 import { ActionBar } from './ActionBar';
 import SchedulingStudentList from './SchedulingStudentList';
 import ArrangingStudentList from './ArrangingStudentList';
 import StudentSearch from './StudentSearch';
+import { useGetSlotsQuery } from '../../../app/services/slotApiSlice';
+import AUTH_STATUS from '../../../common/constants/authStatus';
+import { useSelector } from 'react-redux';
+import {
+  useGetAvailableStudentsQuery,
+  useGetStudentsByCoachIdQuery,
+} from '../../../app/services/studentApiSlice';
+import LoadingSpinner from '../../../components/LoadingSpinner';
 
 const StudentList = ({
   droppedStudent,
@@ -31,6 +38,22 @@ const StudentList = ({
   setSelectedStudent,
 }) => {
   const height = 50;
+  const { user, status } = useSelector((state) => state.auth);
+
+  const { isFetching } = useGetAvailableStudentsQuery(
+    { coachId: user?.id },
+    {
+      skip: status != AUTH_STATUS.AUTHENTICATED || user == null,
+    }
+  );
+
+  useGetStudentsByCoachIdQuery(
+    { coachId: user?.id },
+    {
+      skip: status != AUTH_STATUS.AUTHENTICATED || user == null,
+    }
+  );
+
   return (
     <Box sx={{ height: '100%' }}>
       {/* <Stack direction="row" sx={{ height }}> */}
@@ -44,14 +67,18 @@ const StudentList = ({
       {/* </Stack> */}
       <Stack direction="row" sx={{ height: `calc(100% - ${height}px)` }}>
         <Box sx={{ width: '100%', overflowY: 'auto' }}>
-          <SchedulingStudentList
-            droppedStudent={droppedStudent}
-            setDroppedStudent={setDroppedStudent}
-            draggedStudent={draggedStudent}
-            setDraggedStudent={setDraggedStudent}
-            selectedStudent={selectedStudent}
-            setSelectedStudent={setSelectedStudent}
-          />
+          {isFetching ? (
+            <LoadingSpinner />
+          ) : (
+            <SchedulingStudentList
+              droppedStudent={droppedStudent}
+              setDroppedStudent={setDroppedStudent}
+              draggedStudent={draggedStudent}
+              setDraggedStudent={setDraggedStudent}
+              selectedStudent={selectedStudent}
+              setSelectedStudent={setSelectedStudent}
+            />
+          )}
         </Box>
         {/* hide arrangingStudentList for now */}
         {/* <Box sx={{ width: '50%', overflowY: 'auto' }}>

@@ -3,70 +3,73 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import { Box, IconButton, Stack, Tooltip } from '@mui/material';
 import { green, grey } from '@mui/material/colors';
 import moment from 'moment';
-import React from 'react';
+import React, { useCallback } from 'react';
 import {
   useCreateOpenHoursMutation,
   useDeleteOpenHoursByCoachIdMutation,
 } from '../../app/services/openHourApiSlice';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  addAvailableStudent,
+  selectAllStudents,
+} from './StudentList/studentSlice';
+import { useCreateSlotsMutation } from '../../app/services/slotApiSlice';
+import SLOT_STATUS from '../../common/constants/slotStatus';
 
 const timeFormat = 'YYYY-MM-DD[T]HH:mm:ss';
 
-export const ActionBar = ({ data, isFetching }) => {
+export const ActionBar = ({ planningSlots, setPlanningSlots }) => {
   const { user } = useSelector((state) => state.auth);
+  const students = useSelector(selectAllStudents);
+  const dispatch = useDispatch();
 
-  const [createOpenHours, { isLoading: isCreatingOpenHours }] =
-    useCreateOpenHoursMutation();
-  const [
-    deleteOpenHoursByCoachId,
-    { isLoading: isDeletingOpenHoursByCoachId },
-  ] = useDeleteOpenHoursByCoachIdMutation();
-
-  const publishOpenHours = async () => {
+  const [createSlots] = useCreateSlotsMutation();
+  const schedule = useCallback(async () => {
     try {
-      await createOpenHours({
-        coachId: user?.id,
-        openHours: data.map(({ start, end }) => {
-          return {
-            startAt: moment(start).format(timeFormat),
-            endAt: moment(end).format(timeFormat),
-          };
-        }),
-      });
+      await createSlots({
+        slots: planningSlots.map((slot) => ({
+          studentId: slot.studentId,
+          coachId: user.id,
+          startAt: moment(slot.start).format(timeFormat),
+          endAt: moment(slot.end).format(timeFormat),
+          status: SLOT_STATUS.PENDING,
+        })),
+      }).unwrap();
+      setPlanningSlots([]);
     } catch (err) {
       console.error('Failed to save the open hours: ', err);
     }
-  };
+  }, [planningSlots, user]);
 
-  const clearOpenHours = async () => {
-    try {
-      await deleteOpenHoursByCoachId({ coachId: user?.id });
-    } catch (err) {
-      console.error('Failed to clear open hours: ', err);
-    }
-  };
+  const clearArrangingSlots = useCallback(() => {
+    planningSlots.forEach((slot) => {
+      const student = students.find((student) => student.id === slot.studentId);
+      if (student) {
+        dispatch(addAvailableStudent(student));
+      }
+    });
+    setPlanningSlots([]);
+  }, [planningSlots, setPlanningSlots, students]);
 
   return (
-    <Stack direction={'row'} sx={{ height: '100%' }}>
+    <Stack>
       <Action
         color={green[700]}
         icon={<CheckBoxIcon />}
-        tooltip={'Publish Open Hours'}
-        callback={publishOpenHours}
-        disabled={isFetching}
+        tooltip={'Schedule'}
+        callback={schedule}
       />
       <Action
         color={grey[700]}
         icon={<DeleteForeverIcon />}
-        tooltip={'Clear'}
-        callback={clearOpenHours}
-        disabled={isFetching}
+        tooltip={'Clear arranging slots'}
+        callback={clearArrangingSlots}
       />
     </Stack>
   );
 };
 
-const Action = ({ color, icon, tooltip, callback, disabled }) => {
+const Action = ({ color, icon, tooltip, callback, disabled = false }) => {
   return (
     <Box
       sx={{

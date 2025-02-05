@@ -7,8 +7,8 @@ const slice = createSlice({
   initialState: {
     isSearching: false,
     allStudents: [],
-    schedulingStudents: [],
-    filteredSchedulingStudents: [],
+    availableStudents: [],
+    filteredAvailableStudents: [],
     arrangingStudents: [],
   },
   reducers: {
@@ -16,53 +16,53 @@ const slice = createSlice({
       state.isSearching = payload;
     },
     searchStudents: (state, { payload }) => {
-      state.filteredSchedulingStudents = state.schedulingStudents.filter(
+      state.filteredAvailableStudents = state.availableStudents.filter(
         (student) =>
           student.name.toLowerCase().includes(payload.toLowerCase()) ||
           student.email.toLowerCase().includes(payload.toLowerCase())
       );
     },
-    addSchedulingStudent: (state, { payload }) => {
+    addAvailableStudent: (state, { payload }) => {
       if (state.isSearching) {
-        state.filteredSchedulingStudents.push(payload);
+        state.filteredAvailableStudents.unshift(payload);
       } else {
-        state.schedulingStudents.push(payload);
+        state.availableStudents.unshift(payload);
       }
     },
     addArrangingStudent: (state, { payload }) => {
-      state.arrangingStudents.push(payload);
+      state.arrangingStudents.unshift(payload);
     },
-    addAllSchedulingStudentsToArrangingStudents: (state) => {
+    addAllAvailableStudentsToArrangingStudents: (state) => {
       state.arrangingStudents = [
         ...state.arrangingStudents,
-        ...state.schedulingStudents,
+        ...state.availableStudents,
       ];
-      state.schedulingStudents = [];
+      state.availableStudents = [];
     },
-    addAllArrangingStudentsToSchedulingStudents: (state) => {
-      state.schedulingStudents = [
-        ...state.schedulingStudents,
+    addAllArrangingStudentsToAvailableStudents: (state) => {
+      state.availableStudents = [
+        ...state.availableStudents,
         ...state.arrangingStudents,
       ];
       state.arrangingStudents = [];
     },
-    dragWithinScheduling: (state, { payload }) => {
+    dragWithinAvailable: (state, { payload }) => {
       const { dragIndex, hoverIndex } = payload;
       if (state.isSearching) {
-        state.filteredSchedulingStudents = update(
-          state.filteredSchedulingStudents,
+        state.filteredAvailableStudents = update(
+          state.filteredAvailableStudents,
           {
             $splice: [
               [dragIndex, 1],
-              [hoverIndex, 0, state.filteredSchedulingStudents[dragIndex]],
+              [hoverIndex, 0, state.filteredAvailableStudents[dragIndex]],
             ],
           }
         );
       } else {
-        state.schedulingStudents = update(state.schedulingStudents, {
+        state.availableStudents = update(state.availableStudents, {
           $splice: [
             [dragIndex, 1],
-            [hoverIndex, 0, state.schedulingStudents[dragIndex]],
+            [hoverIndex, 0, state.availableStudents[dragIndex]],
           ],
         });
       }
@@ -76,9 +76,9 @@ const slice = createSlice({
         ],
       });
     },
-    dragToScheduling: (state, { payload }) => {
+    dragToAvailable: (state, { payload }) => {
       const { index, student } = payload;
-      state.schedulingStudents = update(state.schedulingStudents, {
+      state.availableStudents = update(state.availableStudents, {
         $splice: [[index, 1]],
       });
       state.arrangingStudents = update(state.arrangingStudents, {
@@ -90,24 +90,24 @@ const slice = createSlice({
       state.arrangingStudents = update(state.arrangingStudents, {
         $splice: [[index, 1]],
       });
-      state.schedulingStudents = update(state.schedulingStudents, {
+      state.availableStudents = update(state.availableStudents, {
         $unshift: [student],
       });
     },
     dragToCalendar: (state, { payload }) => {
       const { id } = payload;
-      let index = state.schedulingStudents.findIndex(
+      let index = state.availableStudents.findIndex(
         (student) => student.id === id
       );
-      state.schedulingStudents = update(state.schedulingStudents, {
+      state.availableStudents = update(state.availableStudents, {
         $splice: [[index, 1]],
       });
       if (state.isSearching) {
-        index = state.filteredSchedulingStudents.findIndex(
+        index = state.filteredAvailableStudents.findIndex(
           (student) => student.id === id
         );
-        state.filteredSchedulingStudents = update(
-          state.filteredSchedulingStudents,
+        state.filteredAvailableStudents = update(
+          state.filteredAvailableStudents,
           {
             $splice: [[index, 1]],
           }
@@ -124,10 +124,10 @@ const slice = createSlice({
         }
       )
       .addMatcher(
-        api.endpoints.getSchedulingStudents.matchFulfilled,
+        api.endpoints.getAvailableStudents.matchFulfilled,
         (state, { payload }) => {
-          state.schedulingStudents = payload;
-          state.filteredSchedulingStudents = payload;
+          state.availableStudents = payload;
+          state.filteredAvailableStudents = payload;
         }
       );
   },
@@ -136,13 +136,13 @@ const slice = createSlice({
 export const {
   setIsSearching,
   searchStudents,
-  addSchedulingStudent,
+  addAvailableStudent,
   addArrangingStudent,
-  addAllSchedulingStudentsToArrangingStudents,
-  addAllArrangingStudentsToSchedulingStudents,
-  dragWithinScheduling,
+  addAllAvailableStudentsToArrangingStudents,
+  addAllArrangingStudentsToAvailableStudents,
+  dragWithinAvailable,
   dragWithinArranging,
-  dragToScheduling,
+  dragToAvailable,
   dragToArranging,
   dragToCalendar,
 } = slice.actions;
@@ -151,9 +151,9 @@ export default slice.reducer;
 
 export const selectIsSearching = (state) => state.student.isSearching;
 export const selectAllStudents = (state) => state.student.allStudents;
-export const selectFilteredSchedulingStudents = (state) =>
-  state.student.filteredSchedulingStudents;
-export const selectSchedulingStudents = (state) =>
-  state.student.schedulingStudents;
+export const selectFilteredAvailableStudents = (state) =>
+  state.student.filteredAvailableStudents;
+export const selectAvailableStudents = (state) =>
+  state.student.availableStudents;
 export const selectArrangingStudents = (state) =>
   state.student.arrangingStudents;

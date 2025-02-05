@@ -21,14 +21,14 @@ import { useDrop } from 'react-dnd';
 import {
   dragToArranging,
   selectArrangingStudents,
-  selectFilteredSchedulingStudents,
+  selectFilteredAvailableStudents,
   selectIsSearching,
-  selectSchedulingStudents,
+  selectAvailableStudents,
 } from './studentSlice.js';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectCurrentUser } from '../../auth/authSlice.js';
 
-const SchedulingStudentList = ({
+const AvailableStudentList = ({
   droppedStudent,
   setDroppedStudent,
   draggedStudent,
@@ -37,16 +37,16 @@ const SchedulingStudentList = ({
   setSelectedStudent,
 }) => {
   const dispatch = useDispatch();
-  const schedulingStudents = useSelector(selectSchedulingStudents);
-  const filteredSchedulingStudents = useSelector(
-    selectFilteredSchedulingStudents
+  const availableStudents = useSelector(selectAvailableStudents);
+  const filteredAvailableStudents = useSelector(
+    selectFilteredAvailableStudents
   );
   const arrangingStudents = useSelector(selectArrangingStudents);
   const isSearching = useSelector(selectIsSearching);
 
   const displayedStudents = isSearching
-    ? filteredSchedulingStudents
-    : schedulingStudents;
+    ? filteredAvailableStudents
+    : availableStudents;
 
   const [, drop] = useDrop({
     accept: DnDTypes.ARRANGING_STUDENT,
@@ -88,4 +88,4 @@ const SchedulingStudentList = ({
   );
 };
 
-export default SchedulingStudentList;
+export default AvailableStudentList;

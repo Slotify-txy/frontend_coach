@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { api } from '../../app/services/api';
-import * as AuthStatus from '../../common/constants/authStatus';
+import AUTH_STATUS from '../../common/constants/authStatus';
 
 const slice = createSlice({
   name: 'auth',
@@ -10,20 +10,20 @@ const slice = createSlice({
       ? localStorage.getItem('userToken')
       : null,
     status: localStorage.getItem('userToken')
-      ? AuthStatus.AUTHENTICATED
-      : AuthStatus.UNAUTHENTICATED,
+      ? AUTH_STATUS.AUTHENTICATED
+      : AUTH_STATUS.UNAUTHENTICATED,
   },
   reducers: {
     clearCredentials: (state) => {
       state.user = null;
       state.token = null;
-      state.status = AuthStatus.TOKEN_EXPIRED;
+      state.status = AUTH_STATUS.TOKEN_EXPIRED;
     },
     logout: (state) => {
       localStorage.removeItem('userToken');
       state.user = null;
       state.token = null;
-      state.status = AuthStatus.UNAUTHENTICATED;
+      state.status = AUTH_STATUS.UNAUTHENTICATED;
     },
   },
   extraReducers: (builder) => {
@@ -32,7 +32,7 @@ const slice = createSlice({
         const { token } = payload;
         localStorage.setItem('userToken', token);
         state.token = token;
-        state.status = AuthStatus.AUTHENTICATED;
+        state.status = AUTH_STATUS.AUTHENTICATED;
       })
       .addMatcher(
         api.endpoints.getUser.matchFulfilled,

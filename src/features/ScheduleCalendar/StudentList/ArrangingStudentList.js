@@ -20,9 +20,9 @@ import { useDrop } from 'react-dnd';
 import * as DnDTypes from '../../../common/constants/dnd';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  dragToScheduling,
+  dragToAvailable,
   selectArrangingStudents,
-  selectSchedulingStudents,
+  selectAvailableStudents,
 } from './studentSlice.js';
 
 const ArrangingStudentList = ({
@@ -34,18 +34,18 @@ const ArrangingStudentList = ({
   setSelectedStudent,
 }) => {
   const dispatch = useDispatch();
-  const schedulingStudents = useSelector(selectSchedulingStudents);
+  const availableStudents = useSelector(selectAvailableStudents);
   const arrangingStudents = useSelector(selectArrangingStudents);
 
   const [, drop] = useDrop({
     accept: DnDTypes.SCHEDULING_STUDENT,
     drop: ({ id }) => {
-      const student = schedulingStudents.find((student) => student.id === id);
+      const student = availableStudents.find((student) => student.id === id);
       if (student) {
-        const index = schedulingStudents.findIndex(
+        const index = availableStudents.findIndex(
           (student) => student.id === id
         );
-        dispatch(dragToScheduling({ index, student }));
+        dispatch(dragToAvailable({ index, student }));
       }
     },
   });

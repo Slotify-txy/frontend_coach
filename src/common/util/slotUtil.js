@@ -1,5 +1,5 @@
 import moment from 'moment';
-import * as SlotStatusConstants from '../../common/constants/slotStatus';
+import SLOT_STATUS from '../../common/constants/slotStatus';
 
 export const convertSlots = (data) => {
   return data.map((slot) => {
@@ -13,10 +13,15 @@ export const convertSlots = (data) => {
 };
 
 export const convertStatusToText = (status) => {
-  return status
-    .split('_')
-    .map((status) => status.charAt(0) + status.slice(1).toLowerCase())
-    .join(' ');
+  switch (status) {
+    case SLOT_STATUS.PLANNING_OPEN_HOUR || SLOT_STATUS.PLANNING_SCHEDULE:
+      return 'Planning';
+    default:
+      return status
+        .split('_')
+        .map((status) => status.charAt(0) + status.slice(1).toLowerCase())
+        .join(' ');
+  }
 };
 
 // check if the slot will overlaps with existing slots
@@ -94,7 +99,7 @@ export const computeStudentAvailableSlots = (slots) => {
   slots = slots ?? [];
   const ret = {};
   slots.forEach((slot) => {
-    if (slot.status !== SlotStatusConstants.SCHEDULING) return;
+    if (slot.status !== SLOT_STATUS.AVAILABLE) return;
     if (slot.studentId in ret) {
       ret[slot.studentId].push(slot);
     } else {
@@ -124,20 +129,22 @@ export const computeStudentAvailableSlots = (slots) => {
 
 export const getUnschedulingSlots = (slots) => {
   slots = slots ?? [];
-  return slots.filter((slot) => slot.status !== SlotStatusConstants.SCHEDULING);
+  return slots.filter((slot) => slot.status !== SLOT_STATUS.AVAILABLE);
 };
 
 export const getStatusColor = (status) => {
   switch (status) {
-    case SlotStatusConstants.AVAILABLE:
+    case SLOT_STATUS.AVAILABLE:
       return '#039BE5';
-    case SlotStatusConstants.SCHEDULING:
+    case SLOT_STATUS.PENDING:
       return '#f6bf26';
-    case SlotStatusConstants.PUBLISHED:
+    case SLOT_STATUS.OPEN_HOUR:
+    case SLOT_STATUS.APPOINTMENT:
       return '#33b679';
-    case SlotStatusConstants.PLANNING:
+    case SLOT_STATUS.PLANNING_OPEN_HOUR:
+    case SLOT_STATUS.PLANNING_SCHEDULE:
       return '#7986cb';
     default:
-      return '';
+      return '#7986cb';
   }
 };

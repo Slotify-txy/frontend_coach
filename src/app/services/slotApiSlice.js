@@ -1,16 +1,18 @@
 import { v4 as uuidv4 } from 'uuid';
 import { api } from './api';
+import * as SlotStatusConstants from '../../common/constants/slotStatus';
 
 export const slotApiSlice = api.injectEndpoints({
   reducerPath: 'slotApi',
-  tagTypes: ['Slots'],
+  tagTypes: ['Slots', 'Students'],
   endpoints: (builder) => ({
     getSlots: builder.query({
       query: ({ coachId }) => `/slot/coach/${coachId}`,
       transformResponse: (response) => {
-        return response.map(({ startAt, endAt, status, studentId }) => {
+        return response.map(({ id, startAt, endAt, status, studentId }) => {
           return {
-            id: uuidv4(),
+            // id: uuidv4(),
+            id,
             start: startAt,
             end: endAt,
             studentId,
@@ -28,25 +30,40 @@ export const slotApiSlice = api.injectEndpoints({
           : [{ type: 'Slots', id: 'LIST' }],
     }),
     createSlots: builder.mutation({
-      query: ({ studentId, coachId, slots }) => ({
-        url: `/slot/student/${studentId}/coach/${coachId}`,
+      query: ({ slots }) => ({
+        url: `/slot`,
         method: 'POST',
         body: slots,
       }),
-      invalidatesTags: [{ type: 'Slots', id: 'LIST' }],
+      invalidatesTags: [
+        { type: 'Slots', id: 'LIST' },
+        { type: 'Students', id: 'AVAILABLE' },
+      ],
     }),
-    deleteSlots: builder.mutation({
-      query: ({ studentId, coachId }) => ({
-        url: `/slot/student/${studentId}/coach/${coachId}`,
+    // deleteSlots: builder.mutation({
+    //   query: ({ studentId, coachId }) => ({
+    //     url: `/slot/student/${studentId}/coach/${coachId}`,
+    //     method: 'DELETE',
+    //   }),
+    //   invalidatesTags: (result, error, id) => [{ type: 'Slots', id }],
+    // }),
+    deleteSlotById: builder.mutation({
+      query: (id) => ({
+        url: `/slot/${id}`,
         method: 'DELETE',
+        responseHandler: (response) => response.text(), // by default, rtk query receives json response
       }),
-      invalidatesTags: (result, error, id) => [{ type: 'Slots', id }],
+      invalidatesTags: (result, error, id) => [
+        { type: 'Slots', id },
+        { type: 'Students', id: 'AVAILABLE' },
+      ],
     }),
   }),
 });
 
 export const {
   useGetSlotsQuery,
+  useGetOpenHoursQuery,
   useCreateSlotsMutation,
-  useDeleteSlotsMutation,
+  useDeleteSlotByIdMutation,
 } = slotApiSlice;

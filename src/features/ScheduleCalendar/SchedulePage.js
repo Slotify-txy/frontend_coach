@@ -5,13 +5,16 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useGetSlotsQuery } from '../../app/services/slotApiSlice';
 import ScheduleCalendar from './ScheduleCalendar';
 // import StudentList from './StudentList';
-import * as AuthStatus from '../../common/constants/authStatus';
+import * as AUTH_STATUS from '../../common/constants/authStatus';
 import { useSelector } from 'react-redux';
 import {
-  useGetSchedulingStudentsQuery,
+  useGetAvailableStudentsQuery,
   useGetStudentsByCoachIdQuery,
 } from '../../app/services/studentApiSlice';
 import StudentList from './StudentList/StudentList';
+import { ActionBar } from './ActionBar';
+import { useGetOpenHoursQuery } from '../../app/services/openHourApiSlice';
+import { convertSlots } from '../../common/util/slotUtil';
 
 const moment = extendMoment(Moment);
 
@@ -23,46 +26,12 @@ const SchedulePage = ({
   scheduleCalendarDate,
   setScheduleCalendarDate,
 }) => {
-  const { user, status } = useSelector((state) => state.auth);
-
-  const {
-    data: allSlots,
-    isFetching: isFetchingAllSlots,
-    isSuccess: isAllSlotsSuccess,
-  } = useGetSlotsQuery(
-    { coachId: user?.id },
-    {
-      skip: status != AuthStatus.AUTHENTICATED || user == null,
-    }
-  );
-
-  const { isFetching: isFetchingSchedulingStudents } =
-    useGetSchedulingStudentsQuery(
-      { coachId: user?.id },
-      {
-        skip: status != AuthStatus.AUTHENTICATED || user == null,
-      }
-    );
-
-  const { isFetching: isFetchingAllStudents } = useGetStudentsByCoachIdQuery(
-    { coachId: user?.id },
-    {
-      skip: status != AuthStatus.AUTHENTICATED || user == null,
-    }
-  );
   const [draggedStudent, setDraggedStudent] = useState(null);
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [hoveredEvent, setHoveredEvent] = useState(null);
   const [droppedStudent, setDroppedStudent] = useState(null);
+  const [planningSlots, setPlanningSlots] = useState([]);
 
-  if (
-    isFetchingAllSlots ||
-    isFetchingSchedulingStudents ||
-    isFetchingAllStudents
-  ) {
-    <Box>Loading...</Box>;
-    return;
-  }
   return (
     <Box
       sx={{
@@ -83,7 +52,8 @@ const SchedulePage = ({
       </Box>
       <Box sx={{ flex: 1, ml: 1 }}>
         <ScheduleCalendar
-          allSlots={allSlots}
+          planningSlots={planningSlots}
+          setPlanningSlots={setPlanningSlots}
           draggedStudent={draggedStudent}
           setDraggedStudent={setDraggedStudent}
           selectedStudent={selectedStudent}
@@ -99,7 +69,10 @@ const SchedulePage = ({
         />
       </Box>
       <Box sx={{ height: '100%', width: 70 }}>
-        {/* <ActionBar allSlots={allSlots} isFetchingAllSlots={isFetchingAllSlots} /> */}
+        <ActionBar
+          planningSlots={planningSlots}
+          setPlanningSlots={setPlanningSlots}
+        />
       </Box>
     </Box>
   );

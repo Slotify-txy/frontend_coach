@@ -4,15 +4,19 @@ export const studentApiSlice = api.injectEndpoints({
   reducerPath: 'studentApi',
   tagTypes: ['Students'],
   endpoints: (builder) => ({
-    getSchedulingStudents: builder.query({
-      query: ({ coachId }) => `student/coach/${coachId}/scheduling`,
+    getAvailableStudents: builder.query({
+      query: ({ coachId }) => `student/coach/${coachId}/available`,
       providesTags: (result) =>
         result
           ? [
               ...result.map(({ id }) => ({ type: 'Students', id })),
               { type: 'Students', id: 'LIST' },
+              { type: 'Students', id: 'AVAILABLE' },
             ]
-          : [{ type: 'Students', id: 'LIST' }],
+          : [
+              { type: 'Students', id: 'LIST' },
+              { type: 'Students', id: 'AVAILABLE' },
+            ],
     }),
     getStudentById: builder.query({
       query: ({ studentId }) => `student/${studentId}`,
@@ -35,7 +39,7 @@ export const studentApiSlice = api.injectEndpoints({
 });
 
 export const {
-  useGetSchedulingStudentsQuery,
+  useGetAvailableStudentsQuery,
   useGetStudentByIdQuery,
   useGetStudentsByCoachIdQuery,
 } = studentApiSlice;

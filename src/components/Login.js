@@ -9,7 +9,7 @@ import {
 import { GoogleLogin } from '@react-oauth/google';
 import { useLoginMutation } from '../app/services/authApiSlice';
 import { useSelector } from 'react-redux';
-import * as AuthStatus from '../common/constants/authStatus';
+import * as AUTH_STATUS from '../common/constants/authStatus';
 
 export default function Login() {
   const { token, status } = useSelector((state) => state.auth);
@@ -23,7 +23,7 @@ export default function Login() {
   return (
     <Dialog open={openLoginDialog}>
       <DialogTitle>
-        {status == AuthStatus.TOKEN_EXPIRED
+        {status == AUTH_STATUS.TOKEN_EXPIRED
           ? 'Session expired. Please log in again!'
           : 'Tada! Welcome to Slotify!'}
       </DialogTitle>

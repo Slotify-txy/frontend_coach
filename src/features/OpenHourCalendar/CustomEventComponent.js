@@ -2,26 +2,33 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { Box, IconButton, Tooltip, Typography } from '@mui/material';
 import moment from 'moment-timezone';
 import React, { useCallback, useState } from 'react';
-import * as SlotStatusConstants from '../../common/constants/slotStatus';
+import SLOT_STATUS from '../../common/constants/slotStatus';
 import {
   convertStatusToText,
   getStatusColor,
 } from '../../common/util/slotUtil';
+import { useDeleteOpenHourByIdMutation } from '../../app/services/openHourApiSlice';
 
-const CustomEventComponent = ({ event, setAvailableOpenHours }) => {
+const CustomEventComponent = ({ event, setPlanningOpenHours }) => {
   const start = moment(event.start).format('hh:mm A');
   const end = moment(event.end).format('hh:mm A');
   const status = event.status;
   const [onHover, setOnHover] = useState(false);
   const backgroundColor = getStatusColor(status);
+  const [deleteOpenHourById] = useDeleteOpenHourByIdMutation();
+
   const deleteOpenHour = useCallback(() => {
-    if (event.status !== SlotStatusConstants.AVAILABLE) {
-      return;
+    switch (event.status) {
+      case SLOT_STATUS.PLANNING_OPEN_HOUR:
+        setPlanningOpenHours((prev) =>
+          prev.filter((slot) => slot.id !== event.id)
+        );
+        break;
+      case SLOT_STATUS.OPEN_HOUR:
+        deleteOpenHourById(event.id);
+        break;
     }
-    setAvailableOpenHours((prev) =>
-      prev.filter((slot) => slot.id !== event.id)
-    );
-  }, [event]);
+  }, [event, setPlanningOpenHours]);
 
   return (
     <Box

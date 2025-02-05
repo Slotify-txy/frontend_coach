@@ -23,9 +23,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   dragToCalendar,
   dragWithinArranging,
-  dragWithinScheduling,
+  dragWithinAvailable,
   selectArrangingStudents,
-  selectSchedulingStudents,
+  selectAvailableStudents,
 } from './studentSlice';
 
 const StudentCard = ({
@@ -41,15 +41,15 @@ const StudentCard = ({
 }) => {
   const ref = useRef(null);
   const dispatch = useDispatch();
-  const schedulingStudents = useSelector(selectSchedulingStudents);
+  const availableStudents = useSelector(selectAvailableStudents);
   const arrangingStudents = useSelector(selectArrangingStudents);
   const moveCard = useCallback(
     (dragIndex, hoverIndex) => {
       dragType === DnDTypes.SCHEDULING_STUDENT
-        ? dispatch(dragWithinScheduling({ dragIndex, hoverIndex }))
+        ? dispatch(dragWithinAvailable({ dragIndex, hoverIndex }))
         : dispatch(dragWithinArranging({ dragIndex, hoverIndex }));
     },
-    [dragType, schedulingStudents, arrangingStudents]
+    [dragType, availableStudents, arrangingStudents]
   );
 
   const [{ handlerId }, drop] = useDrop({
@@ -172,7 +172,7 @@ const StudentCard = ({
               label={student.location}
               size="small"
               color="primary"
-              sx={{ fontSize: 11 }}
+              sx={{ fontSize: 11, height: 20 }}
             />
           </Stack>
         }

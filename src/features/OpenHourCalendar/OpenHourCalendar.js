@@ -11,11 +11,11 @@ import {
   openHourApiSlice as openHourApi,
   useGetOpenHoursQuery,
 } from '../../app/services/openHourApiSlice';
-import * as SlotStatusConstants from '../../common/constants/slotStatus';
+import SLOT_STATUS from '../../common/constants/slotStatus';
 import { convertSlots, isOverlapped } from '../../common/util/slotUtil';
 import CustomEventComponent from './CustomEventComponent';
 import StyledCalendar from '../../components/StyledCalendar';
-import * as AuthStatus from '../../common/constants/authStatus';
+import * as AUTH_STATUS from '../../common/constants/authStatus';
 
 const moment = extendMoment(Moment);
 const localizer = momentLocalizer(Moment);
@@ -23,8 +23,8 @@ const timeFormat = 'YYYY-MM-DD[T]HH:mm:ss';
 const DnDCalendar = withDragAndProp(Calendar);
 
 export default function OpenHourCalendar({
-  availableOpenHours,
-  setAvailableOpenHours,
+  planningOpenHours,
+  setPlanningOpenHours,
   openHourCalendarView,
   openHourCalendarDate,
 }) {
@@ -40,14 +40,14 @@ export default function OpenHourCalendar({
         result.data = convertSlots(result.data ?? []);
         return result;
       },
-      skip: status != AuthStatus.AUTHENTICATED || user == null,
+      skip: status != AUTH_STATUS.AUTHENTICATED || user == null,
     }
   );
   const onChangeOpenHourTime = useCallback(
     (start, end, id) => {
       if (
         isOverlapped(
-          [...publishedOpenHours, ...availableOpenHours],
+          [...publishedOpenHours, ...planningOpenHours],
           start,
           end,
           id
@@ -57,37 +57,37 @@ export default function OpenHourCalendar({
         return;
       }
 
-      setAvailableOpenHours((prev) => {
+      setPlanningOpenHours((prev) => {
         let slot = prev.find((slot) => slot.id === id);
         slot.start = start;
         slot.end = end;
         return prev;
       });
     },
-    [publishedOpenHours, availableOpenHours]
+    [publishedOpenHours, planningOpenHours]
   );
 
   const onSelect = useCallback(
     (start, end) => {
       if (
-        isOverlapped([...publishedOpenHours, ...availableOpenHours], start, end)
+        isOverlapped([...publishedOpenHours, ...planningOpenHours], start, end)
       ) {
         return;
       }
-      setAvailableOpenHours((prev) => [
+      setPlanningOpenHours((prev) => [
         ...prev,
         {
           id: uuidv4(),
           start: start,
           end: end,
-          status: SlotStatusConstants.AVAILABLE,
+          status: SLOT_STATUS.PLANNING_OPEN_HOUR,
           isDraggable: true,
         },
       ]);
     },
-    [publishedOpenHours, availableOpenHours]
+    [publishedOpenHours, planningOpenHours]
   );
-  console.log('publishedOpenHours', publishedOpenHours);
+
   if (isFetching) {
     return <Box>Loading...</Box>;
   }
@@ -96,7 +96,7 @@ export default function OpenHourCalendar({
     <Box style={{ height: '100%' }}>
       <StyledCalendar
         localizer={localizer}
-        events={[...publishedOpenHours, ...availableOpenHours]}
+        events={[...publishedOpenHours, ...planningOpenHours]}
         date={openHourCalendarDate}
         view={openHourCalendarView}
         onEventDrop={({ start, end, event }) => {
@@ -112,7 +112,7 @@ export default function OpenHourCalendar({
         }}
         createCustomEventComponent={(props) => (
           <CustomEventComponent
-            setAvailableOpenHours={setAvailableOpenHours}
+            setPlanningOpenHours={setPlanningOpenHours}
             {...props}
           />
         )}

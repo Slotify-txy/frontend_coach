@@ -2,7 +2,7 @@ import { InputAdornment, TextField } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 import {
   searchStudents,
-  selectSchedulingStudents,
+  selectAvailableStudents,
   setIsSearching,
 } from './studentSlice';
 import { useDispatch, useSelector } from 'react-redux';
@@ -11,7 +11,7 @@ import PeopleIcon from '@mui/icons-material/People';
 export default function StudentSearch() {
   const dispatch = useDispatch();
   const [searchText, setSearchText] = useState('');
-  const schedulingStudents = useSelector(selectSchedulingStudents);
+  const availableStudents = useSelector(selectAvailableStudents);
 
   useEffect(() => {
     dispatch(setIsSearching(searchText !== ''));

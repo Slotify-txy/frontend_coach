@@ -8,8 +8,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import AddIcon from '@mui/icons-material/Add';
 import ActionButton from '../../../components/ActionButton';
 import {
-  addAllArrangingStudentsToSchedulingStudents,
-  addAllSchedulingStudentsToArrangingStudents,
+  addAllArrangingStudentsToAvailableStudents,
+  addAllAvailableStudentsToArrangingStudents,
 } from './studentSlice';
 
 export const ActionBar = () => {
@@ -17,11 +17,11 @@ export const ActionBar = () => {
   const dispatch = useDispatch();
 
   const addAllStudents = useCallback(() => {
-    dispatch(addAllSchedulingStudentsToArrangingStudents());
+    dispatch(addAllAvailableStudentsToArrangingStudents());
   }, []);
 
   const removeAllStudents = useCallback(() => {
-    dispatch(addAllArrangingStudentsToSchedulingStudents());
+    dispatch(addAllArrangingStudentsToAvailableStudents());
   }, []);
 
   return (

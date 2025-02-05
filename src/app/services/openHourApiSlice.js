@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import * as SlotStatusConstants from '../../common/constants/slotStatus';
+import SLOT_STATUS from '../../common/constants/slotStatus';
 import { api } from './api';
 
 export const openHourApiSlice = api.injectEndpoints({
@@ -9,12 +9,13 @@ export const openHourApiSlice = api.injectEndpoints({
     getOpenHours: builder.query({
       query: ({ coachId }) => `/open-hour/coach/${coachId}`,
       transformResponse: (response) =>
-        response.map(({ startAt, endAt }) => ({
-          id: uuidv4(),
+        response.map(({ id, startAt, endAt }) => ({
+          // id: uuidv4(),
+          id,
           start: startAt,
           end: endAt,
           isDraggable: false,
-          status: SlotStatusConstants.PUBLISHED,
+          status: SLOT_STATUS.OPEN_HOUR,
         })),
       providesTags: (result) =>
         result
@@ -32,12 +33,13 @@ export const openHourApiSlice = api.injectEndpoints({
       }),
       invalidatesTags: [{ type: 'OpenHours', id: 'LIST' }],
     }),
-    deleteOpenHoursByCoachId: builder.mutation({
-      query: ({ coachId }) => ({
-        url: `/open-hour/coach/${coachId}`,
+    deleteOpenHourById: builder.mutation({
+      query: (id) => ({
+        url: `/open-hour/${id}`,
         method: 'DELETE',
+        responseHandler: (response) => response.text(), // by default, rtk query receives json response
       }),
-      invalidatesTags: [{ type: 'OpenHours', id: 'LIST' }],
+      invalidatesTags: (result, error, id) => [{ type: 'OpenHours', id }],
     }),
   }),
 });
@@ -45,5 +47,5 @@ export const openHourApiSlice = api.injectEndpoints({
 export const {
   useGetOpenHoursQuery,
   useCreateOpenHoursMutation,
-  useDeleteOpenHoursByCoachIdMutation,
+  useDeleteOpenHourByIdMutation,
 } = openHourApiSlice;

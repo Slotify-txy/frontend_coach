@@ -13,7 +13,7 @@ import ActionButton from '../../components/ActionButton';
 
 const timeFormat = 'YYYY-MM-DD[T]HH:mm:ss';
 
-export const ActionBar = ({ availableOpenHours, setAvailableOpenHours }) => {
+export const ActionBar = ({ planningOpenHours, setPlanningOpenHours }) => {
   const offset = [0, -14];
   const { user } = useSelector((state) => state.auth);
 
@@ -24,21 +24,21 @@ export const ActionBar = ({ availableOpenHours, setAvailableOpenHours }) => {
     try {
       await createOpenHours({
         coachId: user?.id,
-        openHours: availableOpenHours
+        openHours: planningOpenHours
           .filter(({ start }) => start > Date.now())
           .map(({ start, end }) => ({
             startAt: moment(start).format(timeFormat),
             endAt: moment(end).format(timeFormat),
           })),
       }).unwrap();
-      setAvailableOpenHours([]);
+      setPlanningOpenHours([]);
     } catch (err) {
       console.error('Failed to save the open hours: ', err);
     }
-  }, [availableOpenHours]);
+  }, [planningOpenHours]);
 
   const clearOpenHours = useCallback(() => {
-    setAvailableOpenHours([]);
+    setPlanningOpenHours([]);
   }, []);
 
   return (
