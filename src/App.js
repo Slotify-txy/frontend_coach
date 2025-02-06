@@ -6,8 +6,8 @@ import { NavBar } from './components/NavBar/NavBar';
 import OpenHour from './features/OpenHourCalendar/OpenHourPage';
 import SchedulePage from './features/ScheduleCalendar/SchedulePage';
 import moment from 'moment';
-import * as CalendarViewConstants from './common/constants/calendarView';
-import * as TabConstants from './common/constants/tab';
+import CALENDAR_VIEW from './common/constants/calendarView';
+import Tab from './common/constants/tab';
 import { useLocation } from 'react-router-dom';
 import Login from './components/Login';
 import AUTH_STATUS from './common/constants/authStatus';
@@ -28,7 +28,7 @@ function App() {
 
   const [openHourCalendarDate, setOpenHourCalendarDate] = useState(new Date());
   const [openHourCalendarView, setOpenHourCalendarView] = useState(
-    CalendarViewConstants.WEEK
+    CALENDAR_VIEW.WEEK
   );
   const [openHourCalendarRange, setOpenHourCalendarRange] = useState({
     start: moment().startOf('week'),
@@ -37,7 +37,7 @@ function App() {
 
   const [scheduleCalendarDate, setScheduleCalendarDate] = useState(new Date());
   const [scheduleCalendarView, setScheduleCalendarView] = useState(
-    CalendarViewConstants.WEEK
+    CALENDAR_VIEW.WEEK
   );
   const [scheduleCalendarRange, setScheduleCalendarRange] = useState({
     start: moment().startOf('week'),
@@ -73,7 +73,7 @@ function App() {
           justifyContent: 'center',
         }}
       >
-        {tab == TabConstants.OPEN_HOUR ? (
+        {tab == Tab.OPEN_HOUR ? (
           <NavBar
             calendarView={openHourCalendarView}
             setCalendarView={setOpenHourCalendarView}

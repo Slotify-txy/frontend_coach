@@ -16,7 +16,7 @@ import React, {
 } from 'react';
 import update from 'immutability-helper';
 import StudentCard from './StudentCard.js';
-import * as DnDTypes from '../../../common/constants/dnd';
+import DND_TYPE from '../../../common/constants/dnd';
 import { useDrop } from 'react-dnd';
 import {
   dragToArranging,
@@ -49,7 +49,7 @@ const AvailableStudentList = ({
     : availableStudents;
 
   const [, drop] = useDrop({
-    accept: DnDTypes.ARRANGING_STUDENT,
+    accept: DND_TYPE.ARRANGING_STUDENT,
     drop: ({ id }) => {
       const student = arrangingStudents.find((student) => student.id === id);
       if (student) {
@@ -80,7 +80,7 @@ const AvailableStudentList = ({
             index={index}
             droppedStudent={droppedStudent}
             setDroppedStudent={setDroppedStudent}
-            dragType={DnDTypes.SCHEDULING_STUDENT}
+            dragType={DND_TYPE.SCHEDULING_STUDENT}
           />
         </ListItem>
       ))}

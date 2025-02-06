@@ -15,7 +15,7 @@ import SLOT_STATUS from '../../common/constants/slotStatus';
 import { convertSlots, isOverlapped } from '../../common/util/slotUtil';
 import CustomEventComponent from './CustomEventComponent';
 import StyledCalendar from '../../components/StyledCalendar';
-import * as AUTH_STATUS from '../../common/constants/authStatus';
+import AUTH_STATUS from '../../common/constants/authStatus';
 
 const moment = extendMoment(Moment);
 const localizer = momentLocalizer(Moment);

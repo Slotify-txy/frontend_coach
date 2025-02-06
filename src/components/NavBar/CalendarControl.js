@@ -16,8 +16,8 @@ import TaskAltIcon from '@mui/icons-material/TaskAlt';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import React, { forwardRef, useCallback, useEffect, useState } from 'react';
 import moment from 'moment';
-import * as CalendarViewConstants from '../../common/constants/calendarView';
-import * as TabConstants from '../../common/constants/tab';
+import CALENDAR_VIEW from '../../common/constants/calendarView';
+import Tab from '../../common/constants/tab';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { useNavigate } from 'react-router-dom';
@@ -127,7 +127,7 @@ const CalendarNavigator = ({ setCalendarDate, calendarView }) => {
 };
 
 const Previous = ({ setCalendarDate, calendarView }) => {
-  const tooltipTitle = `Previous ${calendarView === CalendarViewConstants.WEEK ? 'week' : 'month'} `;
+  const tooltipTitle = `Previous ${calendarView === CALENDAR_VIEW.WEEK ? 'week' : 'month'} `;
 
   const onClick = useCallback(() => {
     setCalendarDate((prev) => moment(prev).subtract(1, calendarView).toDate());
@@ -142,7 +142,7 @@ const Previous = ({ setCalendarDate, calendarView }) => {
 };
 
 const Next = ({ setCalendarDate, calendarView }) => {
-  const tooltipTitle = `Next ${calendarView === CalendarViewConstants.WEEK ? 'week' : 'month'} `;
+  const tooltipTitle = `Next ${calendarView === CALENDAR_VIEW.WEEK ? 'week' : 'month'} `;
 
   const onClick = useCallback(() => {
     setCalendarDate((prev) => moment(prev).add(1, calendarView).toDate());
@@ -167,7 +167,7 @@ const Range = ({ calendarView, calendarRange }) => {
     const endMonth = endDate.month();
     const endYear = endDate.year();
     switch (calendarView) {
-      case CalendarViewConstants.WEEK:
+      case CALENDAR_VIEW.WEEK:
         if (startYear === endYear) {
           if (startMonth === endMonth) {
             setShortenedRange(`${startDate.format('MMMM')} ${startYear}`);
@@ -182,7 +182,7 @@ const Range = ({ calendarView, calendarRange }) => {
           );
         }
         break;
-      case CalendarViewConstants.MONTH:
+      case CALENDAR_VIEW.MONTH:
         setShortenedRange(`${startDate.format('MMM')} ${startYear}`);
         break;
       default:
@@ -202,7 +202,7 @@ const Range = ({ calendarView, calendarRange }) => {
 };
 
 const ViewSelection = ({ calendarView, setCalendarView }) => {
-  const views = [CalendarViewConstants.WEEK, CalendarViewConstants.MONTH];
+  const views = [CALENDAR_VIEW.WEEK, CALENDAR_VIEW.MONTH];
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -298,7 +298,7 @@ const TabSelection = ({ tab, setTab }) => {
         tooltipTitle={'Switch to Open Hour'}
         Button={() => (
           <ToggleButton
-            value={TabConstants.OPEN_HOUR}
+            value={Tab.OPEN_HOUR}
             sx={{
               borderTopLeftRadius: 30,
               borderBottomLeftRadius: 30,
@@ -315,7 +315,7 @@ const TabSelection = ({ tab, setTab }) => {
         tooltipTitle={'Switch to Schedule'}
         Button={() => (
           <ToggleButton
-            value={TabConstants.SCHEDULE}
+            value={Tab.SCHEDULE}
             sx={{
               borderTopRightRadius: 30,
               borderBottomRightRadius: 30,

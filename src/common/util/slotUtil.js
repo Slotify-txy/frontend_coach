@@ -144,7 +144,9 @@ export const getStatusColor = (status) => {
     case SLOT_STATUS.PLANNING_OPEN_HOUR:
     case SLOT_STATUS.PLANNING_SCHEDULE:
       return '#7986cb';
-    default:
-      return '#7986cb';
+    case SLOT_STATUS.REJECTED:
+      return '#616161';
+    case SLOT_STATUS.CANCELLED:
+      return '#d50100';
   }
 };

@@ -17,7 +17,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import * as DnDTypes from '../../../common/constants/dnd';
+import DND_TYPE from '../../../common/constants/dnd';
 import { useDrag, useDrop } from 'react-dnd';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -45,7 +45,7 @@ const StudentCard = ({
   const arrangingStudents = useSelector(selectArrangingStudents);
   const moveCard = useCallback(
     (dragIndex, hoverIndex) => {
-      dragType === DnDTypes.SCHEDULING_STUDENT
+      dragType === DND_TYPE.SCHEDULING_STUDENT
         ? dispatch(dragWithinAvailable({ dragIndex, hoverIndex }))
         : dispatch(dragWithinArranging({ dragIndex, hoverIndex }));
     },

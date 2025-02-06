@@ -1,2 +1,6 @@
-export const OPEN_HOUR = 'open_hour';
-export const SCHEDULE = 'schedule';
+const Tab = Object.freeze({
+  OPEN_HOUR: 'open_hour',
+  SCHEDULE: 'schedule',
+});
+
+export default Tab;

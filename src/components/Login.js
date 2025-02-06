@@ -9,7 +9,7 @@ import {
 import { GoogleLogin } from '@react-oauth/google';
 import { useLoginMutation } from '../app/services/authApiSlice';
 import { useSelector } from 'react-redux';
-import * as AUTH_STATUS from '../common/constants/authStatus';
+import AUTH_STATUS from '../common/constants/authStatus';
 
 export default function Login() {
   const { token, status } = useSelector((state) => state.auth);

@@ -24,6 +24,8 @@ import {
   selectAllStudents,
 } from './StudentList/studentSlice';
 import { useDeleteSlotByIdMutation } from '../../app/services/slotApiSlice';
+import EventAction from '../../components/EventAction';
+import CancelIcon from '@mui/icons-material/Cancel';
 
 const CustomEventComponent = ({
   event,
@@ -84,13 +86,13 @@ const CustomEventComponent = ({
       >
         <Stack direction="row" spacing={1} alignItems={'center'}>
           <Avatar
-            sx={{ width: 20, height: 20 }}
+            sx={{ width: 18, height: 18 }}
             src={student?.picture}
             alt={student?.name}
           />
           <Typography
             sx={{
-              fontSize: 15,
+              fontSize: 13,
               fontWeight: 700,
             }}
           >
@@ -100,27 +102,38 @@ const CustomEventComponent = ({
             label={student?.location}
             size="small"
             color="primary"
-            sx={{ fontSize: 12, height: 18 }}
+            sx={{ fontSize: 11, height: 18 }}
           />
         </Stack>
 
         {
           // todo: make ui better
-          hoveredEvent === event.id && (
-            <Tooltip title="Delete">
-              <IconButton
-                onClick={deleteSlot}
-                onMouseDown={(e) => e.stopPropagation()} // otherwise, it triggers with onDragStart
-                sx={{ padding: 0.2 }}
-                aria-label="delete"
-              >
-                <DeleteIcon sx={{ fontSize: 18 }} />
-              </IconButton>
-            </Tooltip>
-          )
+          hoveredEvent === event.id &&
+            (() => {
+              switch (status) {
+                case SLOT_STATUS.PLANNING_SCHEDULE:
+                case SLOT_STATUS.REJECTED:
+                  return (
+                    <EventAction
+                      title="Delete"
+                      onClick={deleteSlot}
+                      Icon={DeleteIcon}
+                    />
+                  );
+                case SLOT_STATUS.PENDING:
+                case SLOT_STATUS.APPOINTMENT:
+                  return (
+                    <EventAction
+                      title="Cancel"
+                      onClick={deleteSlot}
+                      Icon={CancelIcon}
+                    />
+                  );
+              }
+            })()
         }
       </Box>
-      <Typography sx={{ fontSize: 15 }}>
+      <Typography sx={{ fontSize: 13 }}>
         {start} - {end}
       </Typography>
     </Box>

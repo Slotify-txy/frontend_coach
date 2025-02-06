@@ -15,7 +15,7 @@ import {
 } from '../../common/util/slotUtil';
 import CustomEventComponent from './CustomEventComponent';
 import StyledCalendar from '../../components/StyledCalendar';
-import * as DnDTypes from '../../common/constants/dnd';
+import DND_TYPE from '../../common/constants/dnd';
 import { useDrop } from 'react-dnd';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectAllStudents } from './StudentList/studentSlice';
@@ -175,7 +175,7 @@ export default function ScheduleCalendar({
   // }, [draggedStudent]);
 
   const [{ handlerId }, drop] = useDrop({
-    accept: [DnDTypes.ARRANGING_STUDENT, DnDTypes.SCHEDULING_STUDENT],
+    accept: [DND_TYPE.ARRANGING_STUDENT, DND_TYPE.SCHEDULING_STUDENT],
   });
   /**
    * Need to figure out
