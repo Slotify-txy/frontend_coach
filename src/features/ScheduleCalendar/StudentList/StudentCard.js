@@ -1,5 +1,6 @@
 import {
   Avatar,
+  Badge,
   Box,
   Card,
   CardHeader,
@@ -40,6 +41,9 @@ const StudentCard = ({
   dragType,
 }) => {
   const ref = useRef(null);
+  const [numOfClassCanBeScheduled, setNumOfClassCanBeScheduled] = useState(
+    student.numOfClassCanBeScheduled
+  );
   const dispatch = useDispatch();
   const availableStudents = useSelector(selectAvailableStudents);
   const arrangingStudents = useSelector(selectArrangingStudents);
@@ -98,7 +102,7 @@ const StudentCard = ({
   const [{ isDragging }, drag] = useDrag({
     type: dragType,
     item: () => {
-      return { id: student.id, index, dragType };
+      return { id: student.id, index, dragType, setNumOfClassCanBeScheduled };
     },
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
@@ -142,7 +146,7 @@ const StudentCard = ({
       sx={{
         width: '100%',
         backgroundColor,
-        opacity: isDragging ? 0 : 1,
+        opacity: isDragging ? 0.4 : 1,
         '--Card-radius': '18px',
         '&:hover': {
           backgroundColor:
@@ -158,22 +162,28 @@ const StudentCard = ({
       <CardHeader
         sx={{ width: '100%', p: 1 }}
         avatar={
-          <Avatar
-            alt={student.name}
-            src={student.picture}
-            sx={{ bgcolor: blue[500], width: 30, height: 30 }}
-            aria-label="student_card"
-          />
+          <Badge
+            badgeContent={student.numOfClassCanBeScheduled}
+            color="primary"
+            invisible={student.numOfClassCanBeScheduled == 1}
+          >
+            <Avatar
+              alt={student.name}
+              src={student.picture}
+              sx={{ bgcolor: blue[500], width: 30, height: 30 }}
+              aria-label="student_card"
+            />
+          </Badge>
         }
         title={
           <Stack direction="row" spacing={1} alignItems="center">
             <Typography sx={{ fontSize: 13 }}>{student.name}</Typography>
-            <Chip
+            {/* <Chip
               label={student.location}
               size="small"
               color="primary"
               sx={{ fontSize: 11, height: 20 }}
-            />
+            /> */}
           </Stack>
         }
         subheader={

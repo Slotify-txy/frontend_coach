@@ -18,7 +18,10 @@ import StyledCalendar from '../../components/StyledCalendar';
 import DND_TYPE from '../../common/constants/dnd';
 import { useDrop } from 'react-dnd';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectAllStudents } from './StudentList/studentSlice';
+import {
+  decreaseStudentNumOfClassCanBeScheduled,
+  selectAllStudents,
+} from './StudentList/studentSlice';
 import { useGetSlotsQuery } from '../../app/services/slotApiSlice';
 import AUTH_STATUS from '../../common/constants/authStatus';
 import { all } from 'axios';
@@ -39,6 +42,7 @@ export default function ScheduleCalendar({
   setDroppedStudent,
 }) {
   const { user, status } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
 
   const {
     data: allSlots,
@@ -126,6 +130,7 @@ export default function ScheduleCalendar({
   const onDropFromOutside = useCallback(
     ({ start, end }) => {
       // By default, each class's duration is 1 hour
+      start = moment(start);
       end = moment(end).add(0.5, 'hours');
       if (
         !isWithinAvailableTimes(
@@ -138,14 +143,20 @@ export default function ScheduleCalendar({
         return;
       }
       setDroppedStudent(draggedStudent.id);
+
+      const slot = studentAvailableSlots[draggedStudent.id].find((slot) =>
+        moment(slot.start).isSameOrBefore(start)
+      );
+
       setPlanningSlots((prev) => [
         ...prev,
         {
           id: uuidv4(),
           studentId: draggedStudent.id,
-          start: moment(start).toDate(),
+          start: start.toDate(),
           end: end.toDate(),
           status: SLOT_STATUS.PLANNING_SCHEDULE,
+          classId: slot.classId,
           isDraggable: true,
         },
       ]);
@@ -175,7 +186,7 @@ export default function ScheduleCalendar({
   // }, [draggedStudent]);
 
   const [{ handlerId }, drop] = useDrop({
-    accept: [DND_TYPE.ARRANGING_STUDENT, DND_TYPE.SCHEDULING_STUDENT],
+    accept: [DND_TYPE.ARRANGING_STUDENT],
   });
   /**
    * Need to figure out

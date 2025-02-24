@@ -1,6 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
 import { api } from './api';
-import * as SlotStatusConstants from '../../common/constants/slotStatus';
 
 export const slotApiSlice = api.injectEndpoints({
   reducerPath: 'slotApi',
@@ -9,17 +8,20 @@ export const slotApiSlice = api.injectEndpoints({
     getSlots: builder.query({
       query: ({ coachId }) => `/slot/coach/${coachId}`,
       transformResponse: (response) => {
-        return response.map(({ id, startAt, endAt, status, studentId }) => {
-          return {
-            // id: uuidv4(),
-            id,
-            start: startAt,
-            end: endAt,
-            studentId,
-            status,
-            isDraggable: false,
-          };
-        });
+        return response.map(
+          ({ id, startAt, endAt, status, studentId, classId }) => {
+            return {
+              // id: uuidv4(),
+              id,
+              start: startAt,
+              end: endAt,
+              studentId,
+              classId,
+              status,
+              isDraggable: false,
+            };
+          }
+        );
       },
       providesTags: (result) =>
         result

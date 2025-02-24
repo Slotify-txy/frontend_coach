@@ -15,13 +15,17 @@ import {
   convertStatusToText,
   getStatusColor,
 } from '../../common/util/slotUtil';
-import { useGetStudentByIdQuery } from '../../app/services/studentApiSlice';
+import {
+  studentApiSlice,
+  useGetStudentByIdQuery,
+} from '../../app/services/studentApiSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import * as AUTH_STATUS from '../../common/constants/authStatus';
 import {
   addArrangingStudent,
   addAvailableStudent,
   selectAllStudents,
+  addToArrangingFromCalendar,
 } from './StudentList/studentSlice';
 import { useDeleteSlotByIdMutation } from '../../app/services/slotApiSlice';
 import EventAction from '../../components/EventAction';
@@ -52,9 +56,24 @@ const CustomEventComponent = ({
       return;
     }
     setPlanningSlots((prev) => prev.filter((slot) => slot.id !== event.id));
-    dispatch(addAvailableStudent(student));
+    dispatch(addToArrangingFromCalendar({ id: event.studentId }));
     setSelectedStudent(null);
   }, [event, setPlanningSlots, setSelectedStudent]);
+
+  const buildEventAction = useCallback(() => {
+    switch (status) {
+      case SLOT_STATUS.PLANNING_SCHEDULE:
+      case SLOT_STATUS.REJECTED:
+        return (
+          <EventAction title="Delete" onClick={deleteSlot} Icon={DeleteIcon} />
+        );
+      case SLOT_STATUS.PENDING:
+      case SLOT_STATUS.APPOINTMENT:
+        return (
+          <EventAction title="Cancel" onClick={deleteSlot} Icon={CancelIcon} />
+        );
+    }
+  }, [status, deleteSlot]);
 
   return (
     <Box
@@ -98,39 +117,17 @@ const CustomEventComponent = ({
           >
             {student?.name}
           </Typography>
-          <Chip
+          {/* <Chip
             label={student?.location}
             size="small"
             color="primary"
             sx={{ fontSize: 11, height: 18 }}
-          />
+          /> */}
         </Stack>
 
         {
           // todo: make ui better
-          hoveredEvent === event.id &&
-            (() => {
-              switch (status) {
-                case SLOT_STATUS.PLANNING_SCHEDULE:
-                case SLOT_STATUS.REJECTED:
-                  return (
-                    <EventAction
-                      title="Delete"
-                      onClick={deleteSlot}
-                      Icon={DeleteIcon}
-                    />
-                  );
-                case SLOT_STATUS.PENDING:
-                case SLOT_STATUS.APPOINTMENT:
-                  return (
-                    <EventAction
-                      title="Cancel"
-                      onClick={deleteSlot}
-                      Icon={CancelIcon}
-                    />
-                  );
-              }
-            })()
+          hoveredEvent === event.id && buildEventAction()
         }
       </Box>
       <Typography sx={{ fontSize: 13 }}>

@@ -16,14 +16,15 @@ import React, {
 } from 'react';
 import update from 'immutability-helper';
 import StudentCard from './StudentCard.js';
-import DND_TYPE from '../../../common/constants/dnd';
+import DND_TYPE from '../../../common/constants/dnd.js';
 import { useDrop } from 'react-dnd';
 import {
-  dragToArranging,
+  dragToArrangingFromAvailable,
   selectArrangingStudents,
   selectFilteredAvailableStudents,
   selectIsSearching,
   selectAvailableStudents,
+  dragToAvailableFromArranging,
 } from './studentSlice.js';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectCurrentUser } from '../../auth/authSlice.js';
@@ -51,13 +52,13 @@ const AvailableStudentList = ({
   const [, drop] = useDrop({
     accept: DND_TYPE.ARRANGING_STUDENT,
     drop: ({ id }) => {
-      const student = arrangingStudents.find((student) => student.id === id);
-      if (student) {
-        const index = arrangingStudents.findIndex(
-          (student) => student.id === id
-        );
-        dispatch(dragToArranging({ index, student }));
-      }
+      // const student = arrangingStudents.find((student) => student.id === id);
+      // if (student) {
+      //   const index = arrangingStudents.findIndex(
+      //     (student) => student.id === id
+      //   );
+      dispatch(dragToAvailableFromArranging({ id }));
+      // }
     },
   });
   return (

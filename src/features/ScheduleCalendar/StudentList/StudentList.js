@@ -17,7 +17,7 @@ import React, {
   useState,
 } from 'react';
 import { ActionBar } from './ActionBar';
-import SchedulingStudentList from './SchedulingStudentList';
+import AvailableStudentList from './AvailableStudentList';
 import ArrangingStudentList from './ArrangingStudentList';
 import StudentSearch from './StudentSearch';
 import { useGetSlotsQuery } from '../../../app/services/slotApiSlice';
@@ -28,6 +28,7 @@ import {
   useGetStudentsByCoachIdQuery,
 } from '../../../app/services/studentApiSlice';
 import LoadingSpinner from '../../../components/LoadingSpinner';
+import DateTimeRangePicker from './DateTimeRangePicker';
 
 const StudentList = ({
   droppedStudent,
@@ -56,41 +57,42 @@ const StudentList = ({
 
   return (
     <Box sx={{ height: '100%' }}>
-      {/* <Stack direction="row" sx={{ height }}> */}
-      <Box sx={{ pl: 1 }}>
-        <StudentSearch />
-      </Box>
-      {/* hide arrangingStudentList for now */}
-      {/* <Box sx={{ height: '50%' }}>
-          <ActionBar />
-        </Box> */}
-      {/* </Stack> */}
-      <Stack direction="row" sx={{ height: `calc(100% - ${height}px)` }}>
-        <Box sx={{ width: '100%', overflowY: 'auto' }}>
-          {isFetching ? (
-            <LoadingSpinner />
-          ) : (
-            <SchedulingStudentList
-              droppedStudent={droppedStudent}
-              setDroppedStudent={setDroppedStudent}
-              draggedStudent={draggedStudent}
-              setDraggedStudent={setDraggedStudent}
-              selectedStudent={selectedStudent}
-              setSelectedStudent={setSelectedStudent}
-            />
-          )}
+      <Stack direction="row" spacing={2} sx={{ height, px: 1 }}>
+        <Box sx={{ width: '50%' }}>
+          <StudentSearch />
         </Box>
         {/* hide arrangingStudentList for now */}
-        {/* <Box sx={{ width: '50%', overflowY: 'auto' }}>
-          <ArrangingStudentList
-            droppedStudent={droppedStudent}
-            setDroppedStudent={setDroppedStudent}
-            draggedStudent={draggedStudent}
-            setDraggedStudent={setDraggedStudent}
-            selectedStudent={selectedStudent}
-            setSelectedStudent={setSelectedStudent}
-          />
-        </Box> */}
+        <Box sx={{ width: '50%' }}>
+          <ActionBar />
+        </Box>
+      </Stack>
+      <Stack direction="row" sx={{ height: `calc(100% - ${height}px)` }}>
+        {isFetching ? (
+          <LoadingSpinner />
+        ) : (
+          <>
+            <Box sx={{ width: '50%', overflowY: 'auto' }}>
+              <AvailableStudentList
+                droppedStudent={droppedStudent}
+                setDroppedStudent={setDroppedStudent}
+                draggedStudent={draggedStudent}
+                setDraggedStudent={setDraggedStudent}
+                selectedStudent={selectedStudent}
+                setSelectedStudent={setSelectedStudent}
+              />
+            </Box>
+            <Box sx={{ width: '50%', overflowY: 'auto' }}>
+              <ArrangingStudentList
+                droppedStudent={droppedStudent}
+                setDroppedStudent={setDroppedStudent}
+                draggedStudent={draggedStudent}
+                setDraggedStudent={setDraggedStudent}
+                selectedStudent={selectedStudent}
+                setSelectedStudent={setSelectedStudent}
+              />
+            </Box>
+          </>
+        )}
       </Stack>
     </Box>
   );

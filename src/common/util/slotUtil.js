@@ -1,5 +1,6 @@
 import moment from 'moment';
 import SLOT_STATUS from '../../common/constants/slotStatus';
+import { v4 as uuidv4 } from 'uuid';
 
 export const convertSlots = (data) => {
   return data.map((slot) => {
@@ -92,7 +93,7 @@ export const isWithinAvailableTimes = (
 };
 
 /**
- * Get SCHEDULING slots for each student
+ * Combine available slots for each student
  * @returns { studentId: [slots] }
  */
 export const computeStudentAvailableSlots = (slots) => {
@@ -109,27 +110,214 @@ export const computeStudentAvailableSlots = (slots) => {
 
   for (const studentId in ret) {
     ret[studentId].sort((a, b) => moment(a.start) - moment(b.start));
-    const ranges = ret[studentId].map((slot) =>
-      moment.range(moment(slot.start), moment(slot.end))
-    );
+    const ranges = ret[studentId].map((slot) => {
+      return {
+        slotRange: moment.range(moment(slot.start), moment(slot.end)),
+        classId: slot.classId,
+      };
+    });
     const joinedRanges = [];
     for (let i = 0; i < ranges.length; i++) {
-      let range = ranges[i];
-      while (i + 1 < ranges.length && range.adjacent(ranges[i + 1])) {
-        range = range.add(ranges[i + 1], { adjacent: true });
+      let { slotRange, classId } = ranges[i];
+      while (
+        i + 1 < ranges.length &&
+        classId == ranges[i + 1].classId &&
+        slotRange.adjacent(ranges[i + 1].slotRange)
+      ) {
+        slotRange = slotRange.add(ranges[i + 1].slotRange, { adjacent: true });
         i += 1;
       }
-      joinedRanges.push(range);
+      joinedRanges.push({ ...slotRange, classId });
     }
     ret[studentId] = joinedRanges;
   }
-
   return ret;
 };
 
 export const getUnschedulingSlots = (slots) => {
   slots = slots ?? [];
   return slots.filter((slot) => slot.status !== SLOT_STATUS.AVAILABLE);
+};
+
+export const autoSchedule = (students, slots) => {
+  const studentMap = new Map(
+    students.map((s) => [s.id, s.numOfClassCanBeScheduled])
+  );
+  // console.log('studentMap', studentMap);
+
+  const scheduled = [];
+
+  const scheduledClasses = new Set();
+  const statusSet = new Set([
+    SLOT_STATUS.PENDING,
+    SLOT_STATUS.APPOINTMENT,
+    SLOT_STATUS.REJECTED,
+    SLOT_STATUS.CANCELLED,
+  ]);
+  slots.forEach((slot) => {
+    if (statusSet.has(slot.status)) {
+      scheduledClasses.add(slot.classId);
+    }
+  });
+
+  const forbiddenStartTime = new Set();
+  // update forbiddenStartTime
+  slots.forEach((slot) => {
+    if (slot.status != SLOT_STATUS.AVAILABLE) {
+      let start = moment(slot.start);
+      const slotEnd = moment(slot.end);
+      forbiddenStartTime.add(start.subtract(0.5, 'hours').toString());
+
+      while (start.clone().add(0.5, 'hours').isSameOrBefore(slotEnd)) {
+        forbiddenStartTime.add(start.toString());
+        start.add(0.5, 'hours');
+      }
+    }
+  });
+
+  let filteredSlots = slots.filter(
+    (slot) =>
+      moment(slot.start).isSameOrAfter(moment()) &&
+      studentMap.has(slot.studentId)
+  );
+
+  // console.log('filteredSlots', filteredSlots);
+
+  const updateHelperObjs = (
+    slots,
+    forbiddenStartTime,
+    timeMap,
+    impactMap,
+    studentToCountOfStartMap,
+    countToStudentsMap
+  ) => {
+    // console.log('scheduledClasses', scheduledClasses);
+
+    slots = slots.filter(
+      (slot) =>
+        !scheduledClasses.has(slot.classId) &&
+        slot.status == SLOT_STATUS.AVAILABLE
+    );
+
+    // console.log('slots', slots);
+    slots.forEach((slot) => {
+      let start = moment(slot.start);
+      const slotEnd = moment(slot.end);
+      const studentId = slot.studentId;
+      while (start.clone().add(1, 'hours').isSameOrBefore(slotEnd)) {
+        const startString = start.toString();
+        if (forbiddenStartTime.has(startString)) {
+          start.add(0.5, 'hours');
+          continue;
+        }
+
+        if (!studentToCountOfStartMap.has(studentId)) {
+          studentToCountOfStartMap.set(studentId, 1);
+        } else {
+          studentToCountOfStartMap.set(
+            studentId,
+            studentToCountOfStartMap.get(studentId) + 1
+          );
+        }
+
+        if (!countToStudentsMap.has(startString))
+          countToStudentsMap.set(startString, []);
+        countToStudentsMap.get(startString).push(studentId);
+
+        if (!timeMap.has(startString)) timeMap.set(startString, []);
+        timeMap.get(startString).push(slot);
+
+        start.add(0.5, 'hours');
+      }
+    });
+
+    for (const [start, slots] of timeMap) {
+      let impact = slots.length;
+      const startTime = moment(new Date(start));
+      if (timeMap.has(startTime.clone().subtract(0.5, 'hours').toString()))
+        impact += timeMap.get(
+          startTime.clone().subtract(0.5, 'hours').toString()
+        ).length;
+      if (timeMap.has(startTime.clone().add(0.5, 'hours').toString()))
+        impact += timeMap.get(
+          startTime.clone().add(0.5, 'hours').toString()
+        ).length;
+      impactMap.set(start, impact);
+    }
+  };
+
+  while (studentMap.size != 0) {
+    const timeMap = new Map();
+    const impactMap = new Map();
+    const studentToCountOfStartMap = new Map();
+    const countToStudentsMap = new Map();
+
+    updateHelperObjs(
+      filteredSlots,
+      forbiddenStartTime,
+      timeMap,
+      impactMap,
+      studentToCountOfStartMap,
+      countToStudentsMap
+    );
+    // console.log('studentMap', studentMap);
+    // console.log('forbiddenStartTime', forbiddenStartTime);
+    // console.log('timeMap', timeMap);
+    // console.log('impactMap', impactMap);
+    // console.log('studentToCountOfStartMap', studentToCountOfStartMap);
+    // console.log('countToStudentsMap', countToStudentsMap);
+    if (impactMap.size == 0) return scheduled;
+    const sortedTimes = [...impactMap.entries()].sort((a, b) => {
+      if (a[1] == b[1]) {
+        return new Date(a) - new Date(b);
+      }
+      return a[1] - b[1];
+    });
+    // console.log('sortedTimes', sortedTimes);
+    const startTime = sortedTimes[0][0];
+    const { studentId, classId } = timeMap
+      .get(startTime)
+      .sort(
+        (a, b) =>
+          studentToCountOfStartMap.get(a.studentId) -
+          studentToCountOfStartMap.get(b.studentId)
+      )[0];
+
+    scheduled.push({
+      id: uuidv4(),
+      studentId: studentId,
+      start: new Date(startTime),
+      end: moment(new Date(startTime)).add(1, 'hours').toDate(),
+      status: SLOT_STATUS.PLANNING_SCHEDULE,
+      classId: classId,
+      isDraggable: true,
+    });
+    // console.log('scheduled', scheduled);
+    const numOfClassCanBeScheduled = studentMap.get(studentId);
+    if (numOfClassCanBeScheduled == 1) {
+      studentMap.delete(studentId);
+    } else {
+      studentMap.set(studentId, numOfClassCanBeScheduled - 1);
+    }
+    // console.log(studentMap.size, studentMap);
+
+    filteredSlots = filteredSlots.filter((slot) => slot.classId != classId);
+    scheduledClasses.add(classId);
+
+    // update forbiddenStartTime
+    forbiddenStartTime.add(startTime);
+    forbiddenStartTime.add(
+      moment(new Date(startTime)).add(0.5, 'hours').toString()
+    );
+    forbiddenStartTime.add(
+      moment(new Date(startTime)).subtract(0.5, 'hours').toString()
+    );
+
+    // console.log('filteredSlots', filteredSlots);
+    // console.log('scheduledClasses', scheduledClasses);
+  }
+
+  return scheduled;
 };
 
 export const getStatusColor = (status) => {

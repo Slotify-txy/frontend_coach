@@ -11,10 +11,8 @@ import PeopleIcon from '@mui/icons-material/People';
 export default function StudentSearch() {
   const dispatch = useDispatch();
   const [searchText, setSearchText] = useState('');
-  const availableStudents = useSelector(selectAvailableStudents);
 
   useEffect(() => {
-    dispatch(setIsSearching(searchText !== ''));
     dispatch(searchStudents(searchText));
   }, [searchText]);
 
