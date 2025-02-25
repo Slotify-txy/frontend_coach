@@ -59,6 +59,7 @@ export const IsCalendarSlotWithinAvailableTimes = (slots, date) => {
       date.isBefore(end, 'minute')
     ) {
       ret.isAvailable = true;
+      ret.classId = slot.classId;
     }
     if (!ret.isStart && date.isSame(start, 'minute')) {
       ret.isStart = true;

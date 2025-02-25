@@ -72,10 +72,6 @@ export default function ScheduleCalendar({
 
   const slotPropGetter = useCallback(
     (date) => {
-      const style = {
-        borderLeft: '2px solid green',
-        borderRight: '2px solid green',
-      };
       const student = draggedStudent == null ? selectedStudent : draggedStudent;
       if (student == null) {
         return;
@@ -89,14 +85,20 @@ export default function ScheduleCalendar({
       if (!ret.isAvailable) {
         return;
       }
-      // todo: dynamically set color
 
+      // todo: dynamically set color
+      const backgroundStyle = `2px solid #${ret.classId.slice(-6)}`;
+
+      const style = {
+        borderLeft: backgroundStyle,
+        borderRight: backgroundStyle,
+      };
       if (ret.isStart) {
-        style.borderTop = '2px solid green';
+        style.borderTop = backgroundStyle;
         style.borderRadius = '5px 5px 0 0';
       }
       if (ret.isEnd) {
-        style.borderBottom = '2px solid green';
+        style.borderBottom = backgroundStyle;
         style.borderRadius = '0 0 5px 5px';
       }
       return { style };
