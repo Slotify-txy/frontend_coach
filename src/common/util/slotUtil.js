@@ -163,10 +163,23 @@ export const autoSchedule = (students, slots) => {
   const forbiddenStartTime = new Set();
   // update forbiddenStartTime
   slots.forEach((slot) => {
-    if (slot.status != SLOT_STATUS.AVAILABLE) {
+    if (
+      slot.status == SLOT_STATUS.PENDING ||
+      slot.status == SLOT_STATUS.APPOINTMENT
+    ) {
       let start = moment(slot.start);
       const slotEnd = moment(slot.end);
-      forbiddenStartTime.add(start.subtract(0.5, 'hours').toString());
+      forbiddenStartTime.add(start.clone().subtract(0.5, 'hours').toString());
+
+      // at least a 30-minute break if the class starts after 5pm
+      if (start.hour() > 17) {
+        forbiddenStartTime.add(start.clone().subtract(1, 'hours').toString());
+      }
+
+      // at least a 30-minute break if the class ends after 5pm
+      if (slotEnd.hour() >= 17) {
+        forbiddenStartTime.add(slotEnd.toString());
+      }
 
       while (start.clone().add(0.5, 'hours').isSameOrBefore(slotEnd)) {
         forbiddenStartTime.add(start.toString());
@@ -220,8 +233,9 @@ export const autoSchedule = (students, slots) => {
           );
         }
 
-        if (!countToStudentsMap.has(startString))
+        if (!countToStudentsMap.has(startString)) {
           countToStudentsMap.set(startString, []);
+        }
         countToStudentsMap.get(startString).push(studentId);
 
         if (!timeMap.has(startString)) timeMap.set(startString, []);
@@ -242,6 +256,22 @@ export const autoSchedule = (students, slots) => {
         impact += timeMap.get(
           startTime.clone().add(0.5, 'hours').toString()
         ).length;
+
+      // at least a 30-minute break if the class starts after 5pm
+      if (startTime.hour() > 17) {
+        if (timeMap.has(startTime.clone().subtract(1, 'hours').toString())) {
+          impact += timeMap.get(
+            startTime.clone().subtract(1, 'hours').toString()
+          ).length;
+        }
+
+        if (timeMap.has(startTime.clone().add(1, 'hours').toString())) {
+          impact += timeMap.get(
+            startTime.clone().add(1, 'hours').toString()
+          ).length;
+        }
+      }
+
       impactMap.set(start, impact);
     }
   };
@@ -283,11 +313,13 @@ export const autoSchedule = (students, slots) => {
           studentToCountOfStartMap.get(b.studentId)
       )[0];
 
+    const start = moment(new Date(startTime));
+
     scheduled.push({
       id: uuidv4(),
       studentId: studentId,
       start: new Date(startTime),
-      end: moment(new Date(startTime)).add(1, 'hours').toDate(),
+      end: start.clone().add(1, 'hours').toDate(),
       status: SLOT_STATUS.PLANNING_SCHEDULE,
       classId: classId,
       isDraggable: true,
@@ -306,12 +338,18 @@ export const autoSchedule = (students, slots) => {
 
     // update forbiddenStartTime
     forbiddenStartTime.add(startTime);
-    forbiddenStartTime.add(
-      moment(new Date(startTime)).add(0.5, 'hours').toString()
-    );
-    forbiddenStartTime.add(
-      moment(new Date(startTime)).subtract(0.5, 'hours').toString()
-    );
+    forbiddenStartTime.add(start.clone().add(0.5, 'hours').toString());
+    forbiddenStartTime.add(start.clone().subtract(0.5, 'hours').toString());
+
+    // at least a 30-minute break if the class starts after 5pm
+    if (start.hour() > 17) {
+      forbiddenStartTime.add(start.clone().subtract(1, 'hours').toString());
+    }
+
+    // at least a 30-minute break if the class ends after 5pm
+    if (start.clone().add(1, 'hours').hour() >= 17) {
+      forbiddenStartTime.add(start.clone().add(1, 'hours').toString());
+    }
 
     // console.log('filteredSlots', filteredSlots);
     // console.log('scheduledClasses', scheduledClasses);

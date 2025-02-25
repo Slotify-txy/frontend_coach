@@ -5,7 +5,6 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useGetSlotsQuery } from '../../app/services/slotApiSlice';
 import ScheduleCalendar from './ScheduleCalendar';
 // import StudentList from './StudentList';
-import * as AUTH_STATUS from '../../common/constants/authStatus';
 import { useSelector } from 'react-redux';
 import {
   useGetAvailableStudentsQuery,
@@ -15,6 +14,7 @@ import StudentList from './StudentList/StudentList';
 import { ActionBar } from './ActionBar';
 import { useGetOpenHoursQuery } from '../../app/services/openHourApiSlice';
 import { convertSlots } from '../../common/util/slotUtil';
+import AUTH_STATUS from '../../common/constants/authStatus';
 
 const moment = extendMoment(Moment);
 

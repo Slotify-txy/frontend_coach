@@ -11,19 +11,9 @@ import {
 import moment from 'moment-timezone';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import SLOT_STATUS from '../../common/constants/slotStatus';
-import {
-  convertStatusToText,
-  getStatusColor,
-} from '../../common/util/slotUtil';
-import {
-  studentApiSlice,
-  useGetStudentByIdQuery,
-} from '../../app/services/studentApiSlice';
+import { getStatusColor } from '../../common/util/slotUtil';
 import { useDispatch, useSelector } from 'react-redux';
-import * as AUTH_STATUS from '../../common/constants/authStatus';
 import {
-  addArrangingStudent,
-  addAvailableStudent,
   selectAllStudents,
   addToArrangingFromCalendar,
 } from './StudentList/studentSlice';

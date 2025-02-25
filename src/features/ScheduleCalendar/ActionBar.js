@@ -4,14 +4,14 @@ import AutoModeIcon from '@mui/icons-material/AutoMode';
 import { Box, IconButton, Stack, Tooltip } from '@mui/material';
 import { blue, green, grey } from '@mui/material/colors';
 import moment from 'moment';
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   useCreateOpenHoursMutation,
   useDeleteOpenHoursByCoachIdMutation,
 } from '../../app/services/openHourApiSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  addAvailableStudent,
+  addToArrangingFromCalendar,
   selectAllStudents,
   selectArrangingStudents,
   updateArrangingStudent,
@@ -30,6 +30,8 @@ export const ActionBar = ({ planningSlots, setPlanningSlots }) => {
   const { user, status } = useSelector((state) => state.auth);
   const students = useSelector(selectAllStudents);
   const arrangingStudents = useSelector(selectArrangingStudents);
+  const [shouldTriggerAutoSchedule, setShouldTriggerAutoSchedule] =
+    useState(false);
   const { data: allSlots } = useGetSlotsQuery(
     { coachId: user?.id },
     {
@@ -63,10 +65,7 @@ export const ActionBar = ({ planningSlots, setPlanningSlots }) => {
 
   const clearArrangingSlots = useCallback(() => {
     planningSlots.forEach((slot) => {
-      const student = students.find((student) => student.id === slot.studentId);
-      if (student) {
-        dispatch(addAvailableStudent(student));
-      }
+      dispatch(addToArrangingFromCalendar({ id: slot.studentId }));
     });
     setPlanningSlots([]);
   }, [planningSlots, setPlanningSlots, students]);
@@ -88,7 +87,15 @@ export const ActionBar = ({ planningSlots, setPlanningSlots }) => {
     });
     dispatch(updateArrangingStudent(arrangingStudentsCopy));
     setPlanningSlots(scheduledClasses);
-  }, [arrangingStudents, allSlots]);
+  }, [arrangingStudents, allSlots, setPlanningSlots]);
+
+  // redux doesn't update arrangingStudents immediately after clearArrangingSlots, so we need to use a flag to trigger autoSchedule
+  useEffect(() => {
+    if (shouldTriggerAutoSchedule) {
+      autoScheduleAction();
+      setShouldTriggerAutoSchedule(false);
+    }
+  }, [shouldTriggerAutoSchedule]);
 
   return (
     <Stack>
@@ -96,7 +103,10 @@ export const ActionBar = ({ planningSlots, setPlanningSlots }) => {
         color={blue[700]}
         icon={<AutoModeIcon />}
         tooltip={'Auto Schedule'}
-        callback={autoScheduleAction}
+        callback={() => {
+          clearArrangingSlots();
+          setShouldTriggerAutoSchedule(true);
+        }}
       />
       <Action
         color={green[700]}

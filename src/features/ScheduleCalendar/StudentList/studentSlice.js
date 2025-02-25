@@ -47,16 +47,16 @@ const slice = createSlice({
     //           .includes(state.searchText.toLowerCase()));
     //   });
     // },
-    addAvailableStudent: (state, { payload }) => {
-      if (state.isSearching) {
-        state.filteredAvailableStudents.unshift(payload);
-      } else {
-        state.availableStudents.unshift(payload);
-      }
-    },
-    addArrangingStudent: (state, { payload }) => {
-      state.arrangingStudents.unshift(payload);
-    },
+    // addAvailableStudent: (state, { payload }) => {
+    //   if (state.isSearching) {
+    //     state.filteredAvailableStudents.unshift(payload);
+    //   } else {
+    //     state.availableStudents.unshift(payload);
+    //   }
+    // },
+    // addArrangingStudent: (state, { payload }) => {
+    //   state.arrangingStudents.unshift(payload);
+    // },
     updateArrangingStudent: (state, { payload }) => {
       state.arrangingStudents = payload;
     },
@@ -307,8 +307,6 @@ const updateFilteredAvailableStudents = (state) => {
 
 export const {
   searchStudents,
-  addAvailableStudent,
-  addArrangingStudent,
   updateArrangingStudent,
   addAllAvailableStudentsToArrangingStudents,
   addAllArrangingStudentsToAvailableStudents,
