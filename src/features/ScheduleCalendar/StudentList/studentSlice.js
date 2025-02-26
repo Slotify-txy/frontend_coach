@@ -60,6 +60,9 @@ const slice = createSlice({
     updateArrangingStudent: (state, { payload }) => {
       state.arrangingStudents = payload;
     },
+    clearArrangingStudent: (state) => {
+      state.arrangingStudents = [];
+    },
     addAllAvailableStudentsToArrangingStudents: (state) => {
       state.arrangingStudents = [
         ...state.arrangingStudents,
@@ -268,6 +271,7 @@ const slice = createSlice({
         (state, { payload }) => {
           state.availableStudents = payload;
           state.filteredAvailableStudents = state.availableStudents;
+          state.arrangingStudents = [];
         }
       );
     // .addMatcher(
@@ -308,6 +312,7 @@ const updateFilteredAvailableStudents = (state) => {
 export const {
   searchStudents,
   updateArrangingStudent,
+  clearArrangingStudent,
   addAllAvailableStudentsToArrangingStudents,
   addAllArrangingStudentsToAvailableStudents,
   dragWithinAvailable,

@@ -12,6 +12,7 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import {
   addToArrangingFromCalendar,
+  clearArrangingStudent,
   selectAllStudents,
   selectArrangingStudents,
   updateArrangingStudent,
@@ -57,9 +58,10 @@ export const ActionBar = ({ planningSlots, setPlanningSlots }) => {
           status: SLOT_STATUS.PENDING,
         })),
       }).unwrap();
-      setPlanningSlots([]);
     } catch (err) {
       console.error('Failed to save the open hours: ', err);
+    } finally {
+      setPlanningSlots([]);
     }
   }, [planningSlots, user]);
 

@@ -70,6 +70,21 @@ export default function ScheduleCalendar({
     [allSlots]
   );
 
+  const scheduledClasses = useMemo(() => {
+    if (!isAllSlotsSuccess) return new Set();
+
+    return new Set([
+      ...allSlots
+        .filter(
+          (slot) =>
+            slot.status === SLOT_STATUS.PENDING ||
+            slot.status === SLOT_STATUS.APPOINTMENT
+        )
+        .map((slot) => slot.classId),
+      ...planningSlots.map((slot) => slot.classId),
+    ]);
+  }, [isAllSlotsSuccess, allSlots, planningSlots]);
+
   const slotPropGetter = useCallback(
     (date) => {
       const student = draggedStudent == null ? selectedStudent : draggedStudent;
@@ -107,26 +122,43 @@ export default function ScheduleCalendar({
   );
 
   const onChangeSlotTime = useCallback(
-    (start, end, id) => {
+    (start, end, id, classId = undefined) => {
       if (
         !isWithinAvailableTimes(
           studentAvailableSlots[draggedStudent.id] ?? [],
+          scheduledClasses,
           start,
-          end
+          end,
+          classId
         ) ||
         isOverlapped([...unschedulingSlots, ...planningSlots], start, end, id)
       ) {
         // todo: notifications
         return;
       }
+
+      const availableSlot = studentAvailableSlots[draggedStudent.id].find(
+        (slot) =>
+          moment(slot.start).isSameOrBefore(start) &&
+          moment(slot.end).isSameOrAfter(end)
+      );
+      console.log(availableSlot);
+
       setPlanningSlots((prev) => {
         let slot = prev.find((slot) => slot.id === id);
         slot.start = start;
         slot.end = end;
+        slot.classId = availableSlot.classId;
         return prev;
       });
     },
-    [draggedStudent, unschedulingSlots, planningSlots, setPlanningSlots]
+    [
+      draggedStudent,
+      unschedulingSlots,
+      planningSlots,
+      setPlanningSlots,
+      scheduledClasses,
+    ]
   );
 
   const onDropFromOutside = useCallback(
@@ -137,6 +169,7 @@ export default function ScheduleCalendar({
       if (
         !isWithinAvailableTimes(
           studentAvailableSlots[draggedStudent.id] ?? [],
+          scheduledClasses,
           start,
           end
         ) ||
@@ -146,8 +179,10 @@ export default function ScheduleCalendar({
       }
       setDroppedStudent(draggedStudent.id);
 
-      const slot = studentAvailableSlots[draggedStudent.id].find((slot) =>
-        moment(slot.start).isSameOrBefore(start)
+      const slot = studentAvailableSlots[draggedStudent.id].find(
+        (slot) =>
+          moment(slot.start).isSameOrBefore(start) &&
+          moment(slot.end).isSameOrAfter(end)
       );
 
       setPlanningSlots((prev) => [
@@ -170,6 +205,7 @@ export default function ScheduleCalendar({
       planningSlots,
       setPlanningSlots,
       setDroppedStudent,
+      scheduledClasses,
     ]
   );
 
@@ -201,12 +237,12 @@ export default function ScheduleCalendar({
         date={scheduleCalendarDate}
         view={scheduleCalendarView}
         onEventDrop={({ start, end, event }) => {
-          const { id, status } = event;
+          const { id, status, classId } = event;
           if (status === SLOT_STATUS.PLANNING_SCHEDULE) {
             setDraggedStudent(null);
           }
           if (start.getDay() === end.getDay()) {
-            onChangeSlotTime(start, end, id);
+            onChangeSlotTime(start, end, id, classId);
           }
         }}
         onEventResize={({ start, end, event }) => {

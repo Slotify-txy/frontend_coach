@@ -78,8 +78,10 @@ export const IsCalendarSlotWithinAvailableTimes = (slots, date) => {
  */
 export const isWithinAvailableTimes = (
   availableSlotsOfSomeStudent,
+  scheduledClasses,
   start,
-  end
+  end,
+  classId = undefined
 ) => {
   start = moment(start);
   end = moment(end);
@@ -88,7 +90,8 @@ export const isWithinAvailableTimes = (
     const slotEnd = moment(slot.end);
     return (
       start.isSameOrAfter(slotStart, 'minute') &&
-      end.isSameOrBefore(slotEnd, 'minute')
+      end.isSameOrBefore(slotEnd, 'minute') &&
+      (classId == slot.classId || !scheduledClasses.has(slot.classId))
     );
   });
 };
@@ -191,8 +194,7 @@ export const autoSchedule = (students, slots) => {
 
   let filteredSlots = slots.filter(
     (slot) =>
-      moment(slot.start).isSameOrAfter(moment()) &&
-      studentMap.has(slot.studentId)
+      moment(slot.end).isSameOrAfter(moment()) && studentMap.has(slot.studentId)
   );
 
   // console.log('filteredSlots', filteredSlots);
@@ -219,6 +221,10 @@ export const autoSchedule = (students, slots) => {
       const slotEnd = moment(slot.end);
       const studentId = slot.studentId;
       while (start.clone().add(1, 'hours').isSameOrBefore(slotEnd)) {
+        if (start < moment()) {
+          start.add(0.5, 'hours');
+          continue;
+        }
         const startString = start.toString();
         if (forbiddenStartTime.has(startString)) {
           start.add(0.5, 'hours');
@@ -358,6 +364,9 @@ export const autoSchedule = (students, slots) => {
 
   return scheduled;
 };
+
+export const isSlotScheduled = (slot, scheduledClasses) =>
+  scheduledClasses.has(slot.classId);
 
 export const getStatusColor = (status) => {
   switch (status) {
