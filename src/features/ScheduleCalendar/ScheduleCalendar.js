@@ -142,7 +142,6 @@ export default function ScheduleCalendar({
           moment(slot.start).isSameOrBefore(start) &&
           moment(slot.end).isSameOrAfter(end)
       );
-      console.log(availableSlot);
 
       setPlanningSlots((prev) => {
         let slot = prev.find((slot) => slot.id === id);

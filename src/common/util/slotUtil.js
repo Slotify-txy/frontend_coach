@@ -159,7 +159,10 @@ export const autoSchedule = (students, slots) => {
     SLOT_STATUS.CANCELLED,
   ]);
   slots.forEach((slot) => {
-    if (statusSet.has(slot.status)) {
+    if (
+      slot.status == SLOT_STATUS.PENDING ||
+      slot.status == SLOT_STATUS.APPOINTMENT
+    ) {
       scheduledClasses.add(slot.classId);
     }
   });
