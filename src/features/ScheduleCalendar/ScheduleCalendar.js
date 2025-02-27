@@ -102,7 +102,7 @@ export default function ScheduleCalendar({
       }
 
       // todo: dynamically set color
-      const backgroundStyle = `2px solid #${ret.classId.slice(-6)}`;
+      const backgroundStyle = `1px solid #${ret.classId.slice(-6)}`;
 
       const style = {
         borderLeft: backgroundStyle,

@@ -33,6 +33,7 @@ code {
 }
 
 .rbc-event {
+  border-width: 0 !important;
   background-color: transparent !important;
   border-radius: 8px !important;
   padding: 0 !important;
