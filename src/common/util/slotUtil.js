@@ -368,8 +368,23 @@ export const autoSchedule = (students, slots) => {
   return scheduled;
 };
 
-export const isSlotScheduled = (slot, scheduledClasses) =>
-  scheduledClasses.has(slot.classId);
+export const getDisplayedTime = (start, end) => {
+  start = moment(start);
+  end = moment(end);
+  let formattedStart;
+  const formattedEnd =
+    end.minutes() === 0 ? end.format('h A') : end.format('h:mm A');
+
+  if (start.format('A') === end.format('A')) {
+    formattedStart =
+      start.minutes() === 0 ? start.format('h') : start.format('h:mm');
+  } else {
+    formattedStart =
+      start.minutes() === 0 ? start.format('h A') : start.format('h:mm A');
+  }
+
+  return `${formattedStart} - ${formattedEnd}`;
+};
 
 export const getStatusColor = (status) => {
   switch (status) {

@@ -5,14 +5,13 @@ import React, { useCallback, useState } from 'react';
 import SLOT_STATUS from '../../common/constants/slotStatus';
 import {
   convertStatusToText,
+  getDisplayedTime,
   getStatusColor,
 } from '../../common/util/slotUtil';
 import { useDeleteOpenHourByIdMutation } from '../../app/services/openHourApiSlice';
 
 const CustomEventComponent = ({ event, setPlanningOpenHours }) => {
-  const start = moment(event.start).format('hh:mm A');
-  const end = moment(event.end).format('hh:mm A');
-  const status = event.status;
+  const { start, end, status } = event;
   const [onHover, setOnHover] = useState(false);
   const backgroundColor = getStatusColor(status);
   const [deleteOpenHourById] = useDeleteOpenHourByIdMutation();
@@ -76,7 +75,7 @@ const CustomEventComponent = ({ event, setPlanningOpenHours }) => {
         }
       </Box>
       <Typography sx={{ fontSize: 15 }}>
-        {start} - {end}
+        {getDisplayedTime(start, end)}
       </Typography>
     </Box>
   );

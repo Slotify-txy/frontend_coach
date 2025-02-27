@@ -11,7 +11,7 @@ import {
 import moment from 'moment-timezone';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import SLOT_STATUS from '../../common/constants/slotStatus';
-import { getStatusColor } from '../../common/util/slotUtil';
+import { getDisplayedTime, getStatusColor } from '../../common/util/slotUtil';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   selectAllStudents,
@@ -28,9 +28,7 @@ const CustomEventComponent = ({
   hoveredEvent,
   setHoveredEvent,
 }) => {
-  const start = moment(event.start).format('hh:mm A');
-  const end = moment(event.end).format('hh:mm A');
-  const status = event.status;
+  const { start, end, status } = event;
   const backgroundColor = getStatusColor(status);
   const dispatch = useDispatch();
   const allStudents = useSelector(selectAllStudents);
@@ -121,7 +119,7 @@ const CustomEventComponent = ({
         }
       </Box>
       <Typography sx={{ fontSize: 13 }}>
-        {start} - {end}
+        {getDisplayedTime(start, end)}
       </Typography>
     </Box>
   );
