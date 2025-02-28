@@ -17,7 +17,10 @@ import {
   selectAllStudents,
   addToArrangingFromCalendar,
 } from './StudentList/studentSlice';
-import { useDeleteSlotByIdMutation } from '../../app/services/slotApiSlice';
+import {
+  useDeleteSlotByIdMutation,
+  useUpdateSlotStatusByIdMutation,
+} from '../../app/services/slotApiSlice';
 import EventAction from '../../components/EventAction';
 import CancelIcon from '@mui/icons-material/Cancel';
 
@@ -37,6 +40,7 @@ const CustomEventComponent = ({
     [allStudents, event]
   );
   const [deleteSlotById] = useDeleteSlotByIdMutation();
+  const [updateSlotStatusById] = useUpdateSlotStatusByIdMutation();
 
   const deleteSlot = useCallback(() => {
     if (event.status !== SLOT_STATUS.PLANNING_SCHEDULE) {
@@ -48,17 +52,25 @@ const CustomEventComponent = ({
     setSelectedStudent(null);
   }, [event, setPlanningSlots, setSelectedStudent]);
 
+  const cancel = useCallback(() => {
+    updateSlotStatusById({ id: event.id, status: SLOT_STATUS.CANCELLED });
+  }, [event]);
+
   const buildEventAction = useCallback(() => {
     switch (status) {
       case SLOT_STATUS.PLANNING_SCHEDULE:
       case SLOT_STATUS.REJECTED:
+      case SLOT_STATUS.CANCELLED:
         return (
           <EventAction title="Delete" onClick={deleteSlot} Icon={DeleteIcon} />
         );
       case SLOT_STATUS.PENDING:
-      case SLOT_STATUS.APPOINTMENT:
         return (
           <EventAction title="Cancel" onClick={deleteSlot} Icon={CancelIcon} />
+        );
+      case SLOT_STATUS.APPOINTMENT:
+        return (
+          <EventAction title="Cancel" onClick={cancel} Icon={CancelIcon} />
         );
     }
   }, [status, deleteSlot]);
@@ -99,7 +111,7 @@ const CustomEventComponent = ({
           />
           <Typography
             sx={{
-              fontSize: 13,
+              fontSize: 12,
               fontWeight: 700,
             }}
           >
@@ -118,7 +130,7 @@ const CustomEventComponent = ({
           hoveredEvent === event.id && buildEventAction()
         }
       </Box>
-      <Typography sx={{ fontSize: 13 }}>
+      <Typography sx={{ fontSize: 12 }}>
         {getDisplayedTime(start, end)}
       </Typography>
     </Box>

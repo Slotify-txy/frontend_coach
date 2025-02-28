@@ -52,7 +52,7 @@ const CustomEventComponent = ({ event, setPlanningOpenHours }) => {
       >
         <Typography
           sx={{
-            fontSize: 15,
+            fontSize: 12,
             fontWeight: 700,
           }}
         >
@@ -68,13 +68,13 @@ const CustomEventComponent = ({ event, setPlanningOpenHours }) => {
                 sx={{ padding: 0.2 }}
                 aria-label="delete"
               >
-                <DeleteIcon sx={{ fontSize: 18 }} />
+                <DeleteIcon sx={{ fontSize: 14 }} />
               </IconButton>
             </Tooltip>
           )
         }
       </Box>
-      <Typography sx={{ fontSize: 15 }}>
+      <Typography sx={{ fontSize: 12 }}>
         {getDisplayedTime(start, end)}
       </Typography>
     </Box>

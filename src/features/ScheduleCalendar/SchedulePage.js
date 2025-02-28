@@ -5,7 +5,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useGetSlotsQuery } from '../../app/services/slotApiSlice';
 import ScheduleCalendar from './ScheduleCalendar';
 // import StudentList from './StudentList';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   useGetAvailableStudentsQuery,
   useGetStudentsByCoachIdQuery,
@@ -15,6 +15,7 @@ import { ActionBar } from './ActionBar';
 import { useGetOpenHoursQuery } from '../../app/services/openHourApiSlice';
 import { convertSlots } from '../../common/util/slotUtil';
 import AUTH_STATUS from '../../common/constants/authStatus';
+import { addToArrangingFromCalendar } from './StudentList/studentSlice';
 
 const moment = extendMoment(Moment);
 
@@ -31,6 +32,15 @@ const SchedulePage = ({
   const [hoveredEvent, setHoveredEvent] = useState(null);
   const [droppedStudent, setDroppedStudent] = useState(null);
   const [planningSlots, setPlanningSlots] = useState([]);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    return () => {
+      planningSlots.forEach((slot) => {
+        dispatch(addToArrangingFromCalendar({ id: slot.studentId }));
+      });
+    };
+  }, [planningSlots]);
 
   return (
     <Box

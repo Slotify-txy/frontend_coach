@@ -60,6 +60,16 @@ export const slotApiSlice = api.injectEndpoints({
         { type: 'Students', id: 'AVAILABLE' },
       ],
     }),
+    updateSlotStatusById: builder.mutation({
+      query: ({ id, status }) => ({
+        url: `/slot/${id}?status=${status}`,
+        method: 'PUT',
+      }),
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'Slots', id },
+        { type: 'Students', id: 'AVAILABLE' },
+      ],
+    }),
   }),
 });
 
@@ -68,4 +78,5 @@ export const {
   useGetOpenHoursQuery,
   useCreateSlotsMutation,
   useDeleteSlotByIdMutation,
+  useUpdateSlotStatusByIdMutation,
 } = slotApiSlice;

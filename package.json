@@ -18,6 +18,7 @@
     "immutability-helper": "^3.1.1",
     "moment-range": "^4.0.2",
     "moment-timezone": "^0.5.45",
+    "notistack": "^3.0.2",
     "react": "^18.2.0",
     "react-big-calendar": "^1.17.1",
     "react-dnd": "^16.0.1",

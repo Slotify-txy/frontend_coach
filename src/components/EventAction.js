@@ -10,7 +10,7 @@ const EventAction = ({ title, onClick, Icon }) => {
         sx={{ padding: 0.2 }}
         aria-label={title}
       >
-        <Icon sx={{ fontSize: 15 }} />
+        <Icon sx={{ fontSize: 14 }} />
       </IconButton>
     </Tooltip>
   );
