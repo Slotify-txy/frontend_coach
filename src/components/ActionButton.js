@@ -7,6 +7,7 @@ const ActionButton = ({
   tooltip,
   callback,
   disabled = false,
+  loading = false,
   offset,
 }) => {
   return (
@@ -34,7 +35,12 @@ const ActionButton = ({
         }}
       >
         <span>
-          <IconButton sx={{ color }} onClick={callback} disabled={disabled}>
+          <IconButton
+            sx={{ color }}
+            onClick={callback}
+            disabled={disabled}
+            loading={loading}
+          >
             {icon}
           </IconButton>
         </span>

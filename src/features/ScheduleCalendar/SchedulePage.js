@@ -1,7 +1,7 @@
 import { Box, Divider } from '@mui/material';
 import Moment from 'moment';
 import { extendMoment } from 'moment-range';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useGetSlotsQuery } from '../../app/services/slotApiSlice';
 import ScheduleCalendar from './ScheduleCalendar';
 // import StudentList from './StudentList';
@@ -16,6 +16,7 @@ import { useGetOpenHoursQuery } from '../../app/services/openHourApiSlice';
 import { convertSlots } from '../../common/util/slotUtil';
 import AUTH_STATUS from '../../common/constants/authStatus';
 import { addToArrangingFromCalendar } from './StudentList/studentSlice';
+import { setPlanningSlots } from '../common/slotSlice';
 
 const moment = extendMoment(Moment);
 
@@ -31,16 +32,22 @@ const SchedulePage = ({
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [hoveredEvent, setHoveredEvent] = useState(null);
   const [droppedStudent, setDroppedStudent] = useState(null);
-  const [planningSlots, setPlanningSlots] = useState([]);
+  // const [planningSlots, setPlanningSlots] = useState([]);
+  // const planningSlotsRef = useRef(planningSlots);
   const dispatch = useDispatch();
+
+  // useEffect(() => {
+  //   planningSlotsRef.current = planningSlots;
+  // }, [planningSlots]);
 
   useEffect(() => {
     return () => {
-      planningSlots.forEach((slot) => {
-        dispatch(addToArrangingFromCalendar({ id: slot.studentId }));
-      });
+      // planningSlotsRef.current.forEach((slot) => {
+      //   dispatch(addToArrangingFromCalendar({ id: slot.studentId }));
+      // });
+      dispatch(setPlanningSlots([]));
     };
-  }, [planningSlots]);
+  }, []);
 
   return (
     <Box
@@ -62,8 +69,6 @@ const SchedulePage = ({
       </Box>
       <Box sx={{ flex: 1, ml: 1 }}>
         <ScheduleCalendar
-          planningSlots={planningSlots}
-          setPlanningSlots={setPlanningSlots}
           draggedStudent={draggedStudent}
           setDraggedStudent={setDraggedStudent}
           selectedStudent={selectedStudent}
@@ -79,10 +84,7 @@ const SchedulePage = ({
         />
       </Box>
       <Box sx={{ height: '100%', width: 70 }}>
-        <ActionBar
-          planningSlots={planningSlots}
-          setPlanningSlots={setPlanningSlots}
-        />
+        <ActionBar />
       </Box>
     </Box>
   );

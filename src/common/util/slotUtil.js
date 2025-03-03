@@ -143,6 +143,15 @@ export const getUnschedulingSlots = (slots) => {
   return slots.filter((slot) => slot.status !== SLOT_STATUS.AVAILABLE);
 };
 
+export const getPendingAndAppointmentSlots = (slots) => {
+  slots = slots ?? [];
+  return slots.filter(
+    (slot) =>
+      slot.status === SLOT_STATUS.PENDING ||
+      slot.status === SLOT_STATUS.APPOINTMENT
+  );
+};
+
 export const autoSchedule = (students, slots) => {
   const studentMap = new Map(
     students.map((s) => [s.id, s.numOfClassCanBeScheduled])

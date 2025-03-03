@@ -10,6 +10,7 @@ import {
 } from '../../app/services/openHourApiSlice';
 import { useSelector } from 'react-redux';
 import ActionButton from '../../components/ActionButton';
+import { enqueueSnackbar } from 'notistack';
 
 const timeFormat = 'YYYY-MM-DD[T]HH:mm:ss';
 
@@ -31,15 +32,24 @@ export const ActionBar = ({ planningOpenHours, setPlanningOpenHours }) => {
             endAt: moment(end).format(timeFormat),
           })),
       }).unwrap();
-      setPlanningOpenHours([]);
+      enqueueSnackbar('Open hours published successfully!', {
+        variant: 'success',
+      });
     } catch (err) {
-      console.error('Failed to save the open hours: ', err);
+      enqueueSnackbar('Failed to save the open hours: ' + err, {
+        variant: 'error',
+      });
+    } finally {
+      setPlanningOpenHours([]);
     }
-  }, [planningOpenHours]);
+  }, [planningOpenHours, setPlanningOpenHours]);
 
   const clearOpenHours = useCallback(() => {
     setPlanningOpenHours([]);
-  }, []);
+    enqueueSnackbar('Planning open hours cleared!', {
+      variant: 'success',
+    });
+  }, [setPlanningOpenHours]);
 
   return (
     <Box sx={{ pt: 2 }}>
@@ -49,12 +59,15 @@ export const ActionBar = ({ planningOpenHours, setPlanningOpenHours }) => {
         tooltip={'Publish Open Hours'}
         callback={publishOpenHours}
         offset={offset}
+        disabled={planningOpenHours.length === 0}
+        loading={isCreatingOpenHours}
       />
       <ActionButton
         color={grey[700]}
         icon={<DeleteForeverIcon />}
-        tooltip={'Clear'}
+        tooltip={'Clear Planning Open Hours'}
         callback={clearOpenHours}
+        disabled={planningOpenHours.length === 0}
         offset={offset}
       />
     </Box>

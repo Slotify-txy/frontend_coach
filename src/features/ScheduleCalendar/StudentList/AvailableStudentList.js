@@ -27,7 +27,7 @@ import {
   dragToAvailableFromArranging,
 } from './studentSlice.js';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectCurrentUser } from '../../auth/authSlice.js';
+import { selectCurrentUser } from '../../common/authSlice.js';
 
 const AvailableStudentList = ({
   droppedStudent,

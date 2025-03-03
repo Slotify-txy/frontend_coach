@@ -23,10 +23,12 @@ import {
 } from '../../app/services/slotApiSlice';
 import EventAction from '../../components/EventAction';
 import CancelIcon from '@mui/icons-material/Cancel';
+import { enqueueSnackbar } from 'notistack';
+import { deleteConfirmationAction } from '../../components/DeleteConfirmationAction';
+import { deleteSlotFromPlanningSlots } from '../common/slotSlice';
 
 const CustomEventComponent = ({
   event,
-  setPlanningSlots,
   setSelectedStudent,
   hoveredEvent,
   setHoveredEvent,
@@ -39,21 +41,81 @@ const CustomEventComponent = ({
     () => allStudents.find((student) => student.id == event.studentId),
     [allStudents, event]
   );
-  const [deleteSlotById] = useDeleteSlotByIdMutation();
-  const [updateSlotStatusById] = useUpdateSlotStatusByIdMutation();
+  const [deleteSlotById, { isLoading: isDeletingSlot }] =
+    useDeleteSlotByIdMutation();
+  const [updateSlotStatusById, { isLoading: isUpdatingSlot }] =
+    useUpdateSlotStatusByIdMutation();
 
   const deleteSlot = useCallback(() => {
     if (event.status !== SLOT_STATUS.PLANNING_SCHEDULE) {
-      deleteSlotById(event.id);
+      const isCancel = new Set([
+        SLOT_STATUS.PENDING,
+        SLOT_STATUS.APPOINTMENT,
+      ]).has(event.status);
+
+      enqueueSnackbar(
+        `Are you sure you want to ${isCancel ? 'cancel' : 'delete'} the class?`,
+        {
+          variant: 'info',
+          autoHideDuration: null,
+          action: deleteConfirmationAction(async () => {
+            try {
+              await deleteSlotById(event.id).unwrap();
+              enqueueSnackbar(
+                `${isCancel ? 'Cancelled' : 'Deleted'} successfully!`,
+                {
+                  variant: 'success',
+                }
+              );
+            } catch (err) {
+              let prompt = `Failed to ${isCancel ? 'cancel' : 'delete'}: `;
+              if (err.status === 409) {
+                prompt +=
+                  "The class' status is not up to date. Latest status fetched. ";
+              } else {
+                prompt += JSON.parse(err.data).message; // weird thing is err.data from cancel is an object
+              }
+              enqueueSnackbar(prompt, {
+                variant: 'error',
+              });
+            }
+          }),
+        }
+      );
       return;
     }
-    setPlanningSlots((prev) => prev.filter((slot) => slot.id !== event.id));
+    dispatch(deleteSlotFromPlanningSlots(event.id));
     dispatch(addToArrangingFromCalendar({ id: event.studentId }));
     setSelectedStudent(null);
-  }, [event, setPlanningSlots, setSelectedStudent]);
+  }, [event, setSelectedStudent]);
 
   const cancel = useCallback(() => {
-    updateSlotStatusById({ id: event.id, status: SLOT_STATUS.CANCELLED });
+    enqueueSnackbar('Are you sure you want to cancel the class?', {
+      variant: 'info',
+      autoHideDuration: null,
+      action: deleteConfirmationAction(async () => {
+        try {
+          await updateSlotStatusById({
+            id: event.id,
+            status: SLOT_STATUS.CANCELLED,
+          }).unwrap();
+          enqueueSnackbar('Cancelled successfully!', {
+            variant: 'success',
+          });
+        } catch (err) {
+          let prompt = 'Failed to cancel: ';
+          if (err.status === 409) {
+            prompt +=
+              "The class' status is not up to date. Latest status fetched. ";
+          } else {
+            prompt += err.data.message;
+          }
+          enqueueSnackbar(prompt, {
+            variant: 'error',
+          });
+        }
+      }),
+    });
   }, [event]);
 
   const buildEventAction = useCallback(() => {
@@ -62,15 +124,30 @@ const CustomEventComponent = ({
       case SLOT_STATUS.REJECTED:
       case SLOT_STATUS.CANCELLED:
         return (
-          <EventAction title="Delete" onClick={deleteSlot} Icon={DeleteIcon} />
+          <EventAction
+            title="Delete"
+            onClick={deleteSlot}
+            Icon={DeleteIcon}
+            isLoading={isDeletingSlot}
+          />
         );
       case SLOT_STATUS.PENDING:
         return (
-          <EventAction title="Cancel" onClick={deleteSlot} Icon={CancelIcon} />
+          <EventAction
+            title="Cancel"
+            onClick={deleteSlot}
+            Icon={CancelIcon}
+            isLoading={isDeletingSlot}
+          />
         );
       case SLOT_STATUS.APPOINTMENT:
         return (
-          <EventAction title="Cancel" onClick={cancel} Icon={CancelIcon} />
+          <EventAction
+            title="Cancel"
+            onClick={cancel}
+            Icon={CancelIcon}
+            isLoading={isUpdatingSlot}
+          />
         );
     }
   }, [status, deleteSlot]);

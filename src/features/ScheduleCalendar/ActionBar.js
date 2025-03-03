@@ -24,11 +24,19 @@ import {
 import SLOT_STATUS from '../../common/constants/slotStatus';
 import { autoSchedule, convertSlots } from '../../common/util/slotUtil';
 import AUTH_STATUS from '../../common/constants/authStatus';
+import { enqueueSnackbar } from 'notistack';
+import {
+  emptyPlanningSlots,
+  selectPlanningSlots,
+  selectTransformedPlanningSlots,
+  setPlanningSlots,
+} from '../common/slotSlice';
 
 const timeFormat = 'YYYY-MM-DD[T]HH:mm:ss';
 
-export const ActionBar = ({ planningSlots, setPlanningSlots }) => {
+export const ActionBar = () => {
   const { user, status } = useSelector((state) => state.auth);
+  const planningSlots = useSelector(selectTransformedPlanningSlots);
   const students = useSelector(selectAllStudents);
   const arrangingStudents = useSelector(selectArrangingStudents);
   const [shouldTriggerAutoSchedule, setShouldTriggerAutoSchedule] =
@@ -45,7 +53,9 @@ export const ActionBar = ({ planningSlots, setPlanningSlots }) => {
   );
   const dispatch = useDispatch();
 
-  const [createSlots] = useCreateSlotsMutation();
+  const [createSlots, { isLoading: isCreatingSlots }] =
+    useCreateSlotsMutation();
+
   const schedule = useCallback(async () => {
     try {
       await createSlots({
@@ -58,10 +68,15 @@ export const ActionBar = ({ planningSlots, setPlanningSlots }) => {
           status: SLOT_STATUS.PENDING,
         })),
       }).unwrap();
+      enqueueSnackbar('Class invitations sent successfully!', {
+        variant: 'success',
+      });
     } catch (err) {
-      console.error('Failed to save the open hours: ', err);
+      enqueueSnackbar('Failed to send class invitations: ' + err, {
+        variant: 'error',
+      });
     } finally {
-      setPlanningSlots([]);
+      dispatch(emptyPlanningSlots());
     }
   }, [planningSlots, user]);
 
@@ -69,8 +84,8 @@ export const ActionBar = ({ planningSlots, setPlanningSlots }) => {
     planningSlots.forEach((slot) => {
       dispatch(addToArrangingFromCalendar({ id: slot.studentId }));
     });
-    setPlanningSlots([]);
-  }, [planningSlots, setPlanningSlots, students]);
+    dispatch(emptyPlanningSlots());
+  }, [planningSlots, students]);
 
   const autoScheduleAction = useCallback(() => {
     const scheduledClasses = autoSchedule(arrangingStudents, allSlots);
@@ -88,8 +103,22 @@ export const ActionBar = ({ planningSlots, setPlanningSlots }) => {
       }
     });
     dispatch(updateArrangingStudent(arrangingStudentsCopy));
-    setPlanningSlots(scheduledClasses);
-  }, [arrangingStudents, allSlots, setPlanningSlots]);
+    dispatch(
+      setPlanningSlots(
+        scheduledClasses.map((slot) => ({
+          ...slot,
+          start: slot.start.toISOString(),
+          end: slot.end.toISOString(),
+        }))
+      )
+    );
+    enqueueSnackbar(
+      'Auto schedule complete! Please hit "Submit Schedule" button to confirm or manually adjust the schedule.',
+      {
+        variant: 'success',
+      }
+    );
+  }, [arrangingStudents, allSlots]);
 
   // redux doesn't update arrangingStudents immediately after clearArrangingSlots, so we need to use a flag to trigger autoSchedule
   useEffect(() => {
@@ -109,18 +138,27 @@ export const ActionBar = ({ planningSlots, setPlanningSlots }) => {
           clearArrangingSlots();
           setShouldTriggerAutoSchedule(true);
         }}
+        disabled={arrangingStudents.length === 0 && planningSlots.length === 0}
       />
       <Action
         color={green[700]}
         icon={<CheckBoxIcon />}
         tooltip={'Submit Schedule'}
         callback={schedule}
+        isLoading={isCreatingSlots}
+        disabled={planningSlots.length === 0}
       />
       <Action
         color={grey[700]}
         icon={<DeleteForeverIcon />}
-        tooltip={'Clear arranging slots'}
-        callback={clearArrangingSlots}
+        tooltip={'Clear Arranging Slots'}
+        callback={() => {
+          clearArrangingSlots();
+          enqueueSnackbar('Planning classes cleared!', {
+            variant: 'success',
+          });
+        }}
+        disabled={planningSlots.length === 0}
       />
     </Stack>
   );

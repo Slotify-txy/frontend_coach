@@ -8,6 +8,7 @@ import SLOT_STATUS from '../../common/constants/slotStatus';
 import {
   computeStudentAvailableSlots,
   convertSlots,
+  getPendingAndAppointmentSlots,
   getUnschedulingSlots,
   IsCalendarSlotWithinAvailableTimes,
   isOverlapped,
@@ -25,12 +26,17 @@ import {
 import { useGetSlotsQuery } from '../../app/services/slotApiSlice';
 import AUTH_STATUS from '../../common/constants/authStatus';
 import { all } from 'axios';
+import {
+  addSlotToPlanningSlots,
+  selectPlanningSlots,
+  selectTransformedPlanningSlots,
+  updateSlotInPlanningSlots,
+} from '../common/slotSlice';
+import { enqueueSnackbar } from 'notistack';
 
 const moment = extendMoment(Moment);
 
 export default function ScheduleCalendar({
-  planningSlots,
-  setPlanningSlots,
   draggedStudent,
   setDraggedStudent,
   selectedStudent,
@@ -42,6 +48,7 @@ export default function ScheduleCalendar({
   setDroppedStudent,
 }) {
   const { user, status } = useSelector((state) => state.auth);
+  const planningSlots = useSelector(selectTransformedPlanningSlots);
   const dispatch = useDispatch();
 
   const {
@@ -67,6 +74,11 @@ export default function ScheduleCalendar({
 
   const unschedulingSlots = useMemo(
     () => getUnschedulingSlots(allSlots),
+    [allSlots]
+  );
+
+  const pendingAndAppointmentSlots = useMemo(
+    () => getPendingAndAppointmentSlots(allSlots),
     [allSlots]
   );
 
@@ -130,10 +142,27 @@ export default function ScheduleCalendar({
           start,
           end,
           classId
-        ) ||
-        isOverlapped([...unschedulingSlots, ...planningSlots], start, end, id)
+        )
       ) {
-        // todo: notifications
+        enqueueSnackbar(
+          "Not in the student's available hours or double booking!",
+          {
+            variant: 'warning',
+          }
+        );
+        return;
+      }
+      if (
+        isOverlapped(
+          [...pendingAndAppointmentSlots, ...planningSlots],
+          start,
+          end,
+          id
+        )
+      ) {
+        enqueueSnackbar("Slots can't be overlapped!", {
+          variant: 'warning',
+        });
         return;
       }
 
@@ -143,19 +172,19 @@ export default function ScheduleCalendar({
           moment(slot.end).isSameOrAfter(end)
       );
 
-      setPlanningSlots((prev) => {
-        let slot = prev.find((slot) => slot.id === id);
-        slot.start = start;
-        slot.end = end;
-        slot.classId = availableSlot.classId;
-        return prev;
-      });
+      dispatch(
+        updateSlotInPlanningSlots({
+          id,
+          start: start.toISOString(),
+          end: end.toISOString(),
+          classId: availableSlot.classId,
+        })
+      );
     },
     [
       draggedStudent,
-      unschedulingSlots,
+      pendingAndAppointmentSlots,
       planningSlots,
-      setPlanningSlots,
       scheduledClasses,
     ]
   );
@@ -171,11 +200,28 @@ export default function ScheduleCalendar({
           scheduledClasses,
           start,
           end
-        ) ||
-        isOverlapped([...unschedulingSlots, ...planningSlots], start, end)
+        )
       ) {
+        enqueueSnackbar(
+          "Not in the student's available hours or double booking!",
+          {
+            variant: 'warning',
+          }
+        );
         return;
       }
+      if (
+        isOverlapped(
+          [...pendingAndAppointmentSlots, ...planningSlots],
+          start,
+          end
+        )
+      ) {
+        enqueueSnackbar("Slots can't be overlapped!", {
+          variant: 'warning',
+        });
+      }
+
       setDroppedStudent(draggedStudent.id);
 
       const slot = studentAvailableSlots[draggedStudent.id].find(
@@ -184,43 +230,29 @@ export default function ScheduleCalendar({
           moment(slot.end).isSameOrAfter(end)
       );
 
-      setPlanningSlots((prev) => [
-        ...prev,
-        {
+      dispatch(
+        addSlotToPlanningSlots({
           id: uuidv4(),
           studentId: draggedStudent.id,
-          start: start.toDate(),
-          end: end.toDate(),
+          start: start.format(),
+          end: end.format(),
           status: SLOT_STATUS.PLANNING_SCHEDULE,
           classId: slot.classId,
           isDraggable: true,
-        },
-      ]);
+        })
+      );
     },
     [
       studentAvailableSlots,
       draggedStudent,
-      unschedulingSlots,
+      pendingAndAppointmentSlots,
       planningSlots,
-      setPlanningSlots,
       setDroppedStudent,
       scheduledClasses,
     ]
   );
 
   const dragFromOutsideItem = useCallback(() => null, [draggedStudent]);
-
-  // useEffect(() => {
-  //   console.log(planningSlots);
-  // }, [planningSlots]);
-
-  // useEffect(() => {
-  //   console.log('selectedStudent', selectedStudent);
-  // }, [selectedStudent]);
-
-  // useEffect(() => {
-  //   console.log('draggedStudent', draggedStudent);
-  // }, [draggedStudent]);
 
   const [{ handlerId }, drop] = useDrop({
     accept: [DND_TYPE.ARRANGING_STUDENT],
@@ -263,7 +295,6 @@ export default function ScheduleCalendar({
         createCustomEventComponent={(props) => (
           <CustomEventComponent
             selectedStudent={selectedStudent}
-            setPlanningSlots={setPlanningSlots}
             setSelectedStudent={setSelectedStudent}
             hoveredEvent={hoveredEvent}
             setHoveredEvent={setHoveredEvent}

@@ -11,6 +11,7 @@ import { createTheme, ThemeProvider, CssBaseline } from '@mui/material';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
+import { SnackbarProvider } from 'notistack';
 
 const theme = createTheme({
   typography: {
@@ -39,7 +40,15 @@ root.render(
         <Provider store={store}>
           <BrowserRouter>
             <DndProvider backend={HTML5Backend}>
-              <App />
+              <SnackbarProvider
+                autoHideDuration={2000}
+                anchorOrigin={{
+                  vertical: 'top',
+                  horizontal: 'center',
+                }}
+              >
+                <App />
+              </SnackbarProvider>
             </DndProvider>
           </BrowserRouter>
         </Provider>

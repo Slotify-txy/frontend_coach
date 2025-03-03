@@ -16,6 +16,7 @@ import { convertSlots, isOverlapped } from '../../common/util/slotUtil';
 import CustomEventComponent from './CustomEventComponent';
 import StyledCalendar from '../../components/StyledCalendar';
 import AUTH_STATUS from '../../common/constants/authStatus';
+import { enqueueSnackbar } from 'notistack';
 
 const moment = extendMoment(Moment);
 const localizer = momentLocalizer(Moment);
@@ -53,7 +54,9 @@ export default function OpenHourCalendar({
           id
         )
       ) {
-        // todo: notifications
+        enqueueSnackbar("Slots can't be overlapped!", {
+          variant: 'warning',
+        });
         return;
       }
 
@@ -72,6 +75,9 @@ export default function OpenHourCalendar({
       if (
         isOverlapped([...publishedOpenHours, ...planningOpenHours], start, end)
       ) {
+        enqueueSnackbar("Slots can't be overlapped!", {
+          variant: 'warning',
+        });
         return;
       }
       setPlanningOpenHours((prev) => [

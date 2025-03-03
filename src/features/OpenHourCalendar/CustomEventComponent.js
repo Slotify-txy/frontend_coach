@@ -9,12 +9,15 @@ import {
   getStatusColor,
 } from '../../common/util/slotUtil';
 import { useDeleteOpenHourByIdMutation } from '../../app/services/openHourApiSlice';
+import { enqueueSnackbar } from 'notistack';
+import { deleteConfirmationAction } from '../../components/DeleteConfirmationAction';
 
 const CustomEventComponent = ({ event, setPlanningOpenHours }) => {
   const { start, end, status } = event;
   const [onHover, setOnHover] = useState(false);
   const backgroundColor = getStatusColor(status);
-  const [deleteOpenHourById] = useDeleteOpenHourByIdMutation();
+  const [deleteOpenHourById, { isLoading: isDeletingOpenHours }] =
+    useDeleteOpenHourByIdMutation();
 
   const deleteOpenHour = useCallback(() => {
     switch (event.status) {
@@ -24,7 +27,23 @@ const CustomEventComponent = ({ event, setPlanningOpenHours }) => {
         );
         break;
       case SLOT_STATUS.OPEN_HOUR:
-        deleteOpenHourById(event.id);
+        enqueueSnackbar('Are you sure you want to delete the open hour?', {
+          variant: 'info',
+          autoHideDuration: null,
+          action: deleteConfirmationAction(async () => {
+            try {
+              await deleteOpenHourById(event.id).unwrap();
+              enqueueSnackbar('Open hour deleted successfully!', {
+                variant: 'success',
+              });
+            } catch (err) {
+              enqueueSnackbar('Failed to save the open hours: ' + err, {
+                variant: 'error',
+              });
+            }
+          }),
+        });
+
         break;
     }
   }, [event, setPlanningOpenHours]);
@@ -67,6 +86,7 @@ const CustomEventComponent = ({ event, setPlanningOpenHours }) => {
                 onMouseDown={(e) => e.stopPropagation()} // otherwise, it triggers with onDragStart
                 sx={{ padding: 0.2 }}
                 aria-label="delete"
+                loading={isDeletingOpenHours}
               >
                 <DeleteIcon sx={{ fontSize: 14 }} />
               </IconButton>

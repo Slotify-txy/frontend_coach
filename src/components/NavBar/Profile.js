@@ -12,7 +12,7 @@ import React, { Fragment } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import LogoutIcon from '@mui/icons-material/Logout';
 import CloseIcon from '@mui/icons-material/Close';
-import { logout } from '../../features/auth/authSlice';
+import { logout } from '../../features/common/authSlice';
 
 export const Profile = () => {
   const dispatch = useDispatch();

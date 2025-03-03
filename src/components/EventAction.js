@@ -1,7 +1,7 @@
 import { IconButton, Tooltip } from '@mui/material';
 import React from 'react';
 
-const EventAction = ({ title, onClick, Icon }) => {
+const EventAction = ({ title, onClick, Icon, isLoading = false }) => {
   return (
     <Tooltip title={title}>
       <IconButton
@@ -9,6 +9,7 @@ const EventAction = ({ title, onClick, Icon }) => {
         onMouseDown={(e) => e.stopPropagation()} // otherwise, it triggers with onDragStart
         sx={{ padding: 0.2 }}
         aria-label={title}
+        loading={isLoading}
       >
         <Icon sx={{ fontSize: 14 }} />
       </IconButton>

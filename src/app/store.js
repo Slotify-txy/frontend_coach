@@ -1,7 +1,8 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { api } from '../app/services/api';
-import authReducer, { clearCredentials } from '../features/auth/authSlice';
+import authReducer, { clearCredentials } from '../features/common/authSlice';
 import studentReducer from '../features/ScheduleCalendar/StudentList/studentSlice';
+import slotReducer from '../features/common/slotSlice';
 import { isRejectedWithValue } from '@reduxjs/toolkit';
 
 const rtkQueryErrorInterceptor = (api) => (next) => (action) => {
@@ -21,6 +22,7 @@ export const store = configureStore({
     [api.reducerPath]: api.reducer,
     auth: authReducer,
     student: studentReducer,
+    slot: slotReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(api.middleware, rtkQueryErrorInterceptor),
