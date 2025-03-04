@@ -3,6 +3,7 @@ import {
   Box,
   Card,
   CardHeader,
+  Divider,
   List,
   ListItem,
   Stack,
@@ -71,26 +72,51 @@ const StudentList = ({
           <LoadingSpinner />
         ) : (
           <>
-            <Box sx={{ width: '50%', overflowY: 'auto' }}>
-              <AvailableStudentList
-                droppedStudent={droppedStudent}
-                setDroppedStudent={setDroppedStudent}
-                draggedStudent={draggedStudent}
-                setDraggedStudent={setDraggedStudent}
-                selectedStudent={selectedStudent}
-                setSelectedStudent={setSelectedStudent}
-              />
-            </Box>
-            <Box sx={{ width: '50%', overflowY: 'auto' }}>
-              <ArrangingStudentList
-                droppedStudent={droppedStudent}
-                setDroppedStudent={setDroppedStudent}
-                draggedStudent={draggedStudent}
-                setDraggedStudent={setDraggedStudent}
-                selectedStudent={selectedStudent}
-                setSelectedStudent={setSelectedStudent}
-              />
-            </Box>
+            <Stack
+              direction="column"
+              sx={{
+                height: '100%',
+                width: '50%',
+              }}
+              spacing={1}
+            >
+              <Typography fontSize={11} sx={{ pl: 1 }}>
+                Students who want to have class
+              </Typography>
+              <Box sx={{ width: '100%', height: '100%', overflowY: 'auto' }}>
+                <AvailableStudentList
+                  droppedStudent={droppedStudent}
+                  setDroppedStudent={setDroppedStudent}
+                  draggedStudent={draggedStudent}
+                  setDraggedStudent={setDraggedStudent}
+                  selectedStudent={selectedStudent}
+                  setSelectedStudent={setSelectedStudent}
+                />
+              </Box>
+            </Stack>
+            <Divider orientation="vertical" flexItem />
+            <Stack
+              direction="column"
+              sx={{
+                height: '100%',
+                width: '50%',
+              }}
+              spacing={1}
+            >
+              <Typography fontSize={11} sx={{ pl: 1 }}>
+                Students who you want to schedule class with
+              </Typography>
+              <Box sx={{ width: '100%', height: '100%', overflowY: 'auto' }}>
+                <ArrangingStudentList
+                  droppedStudent={droppedStudent}
+                  setDroppedStudent={setDroppedStudent}
+                  draggedStudent={draggedStudent}
+                  setDraggedStudent={setDraggedStudent}
+                  selectedStudent={selectedStudent}
+                  setSelectedStudent={setSelectedStudent}
+                />
+              </Box>
+            </Stack>
           </>
         )}
       </Stack>
