@@ -25,7 +25,7 @@ import {
   selectIsSearching,
   selectAvailableStudents,
   dragToAvailableFromArranging,
-} from './studentSlice.js';
+} from '../../common/studentSlice.js';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectCurrentUser } from '../../common/authSlice.js';
 

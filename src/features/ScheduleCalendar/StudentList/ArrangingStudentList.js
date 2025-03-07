@@ -24,7 +24,7 @@ import {
   dragToAvailableFromArranging,
   selectArrangingStudents,
   selectAvailableStudents,
-} from './studentSlice.js';
+} from '../../common/studentSlice.js';
 import DND_TYPE from '../../../common/constants/dnd.js';
 
 const ArrangingStudentList = ({

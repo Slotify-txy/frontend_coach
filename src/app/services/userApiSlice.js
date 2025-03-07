@@ -8,7 +8,15 @@ export const userApiSlice = api.injectEndpoints({
       query: () => '/user',
       providesTags: ['User'],
     }),
+    updateUser: builder.mutation({
+      query: ({ user }) => ({
+        url: '/user',
+        method: 'PUT',
+        body: user,
+      }),
+      invalidatesTags: ['User'],
+    }),
   }),
 });
 
-export const { useGetUserQuery } = userApiSlice;
+export const { useGetUserQuery, useUpdateUserMutation } = userApiSlice;

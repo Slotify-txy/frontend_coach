@@ -4,7 +4,7 @@ import {
   searchStudents,
   selectAvailableStudents,
   setIsSearching,
-} from './studentSlice';
+} from '../../common/studentSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import PeopleIcon from '@mui/icons-material/People';
 
@@ -24,12 +24,14 @@ export default function StudentSearch() {
       placeholder="Search students"
       value={searchText}
       onChange={(e) => setSearchText(e.target.value)}
-      InputProps={{
-        startAdornment: (
-          <InputAdornment position="start">
-            <PeopleIcon />
-          </InputAdornment>
-        ),
+      slotProps={{
+        input: {
+          startAdornment: (
+            <InputAdornment position="start">
+              <PeopleIcon />
+            </InputAdornment>
+          ),
+        },
       }}
     />
   );

@@ -16,7 +16,7 @@ import {
   selectAllStudents,
   selectArrangingStudents,
   updateArrangingStudent,
-} from './StudentList/studentSlice';
+} from '../common/studentSlice';
 import {
   useCreateSlotsMutation,
   useGetSlotsQuery,
@@ -31,6 +31,7 @@ import {
   selectTransformedPlanningSlots,
   setPlanningSlots,
 } from '../common/slotSlice';
+import ActionButton from '../../components/ActionButton';
 
 const timeFormat = 'YYYY-MM-DD[T]HH:mm:ss';
 
@@ -130,7 +131,7 @@ export const ActionBar = () => {
 
   return (
     <Stack>
-      <Action
+      <ActionButton
         color={blue[700]}
         icon={<AutoModeIcon />}
         tooltip={'Auto Schedule'}
@@ -140,7 +141,7 @@ export const ActionBar = () => {
         }}
         disabled={arrangingStudents.length === 0 && planningSlots.length === 0}
       />
-      <Action
+      <ActionButton
         color={green[700]}
         icon={<CheckBoxIcon />}
         tooltip={'Submit Schedule'}
@@ -148,7 +149,7 @@ export const ActionBar = () => {
         isLoading={isCreatingSlots}
         disabled={planningSlots.length === 0}
       />
-      <Action
+      <ActionButton
         color={grey[700]}
         icon={<DeleteForeverIcon />}
         tooltip={'Clear Arranging Slots'}
@@ -161,40 +162,5 @@ export const ActionBar = () => {
         disabled={planningSlots.length === 0}
       />
     </Stack>
-  );
-};
-
-const Action = ({ color, icon, tooltip, callback, disabled = false }) => {
-  return (
-    <Box
-      sx={{
-        display: 'flex',
-        mb: 2,
-        flexDirection: 'row',
-        justifyContent: 'center',
-      }}
-    >
-      <Tooltip
-        title={tooltip}
-        slotProps={{
-          popper: {
-            modifiers: [
-              {
-                name: 'offset',
-                options: {
-                  offset: [0, -14],
-                },
-              },
-            ],
-          },
-        }}
-      >
-        <span>
-          <IconButton sx={{ color }} onClick={callback} disabled={disabled}>
-            {icon}
-          </IconButton>
-        </span>
-      </Tooltip>
-    </Box>
   );
 };

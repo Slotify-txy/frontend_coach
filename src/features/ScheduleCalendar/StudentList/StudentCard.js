@@ -27,7 +27,7 @@ import {
   dragWithinAvailable,
   selectArrangingStudents,
   selectAvailableStudents,
-} from './studentSlice';
+} from '../../common/studentSlice';
 
 const StudentCard = ({
   student,

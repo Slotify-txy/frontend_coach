@@ -10,7 +10,7 @@ import ActionButton from '../../../components/ActionButton';
 import {
   addAllArrangingStudentsToAvailableStudents,
   addAllAvailableStudentsToArrangingStudents,
-} from './studentSlice';
+} from '../../common/studentSlice';
 
 export const ActionBar = () => {
   const offset = [0, -70];

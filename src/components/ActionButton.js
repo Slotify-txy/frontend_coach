@@ -21,6 +21,7 @@ const ActionButton = ({
     >
       <Tooltip
         title={tooltip}
+        placement="top"
         slotProps={{
           popper: {
             modifiers: [
@@ -38,7 +39,7 @@ const ActionButton = ({
           <IconButton
             sx={{ color }}
             onClick={callback}
-            disabled={disabled}
+            disabled={disabled || loading}
             loading={loading}
           >
             {icon}

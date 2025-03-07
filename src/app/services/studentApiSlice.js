@@ -5,7 +5,7 @@ export const studentApiSlice = api.injectEndpoints({
   tagTypes: ['Students'],
   endpoints: (builder) => ({
     getAvailableStudents: builder.query({
-      query: ({ coachId }) => `student/coach/${coachId}/available`,
+      query: ({ coachId }) => `/student/coach/${coachId}/available`,
       providesTags: (result) =>
         result
           ? [
@@ -19,14 +19,14 @@ export const studentApiSlice = api.injectEndpoints({
             ],
     }),
     getStudentById: builder.query({
-      query: ({ studentId }) => `student/${studentId}`,
+      query: ({ studentId }) => `/student/${studentId}`,
       providesTags: (result) =>
         result
           ? [{ type: 'Students', id: result.id }, { type: 'Students' }]
           : [{ type: 'Students' }],
     }),
     getStudentsByCoachId: builder.query({
-      query: ({ coachId }) => `student/coach/${coachId}`,
+      query: ({ coachId }) => `/student/coach/${coachId}`,
       providesTags: (result) =>
         result
           ? [
@@ -34,6 +34,18 @@ export const studentApiSlice = api.injectEndpoints({
               { type: 'Students', id: 'LIST' },
             ]
           : [{ type: 'Students', id: 'LIST' }],
+    }),
+    deleteStudents: builder.mutation({
+      query: ({ students }) => ({
+        url: `/student`,
+        method: 'DELETE',
+        body: students,
+        responseHandler: (response) => response.text(),
+      }),
+      invalidatesTags: (result, error, id) => [
+        { type: 'Students', id },
+        { type: 'Students', id: 'LIST' },
+      ],
     }),
   }),
 });

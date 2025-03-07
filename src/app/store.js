@@ -1,7 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { api } from '../app/services/api';
 import authReducer, { clearCredentials } from '../features/common/authSlice';
-import studentReducer from '../features/ScheduleCalendar/StudentList/studentSlice';
+import studentReducer from '../features/common/studentSlice';
 import slotReducer from '../features/common/slotSlice';
 import { isRejectedWithValue } from '@reduxjs/toolkit';
 

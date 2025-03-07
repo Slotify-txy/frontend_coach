@@ -22,7 +22,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   decreaseStudentNumOfClassCanBeScheduled,
   selectAllStudents,
-} from './StudentList/studentSlice';
+} from '../common/studentSlice';
 import { useGetSlotsQuery } from '../../app/services/slotApiSlice';
 import AUTH_STATUS from '../../common/constants/authStatus';
 import { all } from 'axios';

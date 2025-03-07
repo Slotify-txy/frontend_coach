@@ -16,7 +16,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   selectAllStudents,
   addToArrangingFromCalendar,
-} from './StudentList/studentSlice';
+} from '../common/studentSlice';
 import {
   useDeleteSlotByIdMutation,
   useUpdateSlotStatusByIdMutation,

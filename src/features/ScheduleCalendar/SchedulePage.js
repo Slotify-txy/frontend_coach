@@ -15,7 +15,7 @@ import { ActionBar } from './ActionBar';
 import { useGetOpenHoursQuery } from '../../app/services/openHourApiSlice';
 import { convertSlots } from '../../common/util/slotUtil';
 import AUTH_STATUS from '../../common/constants/authStatus';
-import { addToArrangingFromCalendar } from './StudentList/studentSlice';
+import { addToArrangingFromCalendar } from '../common/studentSlice';
 import { setPlanningSlots } from '../common/slotSlice';
 
 const moment = extendMoment(Moment);

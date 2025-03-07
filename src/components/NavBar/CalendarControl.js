@@ -12,6 +12,7 @@ import {
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import PeopleIcon from '@mui/icons-material/People';
 import TaskAltIcon from '@mui/icons-material/TaskAlt';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import React, { forwardRef, useCallback, useEffect, useState } from 'react';
@@ -325,6 +326,24 @@ const TabSelection = ({ tab, setTab }) => {
             }}
           >
             <TaskAltIcon fontSize="small" />
+          </ToggleButton>
+        )}
+      />
+
+      <ControlBtn
+        tooltipTitle={'Switch to Student List'}
+        Button={() => (
+          <ToggleButton
+            value={Tab.STUDENT}
+            sx={{
+              borderTopRightRadius: 30,
+              borderBottomRightRadius: 30,
+              color: iconColor,
+              width: '53px',
+              height: buttonHeight,
+            }}
+          >
+            <PeopleIcon fontSize="small" />
           </ToggleButton>
         )}
       />

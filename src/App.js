@@ -13,15 +13,24 @@ import Login from './components/Login';
 import AUTH_STATUS from './common/constants/authStatus';
 import { useGetUserQuery } from './app/services/userApiSlice';
 import { useSelector } from 'react-redux';
+import StudentPage from './features/StudentDisplay/StudentPage';
+import { useGetStudentsByCoachIdQuery } from './app/services/studentApiSlice';
 
 function App() {
   const height = 48;
   const py = 8;
 
-  const { status } = useSelector((state) => state.auth);
+  const { user, status } = useSelector((state) => state.auth);
   const { isFetching } = useGetUserQuery(null, {
     skip: status != AUTH_STATUS.AUTHENTICATED,
   });
+
+  useGetStudentsByCoachIdQuery(
+    { coachId: user?.id },
+    {
+      skip: status != AUTH_STATUS.AUTHENTICATED || user == null,
+    }
+  );
 
   const { pathname } = useLocation();
   const [tab, setTab] = useState(pathname.substring(1));
@@ -62,6 +71,44 @@ function App() {
     setTab(pathname.substring(1));
   }, [pathname]);
 
+  const buildNavBar = useCallback(() => {
+    switch (tab) {
+      case Tab.OPEN_HOUR:
+        return (
+          <NavBar
+            calendarView={openHourCalendarView}
+            setCalendarView={setOpenHourCalendarView}
+            calendarRange={openHourCalendarRange}
+            setCalendarDate={setOpenHourCalendarDate}
+            tab={tab}
+            setTab={setTab}
+          />
+        );
+      case Tab.SCHEDULE:
+        return (
+          <NavBar
+            calendarView={scheduleCalendarView}
+            setCalendarView={setScheduleCalendarView}
+            calendarRange={scheduleCalendarRange}
+            setCalendarDate={setScheduleCalendarDate}
+            tab={tab}
+            setTab={setTab}
+          />
+        );
+      case Tab.STUDENT:
+        return (
+          <NavBar
+            calendarView={scheduleCalendarView}
+            setCalendarView={setScheduleCalendarView}
+            calendarRange={scheduleCalendarRange}
+            setCalendarDate={setScheduleCalendarDate}
+            tab={tab}
+            setTab={setTab}
+          />
+        );
+    }
+  }, [tab]);
+
   return (
     <Box sx={{ height: '100vh', bgcolor: '#f8fafe' }}>
       <Box
@@ -73,25 +120,7 @@ function App() {
           justifyContent: 'center',
         }}
       >
-        {tab == Tab.OPEN_HOUR ? (
-          <NavBar
-            calendarView={openHourCalendarView}
-            setCalendarView={setOpenHourCalendarView}
-            calendarRange={openHourCalendarRange}
-            setCalendarDate={setOpenHourCalendarDate}
-            tab={tab}
-            setTab={setTab}
-          />
-        ) : (
-          <NavBar
-            calendarView={scheduleCalendarView}
-            setCalendarView={setScheduleCalendarView}
-            calendarRange={scheduleCalendarRange}
-            setCalendarDate={setScheduleCalendarDate}
-            tab={tab}
-            setTab={setTab}
-          />
-        )}
+        {buildNavBar()}
       </Box>
       <Login />
       <Routes>
@@ -111,6 +140,18 @@ function App() {
           path="/schedule"
           element={
             <SchedulePage
+              navBarHeight={height + 2 * py}
+              scheduleCalendarView={scheduleCalendarView}
+              setScheduleCalendarRange={setScheduleCalendarRange}
+              scheduleCalendarDate={scheduleCalendarDate}
+              setScheduleCalendarDate={setScheduleCalendarDate}
+            />
+          }
+        />
+        <Route
+          path="/student"
+          element={
+            <StudentPage
               navBarHeight={height + 2 * py}
               scheduleCalendarView={scheduleCalendarView}
               setScheduleCalendarRange={setScheduleCalendarRange}

@@ -21,15 +21,10 @@ import { ActionBar } from './ActionBar';
 import AvailableStudentList from './AvailableStudentList';
 import ArrangingStudentList from './ArrangingStudentList';
 import StudentSearch from './StudentSearch';
-import { useGetSlotsQuery } from '../../../app/services/slotApiSlice';
 import AUTH_STATUS from '../../../common/constants/authStatus';
 import { useSelector } from 'react-redux';
-import {
-  useGetAvailableStudentsQuery,
-  useGetStudentsByCoachIdQuery,
-} from '../../../app/services/studentApiSlice';
+import { useGetAvailableStudentsQuery } from '../../../app/services/studentApiSlice';
 import LoadingSpinner from '../../../components/LoadingSpinner';
-import DateTimeRangePicker from './DateTimeRangePicker';
 
 const StudentList = ({
   droppedStudent,
@@ -43,13 +38,6 @@ const StudentList = ({
   const { user, status } = useSelector((state) => state.auth);
 
   const { isFetching } = useGetAvailableStudentsQuery(
-    { coachId: user?.id },
-    {
-      skip: status != AUTH_STATUS.AUTHENTICATED || user == null,
-    }
-  );
-
-  useGetStudentsByCoachIdQuery(
     { coachId: user?.id },
     {
       skip: status != AUTH_STATUS.AUTHENTICATED || user == null,
