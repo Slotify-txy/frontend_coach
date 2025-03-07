@@ -61,6 +61,7 @@ const StudentPage = ({ navBarHeight }) => {
     enqueueSnackbar(`Are you sure you want to create a new invitation code?`, {
       variant: 'info',
       autoHideDuration: null,
+      key: 'generateInvitationCode',
       action: deleteConfirmationAction(async () => {
         try {
           await updateCoach({
@@ -86,6 +87,7 @@ const StudentPage = ({ navBarHeight }) => {
     enqueueSnackbar(`Are you sure you want to delete the students?`, {
       variant: 'info',
       autoHideDuration: null,
+      key: 'deleteStudent',
       action: deleteConfirmationAction(async () => {
         try {
           await deleteStudentsFromCoach({
@@ -122,8 +124,6 @@ const StudentPage = ({ navBarHeight }) => {
     );
   }, [searchText, students]);
 
-  console.log(students);
-  console.log(displayedStudents);
   return (
     <Container
       maxWidth="lg"

@@ -41,6 +41,7 @@ root.render(
           <BrowserRouter>
             <DndProvider backend={HTML5Backend}>
               <SnackbarProvider
+                preventDuplicate
                 autoHideDuration={2000}
                 anchorOrigin={{
                   vertical: 'top',

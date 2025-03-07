@@ -30,6 +30,7 @@ const CustomEventComponent = ({ event, setPlanningOpenHours }) => {
         enqueueSnackbar('Are you sure you want to delete the open hour?', {
           variant: 'info',
           autoHideDuration: null,
+          key: event.id,
           action: deleteConfirmationAction(async () => {
             try {
               await deleteOpenHourById(event.id).unwrap();

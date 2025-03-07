@@ -10,6 +10,7 @@ import { GoogleLogin } from '@react-oauth/google';
 import { useLoginMutation } from '../app/services/authApiSlice';
 import { useSelector } from 'react-redux';
 import AUTH_STATUS from '../common/constants/authStatus';
+import { enqueueSnackbar } from 'notistack';
 
 export default function Login() {
   const { token, status } = useSelector((state) => state.auth);
@@ -37,11 +38,10 @@ export default function Login() {
               // useNavigate won't refresh the page. Probably because the url is the same
               window.location.reload();
             } catch (error) {
-              console.log(error);
+              enqueueSnackbar('Failed to log in.', {
+                variant: 'error',
+              });
             }
-          }}
-          onError={() => {
-            console.log('Login Failed');
           }}
         />
       </DialogContent>

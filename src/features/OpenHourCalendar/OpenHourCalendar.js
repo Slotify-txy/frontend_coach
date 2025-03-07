@@ -46,6 +46,13 @@ export default function OpenHourCalendar({
   );
   const onChangeOpenHourTime = useCallback(
     (start, end, id) => {
+      if (moment(start).isBefore(moment.now())) {
+        enqueueSnackbar('The start time must be set to a future time!', {
+          variant: 'warning',
+        });
+        return;
+      }
+
       if (
         isOverlapped(
           [...publishedOpenHours, ...planningOpenHours],
@@ -55,6 +62,13 @@ export default function OpenHourCalendar({
         )
       ) {
         enqueueSnackbar("Slots can't be overlapped!", {
+          variant: 'warning',
+        });
+        return;
+      }
+
+      if (moment(end).diff(moment(start), 'hours') < 1) {
+        enqueueSnackbar('At least 1 hour long!', {
           variant: 'warning',
         });
         return;
@@ -72,6 +86,13 @@ export default function OpenHourCalendar({
 
   const onSelect = useCallback(
     (start, end) => {
+      if (moment(start).isBefore(moment.now())) {
+        enqueueSnackbar('The start time must be set to a future time!', {
+          variant: 'warning',
+        });
+        return;
+      }
+
       if (
         isOverlapped([...publishedOpenHours, ...planningOpenHours], start, end)
       ) {
@@ -80,6 +101,14 @@ export default function OpenHourCalendar({
         });
         return;
       }
+
+      if (moment(end).diff(moment(start), 'hours') < 1) {
+        enqueueSnackbar('At least 1 hour long!', {
+          variant: 'warning',
+        });
+        return;
+      }
+
       setPlanningOpenHours((prev) => [
         ...prev,
         {

@@ -156,7 +156,7 @@ export const autoSchedule = (students, slots) => {
   const studentMap = new Map(
     students.map((s) => [s.id, s.numOfClassCanBeScheduled])
   );
-  // console.log('studentMap', studentMap);
+  // ('studentMap', studentMap);
 
   const scheduled = [];
 
@@ -209,8 +209,6 @@ export const autoSchedule = (students, slots) => {
       moment(slot.end).isSameOrAfter(moment()) && studentMap.has(slot.studentId)
   );
 
-  // console.log('filteredSlots', filteredSlots);
-
   const updateHelperObjs = (
     slots,
     forbiddenStartTime,
@@ -219,15 +217,12 @@ export const autoSchedule = (students, slots) => {
     studentToCountOfStartMap,
     countToStudentsMap
   ) => {
-    // console.log('scheduledClasses', scheduledClasses);
-
     slots = slots.filter(
       (slot) =>
         !scheduledClasses.has(slot.classId) &&
         slot.status == SLOT_STATUS.AVAILABLE
     );
 
-    // console.log('slots', slots);
     slots.forEach((slot) => {
       let start = moment(slot.start);
       const slotEnd = moment(slot.end);
@@ -309,12 +304,7 @@ export const autoSchedule = (students, slots) => {
       studentToCountOfStartMap,
       countToStudentsMap
     );
-    // console.log('studentMap', studentMap);
-    // console.log('forbiddenStartTime', forbiddenStartTime);
-    // console.log('timeMap', timeMap);
-    // console.log('impactMap', impactMap);
-    // console.log('studentToCountOfStartMap', studentToCountOfStartMap);
-    // console.log('countToStudentsMap', countToStudentsMap);
+
     if (impactMap.size == 0) return scheduled;
     const sortedTimes = [...impactMap.entries()].sort((a, b) => {
       if (a[1] == b[1]) {
@@ -322,7 +312,7 @@ export const autoSchedule = (students, slots) => {
       }
       return a[1] - b[1];
     });
-    // console.log('sortedTimes', sortedTimes);
+
     const startTime = sortedTimes[0][0];
     const { studentId, classId } = timeMap
       .get(startTime)
@@ -343,14 +333,13 @@ export const autoSchedule = (students, slots) => {
       classId: classId,
       isDraggable: true,
     });
-    // console.log('scheduled', scheduled);
+
     const numOfClassCanBeScheduled = studentMap.get(studentId);
     if (numOfClassCanBeScheduled == 1) {
       studentMap.delete(studentId);
     } else {
       studentMap.set(studentId, numOfClassCanBeScheduled - 1);
     }
-    // console.log(studentMap.size, studentMap);
 
     filteredSlots = filteredSlots.filter((slot) => slot.classId != classId);
     scheduledClasses.add(classId);
@@ -369,9 +358,6 @@ export const autoSchedule = (students, slots) => {
     if (start.clone().add(1, 'hours').hour() >= 17) {
       forbiddenStartTime.add(start.clone().add(1, 'hours').toString());
     }
-
-    // console.log('filteredSlots', filteredSlots);
-    // console.log('scheduledClasses', scheduledClasses);
   }
 
   return scheduled;

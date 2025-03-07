@@ -58,6 +58,7 @@ const CustomEventComponent = ({
         {
           variant: 'info',
           autoHideDuration: null,
+          key: event.id,
           action: deleteConfirmationAction(async () => {
             try {
               await deleteSlotById(event.id).unwrap();
@@ -93,6 +94,7 @@ const CustomEventComponent = ({
     enqueueSnackbar('Are you sure you want to cancel the class?', {
       variant: 'info',
       autoHideDuration: null,
+      key: event.id,
       action: deleteConfirmationAction(async () => {
         try {
           await updateSlotStatusById({

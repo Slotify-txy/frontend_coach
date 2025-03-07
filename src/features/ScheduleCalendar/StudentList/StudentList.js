@@ -68,8 +68,8 @@ const StudentList = ({
               }}
               spacing={1}
             >
-              <Typography fontSize={11} sx={{ pl: 1 }}>
-                Students who want to have class
+              <Typography fontSize={15} sx={{ pl: 1 }}>
+                Students Requesting Class
               </Typography>
               <Box sx={{ width: '100%', height: '100%', overflowY: 'auto' }}>
                 <AvailableStudentList
@@ -91,8 +91,8 @@ const StudentList = ({
               }}
               spacing={1}
             >
-              <Typography fontSize={11} sx={{ pl: 1 }}>
-                Students who you want to schedule class with
+              <Typography fontSize={15} sx={{ pl: 1 }}>
+                Students for Scheduling
               </Typography>
               <Box sx={{ width: '100%', height: '100%', overflowY: 'auto' }}>
                 <ArrangingStudentList
