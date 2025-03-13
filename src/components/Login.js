@@ -1,16 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import {
+  Button,
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle,
 } from '@mui/material';
-import { GoogleLogin } from '@react-oauth/google';
-import { useLoginMutation } from '../app/services/authApiSlice';
 import { useSelector } from 'react-redux';
 import AUTH_STATUS from '../common/constants/authStatus';
 import { enqueueSnackbar } from 'notistack';
+import { useLoginMutation } from '../app/services/authApiSlice';
+
+const domain = process.env.REACT_APP_COGNITO_DOMAIN; // e.g., myapp.auth.us-east-1.amazoncognito.com
+const clientId = process.env.REACT_APP_CLIENT_ID;
+const redirectUri = encodeURIComponent(
+  process.env.REACT_APP_LOGGIN_REDIRECT_URL
+);
+const responseType = 'token'; // implicit flow returns tokens in the URL hash
+const scope = 'email+openid+profile';
+const cognitoUrl = `${domain}/login?response_type=${responseType}&client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}`;
 
 export default function Login() {
   const { token, status } = useSelector((state) => state.auth);
@@ -29,21 +38,16 @@ export default function Login() {
           : 'Tada! Welcome to Slotify!'}
       </DialogTitle>
       <DialogContent>
-        <GoogleLogin
-          onSuccess={async (credentialResponse) => {
-            const { credential: token } = credentialResponse;
-            try {
-              await login(token).unwrap();
-
-              // useNavigate won't refresh the page. Probably because the url is the same
-              window.location.reload();
-            } catch (error) {
-              enqueueSnackbar('Failed to log in.', {
-                variant: 'error',
-              });
-            }
+        <Button
+          fullWidth
+          variant="contained"
+          onClick={() => {
+            window.location.href = cognitoUrl;
           }}
-        />
+          sx={{ textTransform: 'none' }}
+        >
+          Sign in
+        </Button>
       </DialogContent>
     </Dialog>
   );

@@ -2,16 +2,16 @@ import React from 'react';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import ReactDOM from 'react-dom/client';
 import { Provider } from 'react-redux';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import App from './App';
 import { store } from './app/store';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 import { createTheme, ThemeProvider, CssBaseline } from '@mui/material';
-import { GoogleOAuthProvider } from '@react-oauth/google';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { SnackbarProvider } from 'notistack';
+import RedirectPage from './components/RedirectPage';
 
 const theme = createTheme({
   typography: {
@@ -34,28 +34,29 @@ const theme = createTheme({
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
-    <ThemeProvider theme={theme}>
-      <React.StrictMode>
-        <Provider store={store}>
-          <BrowserRouter>
-            <DndProvider backend={HTML5Backend}>
-              <SnackbarProvider
-                preventDuplicate
-                autoHideDuration={2000}
-                anchorOrigin={{
-                  vertical: 'top',
-                  horizontal: 'center',
-                }}
-              >
-                <App />
-              </SnackbarProvider>
-            </DndProvider>
-          </BrowserRouter>
-        </Provider>
-      </React.StrictMode>
-    </ThemeProvider>
-  </GoogleOAuthProvider>
+  <ThemeProvider theme={theme}>
+    <React.StrictMode>
+      <Provider store={store}>
+        <DndProvider backend={HTML5Backend}>
+          <SnackbarProvider
+            preventDuplicate
+            autoHideDuration={2000}
+            anchorOrigin={{
+              vertical: 'top',
+              horizontal: 'center',
+            }}
+          >
+            <BrowserRouter>
+              <Routes>
+                <Route path="/*" element={<App />} />
+                <Route path="/oauth2/callback" element={<RedirectPage />} />
+              </Routes>
+            </BrowserRouter>
+          </SnackbarProvider>
+        </DndProvider>
+      </Provider>
+    </React.StrictMode>
+  </ThemeProvider>
 );
 
 // If you want to start measuring performance in your app, pass a function
