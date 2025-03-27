@@ -1,5 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { api } from '../app/services/api';
+import { setupListeners } from '@reduxjs/toolkit/query';
 import authReducer, { clearCredentials } from '../features/common/authSlice';
 import studentReducer from '../features/common/studentSlice';
 import slotReducer from '../features/common/slotSlice';
@@ -27,3 +28,5 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(api.middleware, rtkQueryErrorInterceptor),
 });
+
+setupListeners(store.dispatch);

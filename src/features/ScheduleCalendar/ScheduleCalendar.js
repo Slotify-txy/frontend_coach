@@ -1,7 +1,7 @@
 import { Box } from '@mui/material';
 import Moment from 'moment';
 import { extendMoment } from 'moment-range';
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
 import { v4 as uuidv4 } from 'uuid';
 import SLOT_STATUS from '../../common/constants/slotStatus';
@@ -46,11 +46,7 @@ export default function ScheduleCalendar({
   const planningSlots = useSelector(selectTransformedPlanningSlots);
   const dispatch = useDispatch();
 
-  const {
-    data: allSlots,
-    isSuccess: isAllSlotsSuccess,
-    refetch: refetchAllSlots,
-  } = useGetSlotsQuery(
+  const { data: allSlots, isSuccess: isAllSlotsSuccess } = useGetSlotsQuery(
     { coachId: user?.id },
     {
       selectFromResult: (result) => {
@@ -253,9 +249,6 @@ export default function ScheduleCalendar({
     accept: [DND_TYPE.ARRANGING_STUDENT],
   });
 
-  useEffect(() => {
-    refetchAllSlots();
-  }, []);
   /**
    * Need to figure out
    * 1. how to diplay preview that takes more than 1 slot

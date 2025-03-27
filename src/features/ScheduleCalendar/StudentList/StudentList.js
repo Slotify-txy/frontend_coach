@@ -1,5 +1,5 @@
 import { Box, Divider, Stack, Typography } from '@mui/material';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { ActionBar } from './ActionBar';
 import AvailableStudentList from './AvailableStudentList';
 import ArrangingStudentList from './ArrangingStudentList';
@@ -20,17 +20,12 @@ const StudentList = ({
   const height = 50;
   const { user, status } = useSelector((state) => state.auth);
 
-  const { isFetching, refetch: refetchAvailableStudents } =
-    useGetAvailableStudentsQuery(
-      { coachId: user?.id },
-      {
-        skip: status != AUTH_STATUS.AUTHENTICATED || user == null,
-      }
-    );
-
-  useEffect(() => {
-    refetchAvailableStudents();
-  }, []);
+  const { isFetching } = useGetAvailableStudentsQuery(
+    { coachId: user?.id },
+    {
+      skip: status != AUTH_STATUS.AUTHENTICATED || user == null,
+    }
+  );
 
   return (
     <Box sx={{ height: '100%' }}>

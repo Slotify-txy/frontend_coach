@@ -1,7 +1,7 @@
 import { Box } from '@mui/material';
 import Moment from 'moment';
 import { extendMoment } from 'moment-range';
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback } from 'react';
 import { momentLocalizer } from 'react-big-calendar';
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
 import { useSelector } from 'react-redux';
@@ -24,17 +24,16 @@ export default function OpenHourCalendar({
   openHourCalendarDate,
 }) {
   const { user, status } = useSelector((state) => state.auth);
-  const { data: publishedOpenHours, refetch: refetchOpenHours } =
-    useGetOpenHoursQuery(
-      { coachId: user?.id },
-      {
-        selectFromResult: (result) => {
-          result.data = convertSlots(result.data ?? []);
-          return result;
-        },
-        skip: status != AUTH_STATUS.AUTHENTICATED || user == null,
-      }
-    );
+  const { data: publishedOpenHours } = useGetOpenHoursQuery(
+    { coachId: user?.id },
+    {
+      selectFromResult: (result) => {
+        result.data = convertSlots(result.data ?? []);
+        return result;
+      },
+      skip: status != AUTH_STATUS.AUTHENTICATED || user == null,
+    }
+  );
   const onChangeOpenHourTime = useCallback(
     (start, end, id) => {
       if (moment(start).isBefore(moment.now())) {
@@ -113,10 +112,6 @@ export default function OpenHourCalendar({
     },
     [publishedOpenHours, planningOpenHours]
   );
-
-  useEffect(() => {
-    refetchOpenHours();
-  }, []);
 
   return (
     <Box style={{ height: '100%' }}>

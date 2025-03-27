@@ -15,6 +15,9 @@ import { useSelector } from 'react-redux';
 import StudentPage from './features/StudentDisplay/StudentPage';
 import { useGetStudentsByCoachIdQuery } from './app/services/studentApiSlice';
 import { useGetUserQuery } from './app/services/userApiSlice';
+import { useLoginMutation } from './app/services/authApiSlice'; //It's not being used, but it's required
+
+const _ = useLoginMutation;
 
 function App() {
   const height = 48;
@@ -132,6 +135,7 @@ function App() {
           path="/open_hour"
           element={
             <OpenHour
+              tab={tab}
               navBarHeight={height + 2 * py}
               openHourCalendarView={openHourCalendarView}
               setOpenHourCalendarRange={setOpenHourCalendarRange}
@@ -144,6 +148,7 @@ function App() {
           path="/schedule"
           element={
             <SchedulePage
+              tab={tab}
               navBarHeight={height + 2 * py}
               scheduleCalendarView={scheduleCalendarView}
               setScheduleCalendarRange={setScheduleCalendarRange}
