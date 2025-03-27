@@ -1,15 +1,9 @@
 import {
-  Avatar,
-  Box,
   Checkbox,
   Container,
   InputAdornment,
   List,
   ListItem,
-  ListItemAvatar,
-  ListItemButton,
-  ListItemText,
-  ListSubheader,
   Stack,
   TextField,
   Typography,
@@ -18,29 +12,22 @@ import React, { useCallback, useEffect, useState } from 'react';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import PeopleIcon from '@mui/icons-material/People';
 import { useSelector } from 'react-redux';
-import {
-  useGetUserQuery,
-  useUpdateUserMutation,
-} from '../../app/services/userApiSlice';
-import AUTH_STATUS from '../../common/constants/authStatus';
 import EventAction from '../../components/EventAction';
 import { enqueueSnackbar } from 'notistack';
 import { deleteConfirmationAction } from '../../components/DeleteConfirmationAction';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { selectAllStudents } from '../common/studentSlice';
 import StudentCard from './StudentCard';
-import { blue } from '@mui/material/colors';
 import {
-  useDeleteStudentsFromCoachMutation,
-  useUpdateCoachMutation,
-} from '../../app/services/coachApiSlice';
+  useDeleteStudentsFromUserMutation,
+  useUpdateUserMutation,
+} from '../../app/services/userApiSlice';
 
 const StudentPage = ({ navBarHeight }) => {
   const { user } = useSelector((state) => state.auth);
-  const [updateCoach, { isLoading: isUpdatingCoach }] =
-    useUpdateCoachMutation();
+  const [updateCoach, { isLoading: isUpdatingCoach }] = useUpdateUserMutation();
   const [deleteStudentsFromCoach, { isLoading: isDeletingStudentFromCoach }] =
-    useDeleteStudentsFromCoachMutation();
+    useDeleteStudentsFromUserMutation();
   const students = useSelector(selectAllStudents);
   const [checked, setChecked] = useState(new Set());
   const [searchText, setSearchText] = useState('');

@@ -1,16 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-} from '@mui/material';
+import { Button, Dialog, DialogContent, DialogTitle } from '@mui/material';
 import { useSelector } from 'react-redux';
 import AUTH_STATUS from '../common/constants/authStatus';
-import { enqueueSnackbar } from 'notistack';
-import { useLoginMutation } from '../app/services/authApiSlice';
 
 const domain = process.env.REACT_APP_COGNITO_DOMAIN; // e.g., myapp.auth.us-east-1.amazoncognito.com
 const clientId = process.env.REACT_APP_CLIENT_ID;
@@ -24,7 +15,6 @@ const cognitoUrl = `${domain}/login?response_type=${responseType}&client_id=${cl
 export default function Login() {
   const { token, status } = useSelector((state) => state.auth);
   const [openLoginDialog, setOpenLoginDialog] = useState(false);
-  const [login, { isLoading }] = useLoginMutation();
 
   useEffect(() => {
     setOpenLoginDialog(token == null);

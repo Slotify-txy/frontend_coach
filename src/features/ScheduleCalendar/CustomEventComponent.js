@@ -1,15 +1,6 @@
 import DeleteIcon from '@mui/icons-material/Delete';
-import {
-  Avatar,
-  Box,
-  Chip,
-  IconButton,
-  Stack,
-  Tooltip,
-  Typography,
-} from '@mui/material';
-import moment from 'moment-timezone';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { Avatar, Box, Stack, Typography } from '@mui/material';
+import React, { useCallback, useMemo } from 'react';
 import SLOT_STATUS from '../../common/constants/slotStatus';
 import { getDisplayedTime, getStatusColor } from '../../common/util/slotUtil';
 import { useDispatch, useSelector } from 'react-redux';

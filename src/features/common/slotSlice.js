@@ -1,9 +1,5 @@
 import { createSelector, createSlice } from '@reduxjs/toolkit';
 import { api } from '../../app/services/api';
-import update from 'immutability-helper';
-import { slotApiSlice } from '../../app/services/slotApiSlice';
-import { getDisplayedStudentSlot } from '../../common/util/slotUtil';
-import { all } from 'axios';
 
 const slice = createSlice({
   name: 'slot',

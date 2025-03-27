@@ -5,18 +5,30 @@ export const userApiSlice = api.injectEndpoints({
   tagTypes: ['User'],
   endpoints: (builder) => ({
     getUser: builder.query({
-      query: () => '/user',
+      query: ({ id }) => `/coach/${id}`,
       providesTags: ['User'],
     }),
     updateUser: builder.mutation({
-      query: ({ user }) => ({
-        url: '/user',
+      query: ({ studentId, coach }) => ({
+        url: `/coach/student/${studentId}`,
         method: 'PUT',
-        body: user,
+        body: coach,
       }),
       invalidatesTags: ['User'],
+    }),
+    deleteStudentsFromUser: builder.mutation({
+      query: ({ coachId, body }) => ({
+        url: `/coach/${coachId}/student`,
+        method: 'PUT',
+        body,
+      }),
+      invalidatesTags: [{ type: 'Students', id: 'LIST' }, 'User'],
     }),
   }),
 });
 
-export const { useGetUserQuery, useUpdateUserMutation } = userApiSlice;
+export const {
+  useGetUserQuery,
+  useUpdateUserMutation,
+  useDeleteStudentsFromUserMutation,
+} = userApiSlice;

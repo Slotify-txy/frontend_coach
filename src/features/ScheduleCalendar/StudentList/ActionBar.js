@@ -1,10 +1,9 @@
-import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import { Box, IconButton, Stack, Tooltip } from '@mui/material';
+import { Stack } from '@mui/material';
 import { green, grey } from '@mui/material/colors';
 import React, { useCallback } from 'react';
 
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import AddIcon from '@mui/icons-material/Add';
 import ActionButton from '../../../components/ActionButton';
 import {

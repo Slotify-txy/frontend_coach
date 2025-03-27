@@ -1,29 +1,11 @@
-import {
-  Avatar,
-  Box,
-  Card,
-  CardHeader,
-  List,
-  ListItem,
-  Typography,
-} from '@mui/material';
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
-import update from 'immutability-helper';
+import { List, ListItem } from '@mui/material';
+import React from 'react';
 import StudentCard from './StudentCard.js';
 import { useDrop } from 'react-dnd';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   dragToArrangingFromAvailable,
-  dragToAvailable,
-  dragToAvailableFromArranging,
   selectArrangingStudents,
-  selectAvailableStudents,
 } from '../../common/studentSlice.js';
 import DND_TYPE from '../../../common/constants/dnd.js';
 
@@ -36,19 +18,12 @@ const ArrangingStudentList = ({
   setSelectedStudent,
 }) => {
   const dispatch = useDispatch();
-  const availableStudents = useSelector(selectAvailableStudents);
   const arrangingStudents = useSelector(selectArrangingStudents);
 
   const [, drop] = useDrop({
     accept: DND_TYPE.SCHEDULING_STUDENT,
     drop: ({ id }) => {
-      // const student = availableStudents.find((student) => student.id === id);
-      // if (student) {
-      //   const index = availableStudents.findIndex(
-      //     (student) => student.id === id
-      //   );
       dispatch(dragToArrangingFromAvailable({ id }));
-      // }
     },
   });
 

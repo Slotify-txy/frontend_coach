@@ -1,11 +1,7 @@
 import { InputAdornment, TextField } from '@mui/material';
-import React, { useCallback, useEffect, useState } from 'react';
-import {
-  searchStudents,
-  selectAvailableStudents,
-  setIsSearching,
-} from '../../common/studentSlice';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useEffect, useState } from 'react';
+import { searchStudents } from '../../common/studentSlice';
+import { useDispatch } from 'react-redux';
 import PeopleIcon from '@mui/icons-material/People';
 
 export default function StudentSearch() {

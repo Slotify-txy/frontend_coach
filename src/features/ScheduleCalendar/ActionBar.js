@@ -1,37 +1,31 @@
+import AutoModeIcon from '@mui/icons-material/AutoMode';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import AutoModeIcon from '@mui/icons-material/AutoMode';
-import { Box, IconButton, Stack, Tooltip } from '@mui/material';
+import { Stack } from '@mui/material';
 import { blue, green, grey } from '@mui/material/colors';
 import moment from 'moment';
+import { enqueueSnackbar } from 'notistack';
 import React, { useCallback, useEffect, useState } from 'react';
-import {
-  useCreateOpenHoursMutation,
-  useDeleteOpenHoursByCoachIdMutation,
-} from '../../app/services/openHourApiSlice';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  addToArrangingFromCalendar,
-  clearArrangingStudent,
-  selectAllStudents,
-  selectArrangingStudents,
-  updateArrangingStudent,
-} from '../common/studentSlice';
 import {
   useCreateSlotsMutation,
   useGetSlotsQuery,
 } from '../../app/services/slotApiSlice';
+import AUTH_STATUS from '../../common/constants/authStatus';
 import SLOT_STATUS from '../../common/constants/slotStatus';
 import { autoSchedule, convertSlots } from '../../common/util/slotUtil';
-import AUTH_STATUS from '../../common/constants/authStatus';
-import { enqueueSnackbar } from 'notistack';
+import ActionButton from '../../components/ActionButton';
 import {
   emptyPlanningSlots,
-  selectPlanningSlots,
   selectTransformedPlanningSlots,
   setPlanningSlots,
 } from '../common/slotSlice';
-import ActionButton from '../../components/ActionButton';
+import {
+  addToArrangingFromCalendar,
+  selectAllStudents,
+  selectArrangingStudents,
+  updateArrangingStudent,
+} from '../common/studentSlice';
 
 const timeFormat = 'YYYY-MM-DD[T]HH:mm:ss';
 

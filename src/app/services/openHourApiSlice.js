@@ -1,4 +1,3 @@
-import { v4 as uuidv4 } from 'uuid';
 import SLOT_STATUS from '../../common/constants/slotStatus';
 import { api } from './api';
 

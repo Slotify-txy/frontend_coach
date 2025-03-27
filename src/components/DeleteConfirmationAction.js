@@ -1,10 +1,7 @@
-import React, { useCallback } from 'react';
-import CheckIcon from '@mui/icons-material/Check';
-import CloseIcon from '@mui/icons-material/Close';
-import ActionButton from './ActionButton';
+import React from 'react';
 import { green, red } from '@mui/material/colors';
 import { closeSnackbar } from 'notistack';
-import { Button, Typography } from '@mui/material';
+import { Button } from '@mui/material';
 
 export const deleteConfirmationAction = (callback) => (snackbarId) => (
   <>

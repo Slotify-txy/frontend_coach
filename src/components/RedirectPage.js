@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 
 import { enqueueSnackbar } from 'notistack';
 import { useNavigate } from 'react-router';
@@ -7,13 +7,12 @@ import LoadingSpinner from './LoadingSpinner';
 import { useLoginMutation } from '../app/services/authApiSlice';
 
 export function RedirectPage() {
-  const [login, { isLoading }] = useLoginMutation();
+  const [login] = useLoginMutation();
   const navigate = useNavigate();
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.hash.slice(1));
     const idToken = urlParams.get('id_token');
-
     const promise = login(idToken);
     promise
       .then(() => navigate('/schedule', { replace: true }))
@@ -23,10 +22,10 @@ export function RedirectPage() {
         })
       );
 
-    // In react 18's dev mode, use effect will be triggered twice, so the first request needs to be aborted when unmounting
-    return () => {
-      promise.abort();
-    };
+    // In react 18's dev mode, use effect will be triggered twice, so the first request needs to be aborted when unmounting, but using this code causes users need to log in twice
+    // return () => {
+    //   promise.abort();
+    // };
   }, []);
 
   return (

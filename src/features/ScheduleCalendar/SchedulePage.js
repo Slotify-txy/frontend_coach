@@ -1,24 +1,12 @@
-import { Box, Divider } from '@mui/material';
-import Moment from 'moment';
-import { extendMoment } from 'moment-range';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { useGetSlotsQuery } from '../../app/services/slotApiSlice';
+import { Box } from '@mui/material';
+import React, { useEffect, useState } from 'react';
 import ScheduleCalendar from './ScheduleCalendar';
 // import StudentList from './StudentList';
-import { useDispatch, useSelector } from 'react-redux';
-import {
-  useGetAvailableStudentsQuery,
-  useGetStudentsByCoachIdQuery,
-} from '../../app/services/studentApiSlice';
+import { useDispatch } from 'react-redux';
+
 import StudentList from './StudentList/StudentList';
 import { ActionBar } from './ActionBar';
-import { useGetOpenHoursQuery } from '../../app/services/openHourApiSlice';
-import { convertSlots } from '../../common/util/slotUtil';
-import AUTH_STATUS from '../../common/constants/authStatus';
-import { addToArrangingFromCalendar } from '../common/studentSlice';
 import { setPlanningSlots } from '../common/slotSlice';
-
-const moment = extendMoment(Moment);
 
 const SchedulePage = ({
   navBarHeight,
@@ -32,19 +20,10 @@ const SchedulePage = ({
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [hoveredEvent, setHoveredEvent] = useState(null);
   const [droppedStudent, setDroppedStudent] = useState(null);
-  // const [planningSlots, setPlanningSlots] = useState([]);
-  // const planningSlotsRef = useRef(planningSlots);
   const dispatch = useDispatch();
-
-  // useEffect(() => {
-  //   planningSlotsRef.current = planningSlots;
-  // }, [planningSlots]);
 
   useEffect(() => {
     return () => {
-      // planningSlotsRef.current.forEach((slot) => {
-      //   dispatch(addToArrangingFromCalendar({ id: slot.studentId }));
-      // });
       dispatch(setPlanningSlots([]));
     };
   }, []);

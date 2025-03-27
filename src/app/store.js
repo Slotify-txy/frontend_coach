@@ -5,9 +5,9 @@ import studentReducer from '../features/common/studentSlice';
 import slotReducer from '../features/common/slotSlice';
 import { isRejectedWithValue } from '@reduxjs/toolkit';
 
-const rtkQueryErrorInterceptor = (api) => (next) => (action) => {
+const rtkQueryErrorInterceptor = () => (next) => (action) => {
   if (isRejectedWithValue(action)) {
-    console.warn('We got a rejected action!', action);
+    // console.warn('We got a rejected action!', action);
     // when token expired
     if (action.payload.status == '401') {
       store.dispatch(clearCredentials());

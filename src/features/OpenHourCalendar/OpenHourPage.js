@@ -1,5 +1,5 @@
-import { Box, Divider } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import { Box } from '@mui/material';
+import React, { useState } from 'react';
 import { ActionBar } from './ActionBar';
 import OpenHourCalendar from './OpenHourCalendar';
 

@@ -156,17 +156,11 @@ export const autoSchedule = (students, slots) => {
   const studentMap = new Map(
     students.map((s) => [s.id, s.numOfClassCanBeScheduled])
   );
-  // ('studentMap', studentMap);
 
   const scheduled = [];
 
   const scheduledClasses = new Set();
-  const statusSet = new Set([
-    SLOT_STATUS.PENDING,
-    SLOT_STATUS.APPOINTMENT,
-    SLOT_STATUS.REJECTED,
-    SLOT_STATUS.CANCELLED,
-  ]);
+
   slots.forEach((slot) => {
     if (
       slot.status == SLOT_STATUS.PENDING ||

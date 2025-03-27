@@ -1,7 +1,6 @@
 import {
   Box,
   Button,
-  ButtonGroup,
   IconButton,
   Stack,
   ToggleButton,
@@ -15,7 +14,7 @@ import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import PeopleIcon from '@mui/icons-material/People';
 import TaskAltIcon from '@mui/icons-material/TaskAlt';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import React, { forwardRef, useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import moment from 'moment';
 import CALENDAR_VIEW from '../../common/constants/calendarView';
 import Tab from '../../common/constants/tab';
@@ -249,7 +248,7 @@ const ViewSelection = ({ calendarView, setCalendarView }) => {
           horizontal: 'center',
         }}
       >
-        {views.map((view, index) => (
+        {views.map((view) => (
           <MenuItem
             key={view}
             onClick={() => {

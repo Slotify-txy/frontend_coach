@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import withDragAndProp from 'react-big-calendar/lib/addons/dragAndDrop';
@@ -30,7 +30,7 @@ export default function StyledCalendar({
     []
   );
 
-  const CustomWeekHeader = useCallback(({ date, label }) => {
+  const CustomWeekHeader = useCallback(({ date }) => {
     const dayOfWeek = moment(date).format('ddd');
     const dayOfMonth = moment(date).format('D');
 

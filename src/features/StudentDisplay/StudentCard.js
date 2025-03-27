@@ -1,23 +1,6 @@
-import {
-  Avatar,
-  Badge,
-  Box,
-  Card,
-  CardHeader,
-  Chip,
-  List,
-  ListItem,
-  Stack,
-  Typography,
-} from '@mui/material';
-import { blue, grey } from '@mui/material/colors';
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { Avatar, Card, CardHeader, Stack, Typography } from '@mui/material';
+import { blue } from '@mui/material/colors';
+import React from 'react';
 
 const StudentCard = ({ student }) => {
   return (

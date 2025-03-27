@@ -1,12 +1,8 @@
 import {
   Avatar,
   Badge,
-  Box,
   Card,
   CardHeader,
-  Chip,
-  List,
-  ListItem,
   Stack,
   Typography,
 } from '@mui/material';
@@ -41,7 +37,7 @@ const StudentCard = ({
   dragType,
 }) => {
   const ref = useRef(null);
-  const [numOfClassCanBeScheduled, setNumOfClassCanBeScheduled] = useState(
+  const [, setNumOfClassCanBeScheduled] = useState(
     student.numOfClassCanBeScheduled
   );
   const dispatch = useDispatch();

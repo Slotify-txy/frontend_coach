@@ -11,20 +11,23 @@ import Tab from './common/constants/tab';
 import { useLocation } from 'react-router-dom';
 import Login from './components/Login';
 import AUTH_STATUS from './common/constants/authStatus';
-import { useGetUserQuery } from './app/services/userApiSlice';
 import { useSelector } from 'react-redux';
 import StudentPage from './features/StudentDisplay/StudentPage';
 import { useGetStudentsByCoachIdQuery } from './app/services/studentApiSlice';
-import { useLoginMutation } from './app/services/authApiSlice'; //It's not being used, but it's required
+import { useGetUserQuery } from './app/services/userApiSlice';
 
 function App() {
   const height = 48;
   const py = 8;
 
-  const { user, status } = useSelector((state) => state.auth);
-  const { isFetching } = useGetUserQuery(null, {
-    skip: status != AUTH_STATUS.AUTHENTICATED,
-  });
+  const { user, userId, status } = useSelector((state) => state.auth);
+
+  useGetUserQuery(
+    { id: userId },
+    {
+      skip: status != AUTH_STATUS.AUTHENTICATED || userId == null,
+    }
+  );
 
   useGetStudentsByCoachIdQuery(
     { coachId: user?.id },

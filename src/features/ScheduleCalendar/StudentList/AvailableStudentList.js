@@ -1,33 +1,15 @@
-import {
-  Avatar,
-  Box,
-  Card,
-  CardHeader,
-  List,
-  ListItem,
-  Typography,
-} from '@mui/material';
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
-import update from 'immutability-helper';
+import { List, ListItem } from '@mui/material';
+import React from 'react';
 import StudentCard from './StudentCard.js';
 import DND_TYPE from '../../../common/constants/dnd.js';
 import { useDrop } from 'react-dnd';
 import {
-  dragToArrangingFromAvailable,
-  selectArrangingStudents,
   selectFilteredAvailableStudents,
   selectIsSearching,
   selectAvailableStudents,
   dragToAvailableFromArranging,
 } from '../../common/studentSlice.js';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectCurrentUser } from '../../common/authSlice.js';
 
 const AvailableStudentList = ({
   droppedStudent,
@@ -42,7 +24,6 @@ const AvailableStudentList = ({
   const filteredAvailableStudents = useSelector(
     selectFilteredAvailableStudents
   );
-  const arrangingStudents = useSelector(selectArrangingStudents);
   const isSearching = useSelector(selectIsSearching);
 
   const displayedStudents = isSearching

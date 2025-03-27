@@ -1,13 +1,10 @@
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import { Box, IconButton, Tooltip } from '@mui/material';
+import { Box } from '@mui/material';
 import { green, grey } from '@mui/material/colors';
 import moment from 'moment';
 import React, { useCallback } from 'react';
-import {
-  useCreateOpenHoursMutation,
-  useDeleteOpenHoursByCoachIdMutation,
-} from '../../app/services/openHourApiSlice';
+import { useCreateOpenHoursMutation } from '../../app/services/openHourApiSlice';
 import { useSelector } from 'react-redux';
 import ActionButton from '../../components/ActionButton';
 import { enqueueSnackbar } from 'notistack';

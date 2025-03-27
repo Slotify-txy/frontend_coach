@@ -1,6 +1,5 @@
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Box, IconButton, Tooltip, Typography } from '@mui/material';
-import moment from 'moment-timezone';
 import React, { useCallback, useState } from 'react';
 import SLOT_STATUS from '../../common/constants/slotStatus';
 import {

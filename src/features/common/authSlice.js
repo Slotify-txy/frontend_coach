@@ -5,6 +5,9 @@ import AUTH_STATUS from '../../common/constants/authStatus';
 const slice = createSlice({
   name: 'auth',
   initialState: {
+    userId: localStorage.getItem('userId')
+      ? localStorage.getItem('userId')
+      : null,
     user: null,
     token: localStorage.getItem('userToken')
       ? localStorage.getItem('userToken')
@@ -15,12 +18,15 @@ const slice = createSlice({
   },
   reducers: {
     clearCredentials: (state) => {
+      localStorage.removeItem('userToken');
+      localStorage.removeItem('userId');
       state.user = null;
       state.token = null;
       state.status = AUTH_STATUS.TOKEN_EXPIRED;
     },
     logout: (state) => {
       localStorage.removeItem('userToken');
+      localStorage.removeItem('userId');
       state.user = null;
       state.token = null;
       state.status = AUTH_STATUS.UNAUTHENTICATED;
@@ -29,10 +35,12 @@ const slice = createSlice({
   extraReducers: (builder) => {
     builder
       .addMatcher(api.endpoints.login.matchFulfilled, (state, { payload }) => {
-        const { token } = payload;
+        const { token, id } = payload;
         localStorage.setItem('userToken', token);
+        localStorage.setItem('userId', id);
         state.token = token;
         state.status = AUTH_STATUS.AUTHENTICATED;
+        state.userId = id;
       })
       .addMatcher(
         api.endpoints.getUser.matchFulfilled,
