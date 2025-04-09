@@ -29,7 +29,7 @@ import {
 
 const timeFormat = 'YYYY-MM-DD[T]HH:mm:ss';
 
-export const ActionBar = () => {
+export const ActionBar = ({ isAllSlotsFetching }) => {
   const { user, status } = useSelector((state) => state.auth);
   const planningSlots = useSelector(selectTransformedPlanningSlots);
   const students = useSelector(selectAllStudents);
@@ -140,7 +140,7 @@ export const ActionBar = () => {
         icon={<CheckBoxIcon />}
         tooltip={'Submit Schedule'}
         callback={schedule}
-        isLoading={isCreatingSlots}
+        isLoading={isAllSlotsFetching || isCreatingSlots}
         disabled={planningSlots.length === 0}
       />
       <ActionButton

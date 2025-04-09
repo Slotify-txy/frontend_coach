@@ -1,12 +1,14 @@
 import { Box } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import ScheduleCalendar from './ScheduleCalendar';
-// import StudentList from './StudentList';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import StudentList from './StudentList/StudentList';
 import { ActionBar } from './ActionBar';
 import { setPlanningSlots } from '../common/slotSlice';
+import { useGetSlotsQuery } from '../../app/services/slotApiSlice';
+import { convertSlots } from '../../common/util/slotUtil';
+import AUTH_STATUS from '../../common/constants/authStatus';
 
 const SchedulePage = ({
   navBarHeight,
@@ -21,6 +23,23 @@ const SchedulePage = ({
   const [hoveredEvent, setHoveredEvent] = useState(null);
   const [droppedStudent, setDroppedStudent] = useState(null);
   const dispatch = useDispatch();
+
+  const { user, status } = useSelector((state) => state.auth);
+
+  const {
+    data: allSlots,
+    isSuccess: isAllSlotsSuccess,
+    isFetching: isAllSlotsFetching,
+  } = useGetSlotsQuery(
+    { coachId: user?.id },
+    {
+      selectFromResult: (result) => {
+        result.data = convertSlots(result.data ?? []);
+        return result;
+      },
+      skip: status != AUTH_STATUS.AUTHENTICATED || user == null,
+    }
+  );
 
   useEffect(() => {
     return () => {
@@ -48,6 +67,8 @@ const SchedulePage = ({
       </Box>
       <Box sx={{ flex: 1, ml: 1 }}>
         <ScheduleCalendar
+          allSlots={allSlots}
+          isAllSlotsSuccess={isAllSlotsSuccess}
           draggedStudent={draggedStudent}
           setDraggedStudent={setDraggedStudent}
           selectedStudent={selectedStudent}
@@ -63,7 +84,7 @@ const SchedulePage = ({
         />
       </Box>
       <Box sx={{ height: '100%', width: 70 }}>
-        <ActionBar />
+        <ActionBar isAllSlotsFetching={isAllSlotsFetching} />
       </Box>
     </Box>
   );

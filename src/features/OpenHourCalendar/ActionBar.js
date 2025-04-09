@@ -11,7 +11,11 @@ import { enqueueSnackbar } from 'notistack';
 
 const timeFormat = 'YYYY-MM-DD[T]HH:mm:ss';
 
-export const ActionBar = ({ planningOpenHours, setPlanningOpenHours }) => {
+export const ActionBar = ({
+  isFetching,
+  planningOpenHours,
+  setPlanningOpenHours,
+}) => {
   const offset = [0, -14];
   const { user } = useSelector((state) => state.auth);
 
@@ -47,7 +51,8 @@ export const ActionBar = ({ planningOpenHours, setPlanningOpenHours }) => {
       variant: 'success',
     });
   }, [setPlanningOpenHours]);
-
+  console.log('isFetching', isFetching);
+  console.log('isCreatingOpenHours', isCreatingOpenHours);
   return (
     <Box sx={{ pt: 2 }}>
       <ActionButton
@@ -57,7 +62,7 @@ export const ActionBar = ({ planningOpenHours, setPlanningOpenHours }) => {
         callback={publishOpenHours}
         offset={offset}
         disabled={planningOpenHours.length === 0}
-        loading={isCreatingOpenHours}
+        loading={isFetching || isCreatingOpenHours}
       />
       <ActionButton
         color={grey[700]}

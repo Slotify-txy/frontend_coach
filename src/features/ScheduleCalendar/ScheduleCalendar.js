@@ -7,7 +7,6 @@ import { v4 as uuidv4 } from 'uuid';
 import SLOT_STATUS from '../../common/constants/slotStatus';
 import {
   computeStudentAvailableSlots,
-  convertSlots,
   getPendingAndAppointmentSlots,
   getUnschedulingSlots,
   IsCalendarSlotWithinAvailableTimes,
@@ -20,8 +19,6 @@ import DND_TYPE from '../../common/constants/dnd';
 import { useDrop } from 'react-dnd';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectAllStudents } from '../common/studentSlice';
-import { useGetSlotsQuery } from '../../app/services/slotApiSlice';
-import AUTH_STATUS from '../../common/constants/authStatus';
 import {
   addSlotToPlanningSlots,
   selectTransformedPlanningSlots,
@@ -32,6 +29,8 @@ import { enqueueSnackbar } from 'notistack';
 const moment = extendMoment(Moment);
 
 export default function ScheduleCalendar({
+  allSlots,
+  isAllSlotsSuccess,
   draggedStudent,
   setDraggedStudent,
   selectedStudent,
@@ -42,21 +41,8 @@ export default function ScheduleCalendar({
   scheduleCalendarDate,
   setDroppedStudent,
 }) {
-  const { user, status } = useSelector((state) => state.auth);
   const planningSlots = useSelector(selectTransformedPlanningSlots);
   const dispatch = useDispatch();
-
-  const { data: allSlots, isSuccess: isAllSlotsSuccess } = useGetSlotsQuery(
-    { coachId: user?.id },
-    {
-      selectFromResult: (result) => {
-        result.data = convertSlots(result.data ?? []);
-        return result;
-      },
-      skip: status != AUTH_STATUS.AUTHENTICATED || user == null,
-    }
-  );
-
   const allStudents = useSelector(selectAllStudents);
   const studentAvailableSlots = useMemo(
     () => computeStudentAvailableSlots(allSlots),
