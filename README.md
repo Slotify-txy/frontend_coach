@@ -1,70 +1,38 @@
-# Getting Started with Create React App
+# Slotify
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+The project is to streamline the class booking process and maximize the booking utilization. 
 
-## Available Scripts
+Consider this situation where the class scheduling is done via messaging: Student A books a class at 3 pm tomorrow and then Student B would like to have class as well and can only do 3 pm tomorrow. Then the coach askes A if they can pick a different time and A does have other availbility. They both have class, but it comes at a cost of communication. This is what the project is solving.
 
-In the project directory, you can run:
+The project contains 3 parts, two frontends, one for the coaches, one for the students, and a backend.
 
-### `npm start`
+This repository is for the coach-side frontend implementation.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Other repos:
+* [Backend](https://github.com/Slotify-txy/backend)
+* [Frontend for Coaches](https://github.com/Slotify-txy/frontend_coach)
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Features
+* Students can submit availbility by selecting time slots and confirm/reject/accept/cancel appointments.
+* Coaches can publish open hours, schedule classes based on students' availbility, and confirm/reject/accept/cancel appointments. 
+* The auto scheduling feature will let coaches schedule as many as classes as possible.
+* Email notification for open hour and slot status update, with action buttons for accept/confirm/reject/cancel and calendar invites
 
-### `npm test`
+## Built With
+* ![Spring Boot][Spring Boot]
+* ![Hibernate][Hibernate]
+* ![React][React.js]
+* ![Redux][Redux]
+* ![AWS][AWS]
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Contact
 
-### `npm run build`
+Xiyuan Tu - [LinkedIn](https://www.linkedin.com/in/xiyuan) - xiyuan.tyler@gmail.com
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Looking for new-grad sde positions (backend/full-stack/cloud/iOS)
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+[Spring Boot]: https://img.shields.io/badge/Spring_Boot-brightgreen?style=for-the-badge&logo=springboot&logoColor=white
+[Hibernate]: https://img.shields.io/badge/Hibernate-4A4A55?style=for-the-badge&logo=hibernate&logoColor=white
+[React.js]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
+[Redux]: https://img.shields.io/badge/Redux-%23764ABC?style=for-the-badge&logo=redux&logoColor=white
+[AWS]: https://img.shields.io/badge/AWS-131f2d?style=for-the-badge&logo=amazonwebservices&logoColor=white
