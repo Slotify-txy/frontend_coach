@@ -3,6 +3,7 @@ import React from 'react';
 
 const EventAction = ({
   title,
+  color,
   onClick,
   Icon,
   fontSize = 14,
@@ -15,7 +16,7 @@ const EventAction = ({
         <IconButton
           onClick={onClick}
           onMouseDown={(e) => e.stopPropagation()} // otherwise, it triggers with onDragStart
-          sx={{ padding: 0.2 }}
+          sx={{ color, padding: 0.2 }}
           aria-label={title}
           disabled={disabled || isLoading}
           loading={isLoading}

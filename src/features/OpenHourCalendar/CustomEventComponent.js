@@ -1,5 +1,4 @@
-import DeleteIcon from '@mui/icons-material/Delete';
-import { Box, IconButton, Tooltip, Typography } from '@mui/material';
+import { Box, Popper, Typography } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 import SLOT_STATUS from '../../common/constants/slotStatus';
 import {
@@ -10,10 +9,13 @@ import {
 import { useDeleteOpenHourByIdMutation } from '../../app/services/openHourApiSlice';
 import { enqueueSnackbar } from 'notistack';
 import { deleteConfirmationAction } from '../../components/DeleteConfirmationAction';
+import EventAction from '../../components/EventAction';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 const CustomEventComponent = ({ event, setPlanningOpenHours }) => {
   const { start, end, status } = event;
   const [onHover, setOnHover] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
   const backgroundColor = getStatusColor(status);
   const [deleteOpenHourById, { isLoading: isDeletingOpenHours }] =
     useDeleteOpenHourByIdMutation();
@@ -57,8 +59,14 @@ const CustomEventComponent = ({ event, setPlanningOpenHours }) => {
         backgroundColor: backgroundColor,
         borderRadius: '8px',
       }}
-      onMouseEnter={() => setOnHover(true)}
-      onMouseLeave={() => setOnHover(false)}
+      onMouseEnter={(event) => {
+        setOnHover(true);
+        setAnchorEl(event.currentTarget);
+      }}
+      onMouseLeave={() => {
+        setOnHover(false);
+        setAnchorEl(null);
+      }}
     >
       <Box
         sx={{
@@ -77,26 +85,44 @@ const CustomEventComponent = ({ event, setPlanningOpenHours }) => {
         >
           {convertStatusToText(status)}
         </Typography>
-        {
-          // todo: make ui better
-          onHover && (
-            <Tooltip title="Delete">
-              <IconButton
-                onClick={deleteOpenHour}
-                onMouseDown={(e) => e.stopPropagation()} // otherwise, it triggers with onDragStart
-                sx={{ padding: 0.2 }}
-                aria-label="delete"
-                loading={isDeletingOpenHours}
-              >
-                <DeleteIcon sx={{ fontSize: 14 }} />
-              </IconButton>
-            </Tooltip>
-          )
-        }
       </Box>
       <Typography sx={{ fontSize: 12 }}>
         {getDisplayedTime(start, end)}
       </Typography>
+      <Popper
+        open={onHover}
+        anchorEl={anchorEl}
+        placement="top-end"
+        modifiers={[
+          {
+            name: 'flip',
+            enabled: true,
+            options: {
+              altBoundary: false,
+            },
+          },
+          {
+            name: 'preventOverflow',
+            enabled: true,
+            options: {
+              altAxis: true,
+              altBoundary: true,
+              tether: true,
+              rootBoundary: 'document',
+              padding: 8,
+            },
+          },
+        ]}
+      >
+        <EventAction
+          key={'Delete'}
+          title="Delete"
+          onClick={deleteOpenHour}
+          Icon={DeleteIcon}
+          fontSize={20}
+          isLoading={isDeletingOpenHours}
+        />
+      </Popper>
     </Box>
   );
 };

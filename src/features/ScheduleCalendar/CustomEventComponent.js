@@ -1,6 +1,6 @@
 import DeleteIcon from '@mui/icons-material/Delete';
-import { Avatar, Box, Stack, Typography } from '@mui/material';
-import React, { useCallback, useMemo } from 'react';
+import { Avatar, Box, Popper, Stack, Typography } from '@mui/material';
+import React, { useCallback, useMemo, useState } from 'react';
 import SLOT_STATUS from '../../common/constants/slotStatus';
 import { getDisplayedTime, getStatusColor } from '../../common/util/slotUtil';
 import { useDispatch, useSelector } from 'react-redux';
@@ -26,6 +26,7 @@ const CustomEventComponent = ({
 }) => {
   const { start, end, status } = event;
   const backgroundColor = getStatusColor(status);
+  const [anchorEl, setAnchorEl] = useState(null);
   const dispatch = useDispatch();
   const allStudents = useSelector(selectAllStudents);
   const student = useMemo(
@@ -121,6 +122,7 @@ const CustomEventComponent = ({
             title="Delete"
             onClick={deleteSlot}
             Icon={DeleteIcon}
+            fontSize={20}
             isLoading={isDeletingSlot}
           />
         );
@@ -130,6 +132,7 @@ const CustomEventComponent = ({
             title="Cancel"
             onClick={deleteSlot}
             Icon={CancelIcon}
+            fontSize={20}
             isLoading={isDeletingSlot}
           />
         );
@@ -139,7 +142,9 @@ const CustomEventComponent = ({
             title="Cancel"
             onClick={cancel}
             Icon={CancelIcon}
+            fontSize={20}
             isLoading={isUpdatingSlot}
+            color={'red'}
           />
         );
     }
@@ -154,13 +159,15 @@ const CustomEventComponent = ({
         backgroundColor: backgroundColor,
         borderRadius: '8px',
       }}
-      onMouseEnter={() => {
+      onMouseEnter={(e) => {
         setSelectedStudent(student);
         setHoveredEvent(event.id);
+        setAnchorEl(e.currentTarget);
       }}
       onMouseLeave={() => {
         setSelectedStudent(null);
         setHoveredEvent(null);
+        setAnchorEl(null);
       }}
     >
       <Box
@@ -187,22 +194,38 @@ const CustomEventComponent = ({
           >
             {student?.name}
           </Typography>
-          {/* <Chip
-            label={student?.location}
-            size="small"
-            color="primary"
-            sx={{ fontSize: 11, height: 18 }}
-          /> */}
         </Stack>
-
-        {
-          // todo: make ui better
-          hoveredEvent === event.id && buildEventAction()
-        }
       </Box>
       <Typography sx={{ fontSize: 12 }}>
         {getDisplayedTime(start, end)}
       </Typography>
+      <Popper
+        open={hoveredEvent === event.id}
+        anchorEl={anchorEl}
+        placement="top-end"
+        modifiers={[
+          {
+            name: 'flip',
+            enabled: true,
+            options: {
+              altBoundary: false,
+            },
+          },
+          {
+            name: 'preventOverflow',
+            enabled: true,
+            options: {
+              altAxis: true,
+              altBoundary: true,
+              tether: true,
+              rootBoundary: 'document',
+              padding: 8,
+            },
+          },
+        ]}
+      >
+        {hoveredEvent === event.id && buildEventAction()}
+      </Popper>
     </Box>
   );
 };
