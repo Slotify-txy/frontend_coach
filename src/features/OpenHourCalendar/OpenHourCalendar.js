@@ -45,9 +45,12 @@ export default function OpenHourCalendar({
       }
 
       if (moment(end).diff(moment(start), 'hours') < 1) {
-        enqueueSnackbar('At least 1 hour long!', {
-          variant: 'warning',
-        });
+        enqueueSnackbar(
+          'At least 1 hour long! Drag to select multiple time slots.',
+          {
+            variant: 'warning',
+          }
+        );
         return;
       }
 
@@ -80,9 +83,12 @@ export default function OpenHourCalendar({
       }
 
       if (moment(end).diff(moment(start), 'hours') < 1) {
-        enqueueSnackbar('At least 1 hour long!', {
-          variant: 'warning',
-        });
+        enqueueSnackbar(
+          'At least 1 hour long! Drag to select multiple time slots.',
+          {
+            variant: 'warning',
+          }
+        );
         return;
       }
 
