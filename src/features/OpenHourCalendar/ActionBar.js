@@ -51,8 +51,7 @@ export const ActionBar = ({
       variant: 'success',
     });
   }, [setPlanningOpenHours]);
-  console.log('isFetching', isFetching);
-  console.log('isCreatingOpenHours', isCreatingOpenHours);
+
   return (
     <Box sx={{ pt: 2 }}>
       <ActionButton

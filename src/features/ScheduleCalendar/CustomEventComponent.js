@@ -1,6 +1,6 @@
 import DeleteIcon from '@mui/icons-material/Delete';
-import { Avatar, Box, Popper, Stack, Typography } from '@mui/material';
-import React, { useCallback, useMemo, useState } from 'react';
+import { Avatar, Box, Stack, Tooltip, Typography } from '@mui/material';
+import React, { useCallback, useMemo } from 'react';
 import SLOT_STATUS from '../../common/constants/slotStatus';
 import { getDisplayedTime, getStatusColor } from '../../common/util/slotUtil';
 import { useDispatch, useSelector } from 'react-redux';
@@ -26,7 +26,6 @@ const CustomEventComponent = ({
 }) => {
   const { start, end, status } = event;
   const backgroundColor = getStatusColor(status);
-  const [anchorEl, setAnchorEl] = useState(null);
   const dispatch = useDispatch();
   const allStudents = useSelector(selectAllStudents);
   const student = useMemo(
@@ -159,73 +158,68 @@ const CustomEventComponent = ({
         backgroundColor: backgroundColor,
         borderRadius: '8px',
       }}
-      onMouseEnter={(e) => {
+      onMouseEnter={() => {
         setSelectedStudent(student);
         setHoveredEvent(event.id);
-        setAnchorEl(e.currentTarget);
       }}
       onMouseLeave={() => {
         setSelectedStudent(null);
         setHoveredEvent(null);
-        setAnchorEl(null);
       }}
     >
-      <Box
-        sx={{
-          display: 'flex',
-          width: '100%',
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          mt: 0.2,
+      <Tooltip
+        interactive
+        arrow
+        placement="top"
+        slotProps={{
+          tooltip: {
+            sx: {
+              backgroundColor: 'white',
+            },
+          },
+          popper: {
+            modifiers: [
+              {
+                name: 'offset',
+                options: {
+                  offset: [0, -5],
+                },
+              },
+            ],
+          },
         }}
+        title={buildEventAction()}
       >
-        <Stack direction="row" spacing={1} alignItems={'center'}>
-          <Avatar
-            sx={{ width: 18, height: 18 }}
-            src={student?.picture}
-            alt={student?.name}
-          />
-          <Typography
-            sx={{
-              fontSize: 12,
-              fontWeight: 700,
-            }}
-          >
-            {student?.name}
-          </Typography>
-        </Stack>
-      </Box>
-      <Typography sx={{ fontSize: 12 }}>
-        {getDisplayedTime(start, end)}
-      </Typography>
-      <Popper
-        open={hoveredEvent === event.id}
-        anchorEl={anchorEl}
-        placement="top-end"
-        modifiers={[
-          {
-            name: 'flip',
-            enabled: true,
-            options: {
-              altBoundary: false,
-            },
-          },
-          {
-            name: 'preventOverflow',
-            enabled: true,
-            options: {
-              altAxis: true,
-              altBoundary: true,
-              tether: true,
-              rootBoundary: 'document',
-              padding: 8,
-            },
-          },
-        ]}
-      >
-        {hoveredEvent === event.id && buildEventAction()}
-      </Popper>
+        <Box
+          sx={{
+            display: 'flex',
+            width: '100%',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            mt: 0.2,
+          }}
+        >
+          <Stack direction="row" spacing={1} alignItems={'center'}>
+            <Avatar
+              sx={{ width: 18, height: 18 }}
+              src={student?.picture}
+              alt={student?.name}
+            />
+            <Typography
+              sx={{
+                fontSize: 12,
+                fontWeight: 700,
+              }}
+            >
+              {student?.name}
+            </Typography>
+          </Stack>
+        </Box>
+        <Typography sx={{ fontSize: 12 }}>
+          {getDisplayedTime(start, end)}
+        </Typography>
+      </Tooltip>
     </Box>
   );
 };
